@@ -34,14 +34,7 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:jest/recommended",
   ],
-  plugins: [
-    "@typescript-eslint",
-    "@typescript-eslint/tslint",
-    "react",
-    "immutable",
-    "jsx-a11y",
-    "react-hooks",
-  ],
+  plugins: ["@typescript-eslint", "@typescript-eslint/tslint", "react", "immutable", "jsx-a11y", "react-hooks"],
   rules: {
     "@typescript-eslint/adjacent-overload-signatures": 2,
     "@typescript-eslint/array-type": 2,
@@ -100,11 +93,7 @@ module.exports = {
           "no-submodule-imports": false,
           "no-this": true,
           "no-unused-expression": true,
-          "only-arrow-functions": [
-            true,
-            "allow-declarations",
-            "allow-named-functions",
-          ],
+          "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
           "prefer-conditional-expression": true,
           "trailing-comma": [
             true,
@@ -119,17 +108,9 @@ module.exports = {
           ],
           "triple-equals": [true, "allow-null-check"],
           typedef: [true, "call-signature"],
-          "variable-name": [
-            true,
-            "ban-keywords",
-            "check-format",
-            "allow-pascal-case",
-          ],
+          "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
         },
-        rulesDirectory: [
-          "node_modules/tslint-immutable/rules",
-          "node_modules/tslint-react/rules",
-        ],
+        rulesDirectory: ["node_modules/tslint-immutable/rules", "node_modules/tslint-react/rules"],
       },
     ],
     "@typescript-eslint/type-annotation-spacing": 0,
@@ -194,4 +175,4 @@ module.exports = {
     "use-isnan": 2,
     "valid-typeof": 0,
   },
-};
+}

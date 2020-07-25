@@ -1,10 +1,10 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import styled from "styled-components";
-import Img from "gatsby-image";
-import { motion } from "framer-motion";
+import React from "react"
+import { useStaticQuery, graphql } from "gatsby"
+import styled from "styled-components"
+import Img from "gatsby-image"
+import { motion } from "framer-motion"
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div``
 
 const GithubIcon: React.FC = () => {
   const data = useStaticQuery(graphql`
@@ -17,9 +17,9 @@ const GithubIcon: React.FC = () => {
         }
       }
     }
-  `);
+  `)
 
-  const imageData = data.icon.childImageSharp.fixed;
+  const imageData = data.icon.childImageSharp.fixed
   return (
     <Wrapper>
       <motion.a
@@ -35,7 +35,7 @@ const GithubIcon: React.FC = () => {
         <Img fixed={imageData} alt="GitHub Icon" />
       </motion.a>
     </Wrapper>
-  );
-};
+  )
+}
 
-export { GithubIcon };
+export { GithubIcon }

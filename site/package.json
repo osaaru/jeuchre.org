@@ -24,7 +24,8 @@
     "clean": "gatsby clean",
     "build": "gatsby build",
     "build:storybook": "build-storybook",
-    "update": "ncu -u"
+    "update": "ncu -u",
+    "prettier": "prettier --write"
   },
   "dependencies": {
     "framer-motion": "^1.9.1",
@@ -82,7 +83,7 @@
     "jest": "^25.1.0",
     "jest-styled-components": "^7.0.0",
     "npm-check-updates": "^4.0.4",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.5",
     "ts-jest": "^25.2.1",
     "tslint": "^6.0.0",
     "tslint-immutable": "^6.0.1",

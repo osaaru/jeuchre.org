@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { motion } from "framer-motion";
-import { RouteComponentProps } from "@reach/router";
-import { Layout } from "../components/layout";
-import { SEO } from "../components/seo";
+import React from "react"
+import styled from "styled-components"
+import { motion } from "framer-motion"
+import { RouteComponentProps } from "@reach/router"
+import { Layout } from "../components/layout"
+import { SEO } from "../components/seo"
 
 /***************************************************************
   Below are some examples of using styled-components with the
@@ -14,19 +14,18 @@ import { SEO } from "../components/seo";
   1. A basic styled component using the theme.
 */
 const StyledComponent1 = styled.p`
-  color: ${props => props.theme.colors.orange};
+  color: ${(props) => props.theme.colors.orange};
   font-size: 1.2rem;
-`;
+`
 
 /*
   2. A styled component that changes color based on the screen size 
   using the theme.
 */
 const StyledComponent2 = styled.p`
-  color: ${({ theme }) =>
-    theme.screens.sm ? theme.colors.blue : theme.colors.orange};
+  color: ${({ theme }) => (theme.screens.sm ? theme.colors.blue : theme.colors.orange)};
   font-size: 1.2rem;
-`;
+`
 
 /*
   3. A styled component that extends a framer-motion component.
@@ -34,12 +33,12 @@ const StyledComponent2 = styled.p`
 */
 
 const OrangeBlock = styled(motion.div)`
-  background: ${props => props.theme.colors.orange};
+  background: ${(props) => props.theme.colors.orange};
   height: 100px;
   width: 100px;
   border-radius: 10px;
   margin: 10px;
-`;
+`
 
 /*
   4. A styled component that extends a framer-motion component.
@@ -52,21 +51,21 @@ const BlueBlock = styled(motion.div).attrs(() => ({
   transition: { duration: 2 },
   whileHover: { scale: 0.8 },
 }))`
-  background: ${props => props.theme.colors.blue};
+  background: ${(props) => props.theme.colors.blue};
   height: 100px;
   width: 100px;
   border-radius: 10px;
   margin: 10px;
-`;
+`
 
 const BlocksWrapper = styled.section`
   display: flex;
   align-items: center;
   margin-top: 20px;
-`;
+`
 
 const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
-  const path = location.pathname;
+  const path = location.pathname
   return (
     <Layout>
       <SEO
@@ -78,20 +77,14 @@ const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
       </h3>
 
       <StyledComponent1>I am a basic styled component.</StyledComponent1>
-      <StyledComponent2>
-        My font color should change on a small device.
-      </StyledComponent2>
+      <StyledComponent2>My font color should change on a small device.</StyledComponent2>
 
       <BlocksWrapper>
-        <OrangeBlock
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2 }}
-          whileHover={{ rotate: 1.1 }}
-        />
+        <OrangeBlock animate={{ rotate: 360 }} transition={{ duration: 2 }} whileHover={{ rotate: 1.1 }} />
         <BlueBlock />
       </BlocksWrapper>
     </Layout>
-  );
-};
+  )
+}
 
-export default AboutPage;
+export default AboutPage

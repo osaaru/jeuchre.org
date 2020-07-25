@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components"
 
 const Button = styled.button`
   height: 30px;
@@ -10,6 +10,6 @@ const Button = styled.button`
   :disabled {
     background: lightgray;
   }
-`;
+`
 
-export { Button };
+export { Button }

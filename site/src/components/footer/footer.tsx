@@ -1,27 +1,27 @@
-import React from "react";
-import styled from "styled-components";
-import { GithubIcon } from "../github-icon";
-import { useTheme } from "../../styles";
+import React from "react"
+import styled from "styled-components"
+import { GithubIcon } from "../github-icon"
+import { useTheme } from "../../styles"
 
 const StyledFooter = styled.footer`
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-`;
+`
 
 const StyledSvg = styled.svg`
   position: absolute;
   bottom: 0;
-`;
+`
 
 const FooterContainer = styled.div`
   text-align: center;
   padding-bottom: 10px;
-`;
+`
 
 const Footer: React.FC = () => {
-  const { blue } = useTheme().colors;
+  const { blue } = useTheme().colors
   return (
     <StyledFooter>
       {/* This svg was created at https://getwaves.io/ */}
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
         <GithubIcon />
       </FooterContainer>
     </StyledFooter>
-  );
-};
+  )
+}
 
-export { Footer };
+export { Footer }

@@ -18,7 +18,6 @@ export default {
     75: 0.75,
     100: 1,
   },
-  py: (value: number | string) =>
-    `padding-top: ${value}; padding-bottom: ${value};`,
+  py: (value: number | string) => `padding-top: ${value}; padding-bottom: ${value};`,
   // Add anything else you'd like.
-};
+}

@@ -1,3 +1,5 @@
+# EditorConfig helps developers define and maintain consistent
+# coding styles between different editors and IDEs
 # http://editorconfig.org
 root = true
 
@@ -7,9 +9,9 @@ end_of_line = lf
 indent_size = 2
 indent_style = space
 insert_final_newline = true
-max_line_length = 80
+max_line_length = 120
 trim_trailing_whitespace = true
 
-[*.md]
+[*.{diff,md}]
 max_line_length = 0
 trim_trailing_whitespace = false

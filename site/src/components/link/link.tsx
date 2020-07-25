@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { Link as GatsbyLink } from "gatsby";
+import styled from "styled-components"
+import { Link as GatsbyLink } from "gatsby"
 
 const Link = styled(GatsbyLink)`
   margin-top: 20px;
@@ -9,6 +9,6 @@ const Link = styled(GatsbyLink)`
   :hover {
     text-decoration: underline;
   }
-`;
+`
 
-export { Link };
+export { Link }
