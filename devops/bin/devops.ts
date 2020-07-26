@@ -1,7 +1,9 @@
-#!/usr/bin/env node
-import 'source-map-support/register';
-import cdk = require('@aws-cdk/core');
-import { DevopsStack } from '../lib/devops-stack';
+import * as cdk from "@aws-cdk/core"
+import "source-map-support/register"
+import { PipelineStack } from "../lib/pipeline-stack"
 
-const app = new cdk.App();
-new DevopsStack(app, 'DevopsStack');
+const app = new cdk.App()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const pipeline = new PipelineStack(app, "JeuchreOrgCodePipeline")
+
+app.synth()

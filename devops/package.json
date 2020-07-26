@@ -3,22 +3,31 @@
     "devops": "bin/devops.js"
   },
   "dependencies": {
+    "@aws-cdk/aws-cloudfront": "^1.54.0",
+    "@aws-cdk/aws-codebuild": "^1.54.0",
+    "@aws-cdk/aws-codepipeline": "^1.54.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.54.0",
+    "@aws-cdk/aws-s3": "^1.54.0",
+    "@aws-cdk/aws-ssm": "^1.54.0",
     "@aws-cdk/core": "^1.18.0",
+    "@aws-cdk/pipelines": "^1.54.0",
     "source-map-support": "^0.5.16"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.18.0",
     "aws-cdk": "^1.18.0",
+    "dotenv": "^8.2.0",
     "ts-node": "^8.1.0"
   },
   "license": "UNLICENCED",
   "name": "@jeuchre/jeuchre-org-devops",
   "scripts": {
     "build": "tsc",
+    "deploy": "AWS_PROFILE=osaaru cdk deploy",
     "lint": "yarn lint:js",
     "lint:js": "eslint .",
     "lint:js:fix": "eslint . --fix",
-    "cdk": "cdk",
+    "synth": "AWS_PROFILE=jeuchre-org-admin cdk synth",
     "test": "jest",
     "watch": "tsc -w"
   },
