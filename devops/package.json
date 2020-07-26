@@ -1,0 +1,26 @@
+{
+  "bin": {
+    "devops": "bin/devops.js"
+  },
+  "dependencies": {
+    "@aws-cdk/core": "^1.18.0",
+    "source-map-support": "^0.5.16"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "^1.18.0",
+    "aws-cdk": "^1.18.0",
+    "ts-node": "^8.1.0"
+  },
+  "license": "UNLICENCED",
+  "name": "@jeuchre/jeuchre-org-devops",
+  "scripts": {
+    "build": "tsc",
+    "lint": "yarn lint:js",
+    "lint:js": "eslint .",
+    "lint:js:fix": "eslint . --fix",
+    "cdk": "cdk",
+    "test": "jest",
+    "watch": "tsc -w"
+  },
+  "version": "0.0.1"
+}

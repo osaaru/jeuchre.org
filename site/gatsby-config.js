@@ -1,3 +1,9 @@
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+
+const path = require("path")
+const CWD = process.cwd()
+
 const hostName = "www.jeuchre.org"
 const protocol = "https"
 const siteTitle = "Jeuchre"
@@ -26,7 +32,7 @@ module.exports = {
         // The property ID; the tracking code won't be generated without it
         trackingId: "UA-173525691-1",
       },
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: "gatsby-plugin-google-analytics",
     },
     {
       options: {
@@ -34,14 +40,14 @@ module.exports = {
         hostName,
         protocol,
       },
-      resolve: `gatsby-plugin-s3`,
+      resolve: "gatsby-plugin-s3",
     },
     {
       options: {
         name: "images",
-        path: `${__dirname}/src/images`,
+        path: path.join(CWD, "src/images"),
       },
-      resolve: `gatsby-source-filesystem`,
+      resolve: "gatsby-source-filesystem",
     },
     {
       options: {
@@ -54,16 +60,16 @@ module.exports = {
       },
       resolve: "gatsby-plugin-react-axe",
     },
-    `gatsby-plugin-styled-components`,
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
+    "gatsby-plugin-styled-components",
+    "gatsby-transformer-sharp",
+    "gatsby-plugin-sharp",
     "gatsby-plugin-react-helmet",
-    `gatsby-plugin-typescript`,
+    "gatsby-plugin-typescript",
     {
       options: {
-        background_color: `#663399`,
+        background_color: "#663399",
         description: siteDescription,
-        display: `minimal-ui`,
+        display: "minimal-ui",
         icon: "src/images/icon.png",
         icons: [
           {
@@ -79,12 +85,12 @@ module.exports = {
         ],
         name: siteTitle,
         short_name: siteTitle,
-        start_url: `/`,
-        theme_color: `#663399`,
+        start_url: "/",
+        theme_color: "#663399",
       },
-      resolve: `gatsby-plugin-manifest`,
+      resolve: "gatsby-plugin-manifest",
     },
-    `gatsby-plugin-offline`,
+    "gatsby-plugin-offline",
   ],
   siteMetadata: {
     author: siteAuthor,

@@ -1,0 +1,28 @@
+{
+  "author": "@osaaru",
+  "description": "Assets of the Jeuchre Foundation",
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
+  "license": "UNLICENSED",
+  "name": "@jeuchre/jeuchre-org",
+  "private": true,
+  "repository": "git@github.com:osaaru/jeuchre.org.git",
+  "resolutions": {
+    "eslint-plugin-react-hooks": "^4.0.8"
+  },
+  "scripts": {
+    "clean": "lerna clean -y && lerna run clean --parallel --stream",
+    "lint": "lerna run lint --parallel --stream",
+    "lint:js": "lerna run lint:js --parallel --stream",
+    "lint:js:fix": "lerna run --stream lint:js:fix",
+    "prettier": "prettier --write"
+  },
+  "version": "0.0.1",
+  "workspaces": {
+    "packages": [
+      "devops",
+      "site"
+    ]
+  }
+}

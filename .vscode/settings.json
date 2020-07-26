@@ -1,8 +1,16 @@
 {
+  "[javascript]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[javascriptreact]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[typescript]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[typescriptreact]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "editor.formatOnSave": true,
   "files.exclude": {
     "**/.cache": true,
     "**/node_modules": true
   },
+  "sortier.onSave": true,
   "typescript.tsdk": "node_modules/typescript/lib"
 }
