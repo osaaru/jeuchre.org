@@ -21,11 +21,9 @@ module.exports = {
   ],
   ignorePatterns: [
     ".cache",
-    "bin",
     "build",
     "coverage",
     "dist",
-    "lib",
     "node_modules",
     "tmp",
     ".storybook/generated-entry.js",

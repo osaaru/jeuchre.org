@@ -27,6 +27,7 @@
   "description": "The jeuchre.org web site.",
   "devDependencies": {
     "@babel/core": "^7.8.7",
+    "@snowcoders/sortier": "^3.1.2",
     "@storybook/addon-actions": "^5.3.14",
     "@storybook/addon-knobs": "^5.3.14",
     "@storybook/addon-links": "^5.3.14",
