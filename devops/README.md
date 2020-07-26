@@ -21,7 +21,13 @@ Boostrap the account for CDK use
 `CDK_NEW_BOOTSTRAP=1 npx cdk bootstrap --profile account_admin --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess`?
 
 Configure `GITHUB_OWNER` and `GITHUB_REPO` in a `.env` file.
-The repo owner must issue a personal access token to be used by the CodePipeline. Create a plain text Secrets Manager secret called `/jeuchre/org/github_access_token`. If you want to use a different name configure `GITHUB_ACCESS_TOKEN_SECRET_NAME` in `.env`.
+Update readmeThe repo owner must issue a personal access token to be used by the CodePipeline. Create a plain text Secrets Manager secret called `jeuchre/org/github_access_token`. If you want to use a different name configure `GITHUB_ACCESS_TOKEN_SECRET_NAME` in `.env`.
+Instructions for generating the access token: https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html
+To be safe, you can create a dedicated github account that only has access to the repo in question to issue the personal access token.
+
+At this point you can do an initial deployment using `yarn deploy`
+
+Subsequent pushes to the repo will cause the pipeline to self-update.
 
 ## Useful commands
 
