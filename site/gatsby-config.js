@@ -1,27 +1,16 @@
+const hostName = "www.jeuchre.org"
+const protocol = "https"
 const siteTitle = "Jeuchre"
 const siteDescription = "Jeuchre is a card game that is the anti-euchre."
 const siteAuthor = "@osaaru"
-const siteUrl = "https://www.jeuchre.org"
+const siteUrl = `${protocol}://${hostName}`
 const siteImage = `${siteUrl}/icons/icon_512x512.png`
-const siteKeywords = ["jeuchre", "euchre", "card", "game", "trick", "anti"]
+const siteKeywords = ["anti", "card", "euchre", "game", "jeuchre", "trick"]
 
 module.exports = {
-  siteMetadata: {
-    title: siteTitle,
-    description: siteDescription,
-    author: siteAuthor,
-    url: siteUrl,
-    keywords: siteKeywords,
-    image: siteImage,
-  },
   plugins: [
     {
-      resolve: `gatsby-plugin-google-analytics`,
       options: {
-        // The property ID; the tracking code won't be generated without it
-        trackingId: "UA-173525691-1",
-        // Defines where to place the tracking script - `true` in the head and `false` in the body
-        head: true,
         // Setting this parameter is also optional
         // respectDNT: true,
         // Enables Google Optimize using your container Id
@@ -32,25 +21,38 @@ module.exports = {
         // variationId: "YOUR_GOOGLE_OPTIMIZE_VARIATION_ID",
         // Defers execution of google analytics script after page load
         defer: false,
+        // Defines where to place the tracking script - `true` in the head and `false` in the body
+        head: true,
+        // The property ID; the tracking code won't be generated without it
+        trackingId: "UA-173525691-1",
       },
+      resolve: `gatsby-plugin-google-analytics`,
     },
     {
-      resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/src/images`,
+        bucketName: hostName,
+        hostName,
+        protocol,
+      },
+      resolve: `gatsby-plugin-s3`,
+    },
+    {
+      options: {
         name: "images",
+        path: `${__dirname}/src/images`,
       },
+      resolve: `gatsby-source-filesystem`,
     },
     {
-      resolve: "gatsby-plugin-react-axe",
       options: {
-        showInProduction: false,
         // Options to pass to axe-core.
         // See: https://github.com/dequelabs/axe-core/blob/master/doc/API.md#api-name-axeconfigure
         axeOptions: {
           // Your axe-core options.
         },
+        showInProduction: false,
       },
+      resolve: "gatsby-plugin-react-axe",
     },
     `gatsby-plugin-styled-components`,
     `gatsby-transformer-sharp`,
@@ -58,30 +60,38 @@ module.exports = {
     "gatsby-plugin-react-helmet",
     `gatsby-plugin-typescript`,
     {
-      resolve: `gatsby-plugin-manifest`,
       options: {
-        name: siteTitle,
-        short_name: siteTitle,
-        description: siteDescription,
-        start_url: `/`,
         background_color: `#663399`,
-        theme_color: `#663399`,
+        description: siteDescription,
         display: `minimal-ui`,
         icon: "src/images/icon.png",
         icons: [
           {
-            src: "icons/icon_512x512.png",
             sizes: "512x512",
+            src: "icons/icon_512x512.png",
             types: "image/png",
           },
           {
-            src: "icons/icon_192x192.png",
             sizes: "192x192",
+            src: "icons/icon_192x192.png",
             types: "image/png",
           },
         ],
+        name: siteTitle,
+        short_name: siteTitle,
+        start_url: `/`,
+        theme_color: `#663399`,
       },
+      resolve: `gatsby-plugin-manifest`,
     },
     `gatsby-plugin-offline`,
   ],
+  siteMetadata: {
+    author: siteAuthor,
+    description: siteDescription,
+    image: siteImage,
+    keywords: siteKeywords,
+    title: siteTitle,
+    url: siteUrl,
+  },
 }
