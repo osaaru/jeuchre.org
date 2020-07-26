@@ -23,7 +23,7 @@ const GithubIcon: React.FC = () => {
   return (
     <Wrapper>
       <motion.a
-        href="https://github.com/gojutin/gatsby-starter-typescript-deluxe"
+        href="https://github.com/osaaru/jeuchre.org"
         rel="noopener noreferrer"
         target="_blank"
         // eslint-disable-next-line @typescript-eslint/tslint/config

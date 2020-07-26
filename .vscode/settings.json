@@ -1,0 +1,8 @@
+{
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.cache": true,
+    "**/node_modules": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

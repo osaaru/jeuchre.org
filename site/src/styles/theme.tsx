@@ -7,9 +7,12 @@ export default {
     xl: 1280,
   },
   colors: {
-    blue: "#0099ff",
-    darkblue: "#00072e",
-    orange: "#FF9429",
+    spanishGreen: "#058C42",
+    forestGreen: "#04471C",
+    cambridgeBlue: "#BCD8C1",
+    marigold: "#FF9F1C",
+    dimGray: "#6D6A75",
+    text: "#FFFCE8",
   },
   opacity: {
     0: 0,

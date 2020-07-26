@@ -1,9 +1,9 @@
-const siteTitle = "gatsby-starter-typescript-deluxe"
-const siteDescription = "A Gatsby starter with TypeScript, Storybook, Styled Components, Framer Motion, Jest, and more."
-const siteAuthor = "@gojutin"
-const siteUrl = "https://gatsby-starter-typescript-deluxe.netlify.com"
+const siteTitle = "Jeuchre"
+const siteDescription = "Jeuchre is a card game that is the anti-euchre."
+const siteAuthor = "@osaaru"
+const siteUrl = "https://www.jeuchre.org"
 const siteImage = `${siteUrl}/icons/icon_512x512.png`
-const siteKeywords = ["gatsby", "typescript", "starter", "javascript", "react"]
+const siteKeywords = ["jeuchre", "euchre", "card", "game", "trick", "anti"]
 
 module.exports = {
   siteMetadata: {

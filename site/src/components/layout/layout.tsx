@@ -2,6 +2,8 @@ import React from "react"
 import styled, { ThemeProvider } from "styled-components"
 import { useStaticQuery, graphql } from "gatsby"
 import { theme, GlobalStyles } from "../../styles"
+import { Helmet } from "react-helmet"
+
 // Components
 import { CSSDebugger } from "../css-debugger"
 import { Link } from "../link"
@@ -14,15 +16,16 @@ const Container = styled.div`
 `
 
 const Title = styled.h1`
-  font-size: ${(props) => (props.theme.screens.sm ? "1.8rem" : "2.2rem")};
+  font-family: "Diplomata SC", cursive;
+  font-size: ${(props) => (props.theme.screens.sm ? "1.8rem" : "2.8rem")};
   margin: 20px 0px;
-  color: white;
+  color: ${({ theme }) => theme.colors.marigold};
 `
 
 const Tagline = styled.h2`
   font-size: 1.1rem;
   font-weight: 400;
-  color: ${(props) => props.theme.colors.blue};
+  color: ${(props) => props.theme.colors.text};
 `
 
 const Layout: React.FC = ({ children }) => {
@@ -42,13 +45,15 @@ const Layout: React.FC = ({ children }) => {
   return (
     <ThemeProvider theme={theme()}>
       <Container>
+        <Helmet>
+          <link href="https://fonts.googleapis.com/css2?family=Diplomata+SC&display=swap" rel="stylesheet" />
+        </Helmet>
         <GlobalStyles />
         <CSSDebugger />
-        <Link to="/">
-          <Title>{title.toUpperCase()}</Title>
-        </Link>
+        <Title>{title.toUpperCase()}</Title>
         <Tagline>{description}</Tagline>
         <br />
+        <p>More to come soon...</p>
         <main>{children}</main>
         <Footer />
       </Container>
