@@ -1,7 +1,7 @@
 import * as codepipeline from "@aws-cdk/aws-codepipeline"
 import * as codepipelineActions from "@aws-cdk/aws-codepipeline-actions"
 import { Construct, SecretValue, Stack, StackProps } from "@aws-cdk/core"
-import { CdkPipeline, SimpleSynthAction } from "@aws-cdk/pipelines"
+import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
 import { config } from "dotenv"
 
 import { JeuchreOrgStage } from "./jeuchre-org-stage"
@@ -36,6 +36,13 @@ export class PipelineStack extends Stack {
       }),
     })
 
-    pipeline.addApplicationStage(new JeuchreOrgStage(this, "master"))
+    const masterStage = pipeline.addApplicationStage(new JeuchreOrgStage(this, "master"))
+
+    masterStage.addActions(
+      new ShellScriptAction({
+        actionName: "shell test",
+        commands: ["yarn lint"],
+      }),
+    )
   }
 }
