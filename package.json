@@ -12,6 +12,7 @@
     "eslint-plugin-react-hooks": "^4.0.8"
   },
   "scripts": {
+    "build": "yarn workspace site build",
     "clean": "lerna clean -y && lerna run clean --parallel --stream",
     "lint": "lerna run lint --parallel --stream",
     "lint:js": "lerna run lint:js --parallel --stream",

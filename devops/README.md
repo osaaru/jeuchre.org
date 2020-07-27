@@ -25,7 +25,7 @@ Update readmeThe repo owner must issue a personal access token to be used by the
 Instructions for generating the access token: https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html
 To be safe, you can create a dedicated github account that only has access to the repo in question to issue the personal access token.
 
-At this point you can do an initial deployment using `yarn deploy`
+At this point you can do an initial deployment using `AWS_PROFILE=admin yarn deploy`
 
 Subsequent pushes to the repo will cause the pipeline to self-update.
 

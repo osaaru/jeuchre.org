@@ -1,12 +1,24 @@
 import * as codepipeline from "@aws-cdk/aws-codepipeline"
 import * as codepipelineActions from "@aws-cdk/aws-codepipeline-actions"
-import { Construct, SecretValue, Stack, StackProps } from "@aws-cdk/core"
+import { Construct, SecretValue, Stack, StackProps, Stage, StageProps } from "@aws-cdk/core"
 import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
 import { config } from "dotenv"
 
-import { JeuchreOrgStage } from "./jeuchre-org-stage"
+import { AppStack } from "./app-stack"
 
 config({ path: process.env.ENVFILE })
+
+export class JeuchreOrgStage extends Stage {
+  public readonly appStack: AppStack
+
+  constructor(scope: Construct, id: string, props?: StageProps) {
+    super(scope, id, props)
+
+    this.appStack = new AppStack(this, id, {
+      stackName: `jeuchre-org-${id}`,
+    })
+  }
+}
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -17,7 +29,7 @@ export class PipelineStack extends Stack {
 
     const pipeline = new CdkPipeline(this, "JeuchreOrgCodePipeline", {
       cloudAssemblyArtifact,
-      pipelineName: "JeuchreOrgCodePipeline",
+      pipelineName: "jeuchre-org",
       sourceAction: new codepipelineActions.GitHubSourceAction({
         actionName: "GitHub",
         oauthToken: SecretValue.secretsManager(
@@ -31,18 +43,33 @@ export class PipelineStack extends Stack {
       }),
 
       synthAction: SimpleSynthAction.standardYarnSynth({
+        // buildCommand: "yarn build",
         cloudAssemblyArtifact,
         sourceArtifact,
+        subdirectory: "devops",
       }),
     })
 
-    const masterStage = pipeline.addApplicationStage(new JeuchreOrgStage(this, "master"))
+    const masterStage = new JeuchreOrgStage(this, "master")
+    const masterApplicationStage = pipeline.addApplicationStage(masterStage)
 
-    masterStage.addActions(
-      new ShellScriptAction({
-        actionName: "shell test",
-        commands: ["yarn lint"],
-      }),
-    )
+    const validateAction = new ShellScriptAction({
+      actionName: "validate",
+      commands: ["yarn lint"],
+      useOutputs: {
+        URL: pipeline.stackOutput(masterStage.appStack.hostName),
+      },
+    })
+    masterApplicationStage.addActions(validateAction)
+
+    const buildAction = new ShellScriptAction({
+      actionName: "build",
+      commands: ["yarn build"],
+
+      useOutputs: {
+        URL: pipeline.stackOutput(masterStage.appStack.hostName),
+      },
+    })
+    masterApplicationStage.addActions(buildAction)
   }
 }

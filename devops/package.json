@@ -22,12 +22,12 @@
   "license": "UNLICENCED",
   "name": "@jeuchre/jeuchre-org-devops",
   "scripts": {
-    "build": "tsc",
-    "deploy": "AWS_PROFILE=osaaru cdk deploy",
+    "build": "cdk build",
+    "deploy": "cdk deploy",
     "lint": "yarn lint:js",
     "lint:js": "eslint .",
     "lint:js:fix": "eslint . --fix",
-    "synth": "AWS_PROFILE=jeuchre-org-admin cdk synth",
+    "synth": "cdk synth",
     "test": "jest",
     "watch": "tsc -w"
   },
