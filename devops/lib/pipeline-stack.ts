@@ -4,6 +4,8 @@ import { Construct, SecretValue, Stack, StackProps } from "@aws-cdk/core"
 import { CdkPipeline, SimpleSynthAction } from "@aws-cdk/pipelines"
 import { config } from "dotenv"
 
+import { JeuchreOrgStage } from "./jeuchre-org-stage"
+
 config({ path: process.env.ENVFILE })
 
 export class PipelineStack extends Stack {
@@ -13,7 +15,6 @@ export class PipelineStack extends Stack {
     const sourceArtifact = new codepipeline.Artifact()
     const cloudAssemblyArtifact = new codepipeline.Artifact()
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pipeline = new CdkPipeline(this, "JeuchreOrgCodePipeline", {
       cloudAssemblyArtifact,
       pipelineName: "JeuchreOrgCodePipeline",
@@ -29,14 +30,12 @@ export class PipelineStack extends Stack {
         trigger: codepipelineActions.GitHubTrigger.POLL,
       }),
 
-      synthAction: SimpleSynthAction.standardNpmSynth({
+      synthAction: SimpleSynthAction.standardYarnSynth({
         cloudAssemblyArtifact,
         sourceArtifact,
-
-        // Use this if you need a build step (if you're not using ts-node
-        // or if you have TypeScript Lambdas that need to be compiled).
-        buildCommand: "npm run build",
       }),
     })
+
+    pipeline.addApplicationStage(new JeuchreOrgStage(this, "master"))
   }
 }

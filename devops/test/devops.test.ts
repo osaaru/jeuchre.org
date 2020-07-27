@@ -1,13 +1,18 @@
-import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
-import cdk = require('@aws-cdk/core');
-import Devops = require('../lib/devops-stack');
+import { MatchStyle, expect as expectCDK, matchTemplate } from "@aws-cdk/assert"
+import cdk = require("@aws-cdk/core")
+import Devops = require("../lib/jeuchre-org-stage")
 
-test('Empty Stack', () => {
-    const app = new cdk.App();
-    // WHEN
-    const stack = new Devops.DevopsStack(app, 'MyTestStack');
-    // THEN
-    expectCDK(stack).to(matchTemplate({
-      "Resources": {}
-    }, MatchStyle.EXACT))
-});
+test("Empty Stack", () => {
+  const app = new cdk.App()
+  // WHEN
+  const stack = new Devops.DevopsStack(app, "MyTestStack")
+  // THEN
+  expectCDK(stack).to(
+    matchTemplate(
+      {
+        Resources: {},
+      },
+      MatchStyle.EXACT,
+    ),
+  )
+})
