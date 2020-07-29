@@ -14,9 +14,9 @@ export class JeuchreOrgStage extends Stage {
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props)
 
-    // this.appStack = new AppStack(this, id, {
-    //   stackName: `jeuchre-org-${id}`,
-    // })
+    this.appStack = new AppStack(this, id, {
+      stackName: `jeuchre-org-${id}`,
+    })
   }
 }
 
