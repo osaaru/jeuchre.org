@@ -50,25 +50,25 @@ export class PipelineStack extends Stack {
       }),
     })
 
-    // const masterStage = new JeuchreOrgStage(this, "master")
-    // const masterApplicationStage = pipeline.addApplicationStage(masterStage)
+    const masterStage = new JeuchreOrgStage(this, "master")
+    const masterApplicationStage = pipeline.addApplicationStage(masterStage)
 
-    // const validateAction = new ShellScriptAction({
-    //   actionName: "validate",
-    //   commands: ["yarn lint"],
-    //   useOutputs: {
-    //     URL: pipeline.stackOutput(masterStage.appStack.hostName),
-    //   },
-    // })
-    // masterApplicationStage.addActions(validateAction)
+    const validateAction = new ShellScriptAction({
+      actionName: "validate",
+      commands: ["yarn lint"],
+      useOutputs: {
+        URL: pipeline.stackOutput(masterStage.appStack.hostName),
+      },
+    })
+    masterApplicationStage.addActions(validateAction)
 
-    //   const buildAction = new ShellScriptAction({
-    //     actionName: "build",
-    //     commands: ["yarn build"],
-    //     useOutputs: {
-    //       URL: pipeline.stackOutput(masterStage.appStack.hostName),
-    //     },
-    //   })
-    //   masterApplicationStage.addActions(buildAction)
+    const buildAction = new ShellScriptAction({
+      actionName: "build",
+      commands: ["yarn build"],
+      useOutputs: {
+        URL: pipeline.stackOutput(masterStage.appStack.hostName),
+      },
+    })
+    masterApplicationStage.addActions(buildAction)
   }
 }
