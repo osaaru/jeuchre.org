@@ -14,9 +14,9 @@ export class JeuchreOrgStage extends Stage {
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props)
 
-    this.appStack = new AppStack(this, id, {
-      stackName: `jeuchre-org-${id}`,
-    })
+    // this.appStack = new AppStack(this, id, {
+    //   stackName: `jeuchre-org-${id}`,
+    // })
   }
 }
 
@@ -37,8 +37,8 @@ export class PipelineStack extends Stack {
         ),
         output: sourceArtifact,
         // Replace these with your actual GitHub project info
-        owner: process.env.GITHUB_OWNER || "",
-        repo: process.env.GITHUB_REPO || "",
+        owner: process.env.GITHUB_OWNER || "osaaru",
+        repo: process.env.GITHUB_REPO || "jeuchre.org",
         trigger: codepipelineActions.GitHubTrigger.POLL,
       }),
 
@@ -50,8 +50,8 @@ export class PipelineStack extends Stack {
       }),
     })
 
-    const masterStage = new JeuchreOrgStage(this, "master")
-    const masterApplicationStage = pipeline.addApplicationStage(masterStage)
+    // const masterStage = new JeuchreOrgStage(this, "master")
+    // const masterApplicationStage = pipeline.addApplicationStage(masterStage)
 
     // const validateAction = new ShellScriptAction({
     //   actionName: "validate",
@@ -62,13 +62,13 @@ export class PipelineStack extends Stack {
     // })
     // masterApplicationStage.addActions(validateAction)
 
-    const buildAction = new ShellScriptAction({
-      actionName: "build",
-      commands: ["yarn build"],
-      useOutputs: {
-        URL: pipeline.stackOutput(masterStage.appStack.hostName),
-      },
-    })
-    masterApplicationStage.addActions(buildAction)
+    //   const buildAction = new ShellScriptAction({
+    //     actionName: "build",
+    //     commands: ["yarn build"],
+    //     useOutputs: {
+    //       URL: pipeline.stackOutput(masterStage.appStack.hostName),
+    //     },
+    //   })
+    //   masterApplicationStage.addActions(buildAction)
   }
 }
