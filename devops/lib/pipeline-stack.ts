@@ -16,10 +16,10 @@ export class JeuchreOrgStage extends Stage {
 
     this.appStack = new AppStack(this, id, {
       // env has to be explicitly set in order for it to use HostedZone
-      env: {
-        account: "220379026029", // TODO: How do we get this from pipeline env?
-        region: "us-east-1", // Must be us-east-1 in order to create ACM certificates
-      },
+      // env: {
+      //   account: "220379026029", // TODO: How do we get this from pipeline env?
+      //   region: "us-east-1", // Must be us-east-1 in order to create ACM certificates
+      // },
       stackName: `jeuchre-org-${id}`,
     })
   }
@@ -50,7 +50,7 @@ export class PipelineStack extends Stack {
       synthAction: SimpleSynthAction.standardYarnSynth({
         cloudAssemblyArtifact,
         // buildCommand: "yarn build",
-        copyEnvironmentVariables: [],
+        copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
         sourceArtifact,
         subdirectory: "devops", // Need to set this to where the CDK app is
       }),

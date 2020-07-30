@@ -20,7 +20,9 @@ export class AppStack extends Stack {
       value: hostName,
     })
 
-    const hostedZone = PublicHostedZone.fromLookup(this, "HostedZone", { domainName })
+    // fromLookup is a PITA because it needs the stack to have an explicit environment which backs up to the pipeline too
+    // const hostedZone = PublicHostedZone.fromLookup(this, "HostedZone", { domainName })
+    const hostedZone = PublicHostedZone.fromHostedZoneId(this, "HostedZone", process.env.HOSTED_ZONE_ID || "")
 
     const certificate = new Certificate(this, "Certificate", {
       domainName: hostName,
