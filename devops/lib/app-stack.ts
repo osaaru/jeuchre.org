@@ -20,9 +20,7 @@ export class AppStack extends Stack {
       value: hostName,
     })
 
-    const hostedZone = new PublicHostedZone(this, "HostedZone", {
-      zoneName: domainName,
-    })
+    const hostedZone = PublicHostedZone.fromLookup(this, "HostedZone", { domainName })
 
     const certificate = new Certificate(this, "Certificate", {
       domainName: hostName,
