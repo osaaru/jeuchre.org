@@ -6,7 +6,7 @@ import { PublicHostedZone } from "@aws-cdk/aws-route53"
 import { Bucket } from "@aws-cdk/aws-s3"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
-const domainName = "jeichre.org"
+const domainName = "jeuchre.org"
 
 export class AppStack extends Stack {
   public readonly hostName: CfnOutput
