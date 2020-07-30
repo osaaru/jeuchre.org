@@ -29,7 +29,6 @@ export class AppStack extends Stack {
       validation: CertificateValidation.fromDns(hostedZone),
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const bucket = new Bucket(this, "S3Bucket", {
       bucketName: hostName,
     })
