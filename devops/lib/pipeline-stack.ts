@@ -15,6 +15,11 @@ export class JeuchreOrgStage extends Stage {
     super(scope, id, props)
 
     this.appStack = new AppStack(this, id, {
+      // env has to be explicitly set in order for it to use HostedZone
+      env: {
+        account: "220379026029", // TODO: How do we get this from pipeline env?
+        region: "us-east-1", // Must be us-east-1 in order to create ACM certificates
+      },
       stackName: `jeuchre-org-${id}`,
     })
   }
