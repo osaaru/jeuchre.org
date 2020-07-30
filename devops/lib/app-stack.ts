@@ -34,7 +34,7 @@ export class AppStack extends Stack {
       bucketName: hostName,
     })
 
-    const cloudfront = new CloudFrontWebDistribution(this, "CloudfrontDistribution", {
+    const cloudfront = new Distribution(this, "CloudfrontDistribution", {
       certificate,
       defaultBehavior: { origin: new S3Origin({ bucket }) },
     })
