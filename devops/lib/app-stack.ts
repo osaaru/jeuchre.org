@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import core = require("@aws-cdk/core")
 import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
-import { CloudFrontWebDistribution, Distribution, S3Origin } from "@aws-cdk/aws-cloudfront"
-import { PublicHostedZone } from "@aws-cdk/aws-route53"
+import { Distribution, S3Origin } from "@aws-cdk/aws-cloudfront"
+import { AaaaRecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
+import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { Bucket } from "@aws-cdk/aws-s3"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
@@ -33,9 +34,14 @@ export class AppStack extends Stack {
       bucketName: hostName,
     })
 
-    const cloudfront = new Distribution(this, "CloudfrontDistribution", {
+    const distribution = new Distribution(this, "CloudfrontDistribution", {
       certificate,
       defaultBehavior: { origin: new S3Origin({ bucket }) },
+    })
+
+    const dnsRecord = new AaaaRecord(this, "DnsRecord", {
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      zone: hostedZone,
     })
   }
 }
