@@ -21,9 +21,14 @@ export class AppStack extends Stack {
       value: hostName,
     })
 
+    // Note: I tried a couple of the other HZ lookup methods but they had problems. This is the only one that seems to work.
     // fromLookup is a PITA because it needs the stack to have an explicit environment which backs up to the pipeline too
-    // const hostedZone = PublicHostedZone.fromLookup(this, "HostedZone", { domainName })
-    const hostedZone = PublicHostedZone.fromHostedZoneId(this, "HostedZone", process.env.HOSTED_ZONE_ID || "")
+    // fromHostedZoneId and fromHostedZoneName return proxies that are incomplete and don't respond to some of the methods
+    // used by downstream constructs
+    const hostedZone = PublicHostedZone.fromHostedZoneAttributes(this, "HostedZone", {
+      hostedZoneId: process.env.HOSTED_ZONE_ID || "",
+      zoneName: domainName,
+    })
 
     const certificate = new Certificate(this, "Certificate", {
       domainName: hostName,
