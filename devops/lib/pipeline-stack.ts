@@ -43,10 +43,11 @@ export class PipelineStack extends Stack {
       }),
 
       synthAction: SimpleSynthAction.standardYarnSynth({
-        // buildCommand: "yarn build",
         cloudAssemblyArtifact,
+        // buildCommand: "yarn build",
+        copyEnvironmentVariables: [],
         sourceArtifact,
-        subdirectory: "devops",
+        subdirectory: "devops", // Need to set this to where the CDK app is
       }),
     })
 
@@ -55,7 +56,8 @@ export class PipelineStack extends Stack {
 
     const validateAction = new ShellScriptAction({
       actionName: "validate",
-      commands: ["yarn lint"],
+      additionalArtifacts: [sourceArtifact],
+      commands: ["ls"],
       useOutputs: {
         URL: pipeline.stackOutput(masterStage.appStack.hostName),
       },
