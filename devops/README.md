@@ -41,3 +41,5 @@ SECRET_NAME - can be used to override the name of secret used by this CDK app. D
 # TODOs
 
 - Was it a good idea to use yarn workspaces? It means the stack synths load more node modules than they need and the site build loads more node modules than it needs. Maybe We keep them separate but keep all the linting stuff in the root package?
+- run lint
+- only build whitelisted branches

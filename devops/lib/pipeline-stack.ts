@@ -6,18 +6,44 @@ import { CdkPipeline, SimpleSynthAction } from "@aws-cdk/pipelines"
 import { config } from "dotenv"
 
 import { AppStack } from "./app-stack"
+import { ResourcesStack } from "./resources-stack"
 
 config({ path: process.env.ENVFILE })
 
+interface AppStageProps extends StageProps {
+  resourcesStack: ResourcesStack
+}
+
+export class AppStage extends Stage {
+  public readonly appStack: AppStack
+
+  constructor(scope: Construct, id: string, props: AppStageProps) {
+    super(scope, id, props)
+
+    const { resourcesStack } = props
+
+    this.appStack = new AppStack(this, id, {
+      resourcesStack,
+      // env has to be explicitly set in order for it to use HostedZone
+      // env: {
+      //   account: "220379026029", // TODO: How do we get this from pipeline env?
+      //   region: "us-east-1", // Must be us-east-1 in order to create ACM certificates
+      // },
+      stackName: `jeuchre-org-${id}`,
+    })
+  }
+}
+
 interface PipelineStackProps extends StackProps {
   domainName: string
+  resourcesStack: ResourcesStack
 }
 
 export class PipelineStack extends Stack {
-  constructor(scope: Construct, id: string, props?: PipelineStackProps) {
+  constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const domainName = props?.domainName || ""
+    const { domainName, resourcesStack } = props
 
     const sourceArtifact = new Artifact()
     const cloudAssemblyArtifact = new Artifact()
@@ -45,6 +71,9 @@ export class PipelineStack extends Stack {
         subdirectory: "devops", // Need to set this to where the CDK app is
       }),
     })
+
+    const appStage = new AppStage(this, "master", { resourcesStack }) // TODO: Use branch name
+    const appPipelineStage = pipeline.addApplicationStage(appStage)
 
     // const buildStage = new JeuchreOrgStage(this, "app-build")
     //   const masterApplicationStage = pipeline.addApplicationStage(masterStage)

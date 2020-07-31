@@ -10,16 +10,17 @@ const domainName = "jeuchre.org"
 
 const app = new App()
 
-const resources = new ResourcesStack(app, "jeuchre-org-resources", {
+const resourcesStack = new ResourcesStack(app, "jeuchre-org-resources", {
   domainName,
   // Forced to us-east-1 because certificate validation only works in us-east-1
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
 })
 
-const pipeline = new PipelineStack(app, "jeuchre-org-pipeline", {
+const pipelineStack = new PipelineStack(app, "jeuchre-org-pipeline", {
   domainName,
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+  resourcesStack,
 })
-pipeline.addDependency(resources)
+pipelineStack.addDependency(resourcesStack)
 
 app.synth()
