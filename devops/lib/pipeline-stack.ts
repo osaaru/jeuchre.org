@@ -9,23 +9,6 @@ import { AppStack } from "./app-stack"
 
 config({ path: process.env.ENVFILE })
 
-export class JeuchreOrgStage extends Stage {
-  public readonly appStack: AppStack
-
-  constructor(scope: Construct, id: string, props?: StageProps) {
-    super(scope, id, props)
-
-    this.appStack = new AppStack(this, id, {
-      // env has to be explicitly set in order for it to use HostedZone
-      // env: {
-      //   account: "220379026029", // TODO: How do we get this from pipeline env?
-      //   region: "us-east-1", // Must be us-east-1 in order to create ACM certificates
-      // },
-      stackName: `jeuchre-org-${id}`,
-    })
-  }
-}
-
 interface PipelineStackProps extends StackProps {
   domainName: string
 }
@@ -55,15 +38,15 @@ export class PipelineStack extends Stack {
       }),
 
       synthAction: SimpleSynthAction.standardYarnSynth({
+        buildCommand: "env && cd ../site && yarn build",
         cloudAssemblyArtifact,
-        // buildCommand: "yarn build",
         // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
         sourceArtifact,
         subdirectory: "devops", // Need to set this to where the CDK app is
       }),
     })
 
-    //   const masterStage = new JeuchreOrgStage(this, "master")
+    // const buildStage = new JeuchreOrgStage(this, "app-build")
     //   const masterApplicationStage = pipeline.addApplicationStage(masterStage)
 
     //   const validateAction = new ShellScriptAction({

@@ -37,3 +37,7 @@ GITHUB_OWNER - can be used to override the github repo owner. Defaults to `osaar
 GITHUB_REPO - can be used to override the github repo name. Defaults to `jeuchre.org`
 HOSTED_ZONE_ID - the id of the hosted zone created as part of the one-time setup.
 SECRET_NAME - can be used to override the name of secret used by this CDK app. Defaults to `jeuchre/org`
+
+# TODOs
+
+- Was it a good idea to use yarn workspaces? It means the stack synths load more node modules than they need and the site build loads more node modules than it needs. Maybe We keep them separate but keep all the linting stuff in the root package?
