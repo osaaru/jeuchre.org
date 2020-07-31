@@ -25,9 +25,9 @@ It uses a CDK pipeline that automatically deploys/updates the stack each time co
 
 7. Create a secret in the AWS Secrets Manager called `jeuchre/org`. Add a key named `github_access_token` with the access token as the value.
 
-8. Perform the initial deployment using `yarn deploy`
+8. Perform the initial deployment using `yarn deploy`. Subsequent pushes to the repo will cause the pipeline to self-update and execute.
 
-Subsequent pushes to the repo will cause the pipeline to self-update.
+9. At this point you might want to revoke the admin privileges from the IAM user used to deploy the pipeline since most updates should be possible by just pushing code to the repo.
 
 ## Environment variables
 
@@ -37,12 +37,3 @@ GITHUB_OWNER - can be used to override the github repo owner. Defaults to `osaar
 GITHUB_REPO - can be used to override the github repo name. Defaults to `jeuchre.org`
 HOSTED_ZONE_ID - the id of the hosted zone created as part of the one-time setup.
 SECRET_NAME - can be used to override the name of secret used by this CDK app. Defaults to `jeuchre/org`
-
-## Useful commands
-
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
