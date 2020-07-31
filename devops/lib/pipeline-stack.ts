@@ -1,7 +1,8 @@
-import * as codepipeline from "@aws-cdk/aws-codepipeline"
-import * as codepipelineActions from "@aws-cdk/aws-codepipeline-actions"
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Artifact } from "@aws-cdk/aws-codepipeline"
+import { GitHubSourceAction, GitHubTrigger } from "@aws-cdk/aws-codepipeline-actions"
 import { Construct, SecretValue, Stack, StackProps, Stage, StageProps } from "@aws-cdk/core"
-import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
+import { CdkPipeline, SimpleSynthAction } from "@aws-cdk/pipelines"
 import { config } from "dotenv"
 
 import { AppStack } from "./app-stack"
@@ -25,57 +26,63 @@ export class JeuchreOrgStage extends Stage {
   }
 }
 
+interface PipelineStackProps extends StackProps {
+  domainName: string
+}
+
 export class PipelineStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props?: PipelineStackProps) {
     super(scope, id, props)
 
-    const sourceArtifact = new codepipeline.Artifact()
-    const cloudAssemblyArtifact = new codepipeline.Artifact()
+    const domainName = props?.domainName || ""
+
+    const sourceArtifact = new Artifact()
+    const cloudAssemblyArtifact = new Artifact()
 
     const pipeline = new CdkPipeline(this, "JeuchreOrgCodePipeline", {
       cloudAssemblyArtifact,
       pipelineName: "jeuchre-org",
-      sourceAction: new codepipelineActions.GitHubSourceAction({
+      sourceAction: new GitHubSourceAction({
         actionName: "GitHub",
-        oauthToken: SecretValue.secretsManager(
-          process.env.GITHUB_ACCESS_TOKEN_SECRET_NAME || "jeuchre/org/github_access_token",
-        ),
+        oauthToken: SecretValue.secretsManager(process.env.SECRET_NAME || "jeuchre/org", {
+          jsonField: "github_access_token",
+        }),
         output: sourceArtifact,
         // Replace these with your actual GitHub project info
         owner: process.env.GITHUB_OWNER || "osaaru",
-        repo: process.env.GITHUB_REPO || "jeuchre.org",
-        trigger: codepipelineActions.GitHubTrigger.POLL,
+        repo: process.env.GITHUB_REPO || domainName,
+        trigger: GitHubTrigger.POLL,
       }),
 
       synthAction: SimpleSynthAction.standardYarnSynth({
         cloudAssemblyArtifact,
         // buildCommand: "yarn build",
-        copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
+        // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
         sourceArtifact,
         subdirectory: "devops", // Need to set this to where the CDK app is
       }),
     })
 
-    const masterStage = new JeuchreOrgStage(this, "master")
-    const masterApplicationStage = pipeline.addApplicationStage(masterStage)
+    //   const masterStage = new JeuchreOrgStage(this, "master")
+    //   const masterApplicationStage = pipeline.addApplicationStage(masterStage)
 
-    const validateAction = new ShellScriptAction({
-      actionName: "validate",
-      additionalArtifacts: [sourceArtifact],
-      commands: ["ls"],
-      useOutputs: {
-        URL: pipeline.stackOutput(masterStage.appStack.hostName),
-      },
-    })
-    masterApplicationStage.addActions(validateAction)
+    //   const validateAction = new ShellScriptAction({
+    //     actionName: "validate",
+    //     additionalArtifacts: [sourceArtifact],
+    //     commands: ["ls"],
+    //     useOutputs: {
+    //       URL: pipeline.stackOutput(masterStage.appStack.hostName),
+    //     },
+    //   })
+    //   masterApplicationStage.addActions(validateAction)
 
-    const buildAction = new ShellScriptAction({
-      actionName: "build",
-      commands: ["yarn build"],
-      useOutputs: {
-        URL: pipeline.stackOutput(masterStage.appStack.hostName),
-      },
-    })
-    masterApplicationStage.addActions(buildAction)
+    //   const buildAction = new ShellScriptAction({
+    //     actionName: "build",
+    //     commands: ["yarn build"],
+    //     useOutputs: {
+    //       URL: pipeline.stackOutput(masterStage.appStack.hostName),
+    //     },
+    //   })
+    //   masterApplicationStage.addActions(buildAction)
   }
 }
