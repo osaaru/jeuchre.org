@@ -46,26 +46,35 @@ export class PipelineStack extends Stack {
     const { domainName, resourcesStack } = props
 
     const sourceArtifact = new Artifact()
+    const siteArtifact = new Artifact("site")
     const cloudAssemblyArtifact = new Artifact()
+
+    const sourceAction = new GitHubSourceAction({
+      actionName: "GitHub",
+      oauthToken: SecretValue.secretsManager(process.env.SECRET_NAME || "jeuchre/org", {
+        jsonField: "github_access_token",
+      }),
+      output: sourceArtifact,
+      // Replace these with your actual GitHub project info
+      owner: process.env.GITHUB_OWNER || "osaaru",
+      repo: process.env.GITHUB_REPO || domainName,
+      trigger: GitHubTrigger.POLL,
+    })
+
+    const environmentVariables = {
+      BRANCH_NAME: { value: sourceAction.variables.branchName },
+      DOMAIN_NAME: { value: domainName },
+    }
 
     const pipeline = new CdkPipeline(this, "JeuchreOrgCodePipeline", {
       cloudAssemblyArtifact,
       pipelineName: "jeuchre-org",
-      sourceAction: new GitHubSourceAction({
-        actionName: "GitHub",
-        oauthToken: SecretValue.secretsManager(process.env.SECRET_NAME || "jeuchre/org", {
-          jsonField: "github_access_token",
-        }),
-        output: sourceArtifact,
-        // Replace these with your actual GitHub project info
-        owner: process.env.GITHUB_OWNER || "osaaru",
-        repo: process.env.GITHUB_REPO || domainName,
-        trigger: GitHubTrigger.POLL,
-      }),
-
+      sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
-        buildCommand: "env && cd ../site && yarn build",
+        additionalArtifacts: [{ artifact: siteArtifact, directory: "site" }],
+        buildCommand: "HOST_NAME=$BRANCH_NAME.$DOMAIN_NAME env && cd ../site && yarn build",
         cloudAssemblyArtifact,
+        environmentVariables,
         // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
         sourceArtifact,
         subdirectory: "devops", // Need to set this to where the CDK app is

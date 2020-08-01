@@ -4,7 +4,7 @@
 const path = require("path")
 const CWD = process.cwd()
 
-const hostName = "www.jeuchre.org"
+const hostName = process.env.HOST_NAME || "www.jeuchre.org"
 const protocol = "https"
 const siteTitle = "Jeuchre"
 const siteDescription = "Jeuchre is a card game that is the anti-euchre."
@@ -34,14 +34,15 @@ module.exports = {
       },
       resolve: "gatsby-plugin-google-analytics",
     },
-    {
-      options: {
-        bucketName: hostName,
-        hostName,
-        protocol,
-      },
-      resolve: "gatsby-plugin-s3",
-    },
+    // {
+    //   options: {
+    //     bucketName: process.env.BUCKET_NAME || "jeuchre.org",
+    //     bucketPrefix: process.env.BUCKET_PREFIX || "www",
+    //     hostName,
+    //     protocol,
+    //   },
+    //   resolve: "gatsby-plugin-s3",
+    // },
     {
       options: {
         name: "images",
