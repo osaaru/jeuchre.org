@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Distribution } from "@aws-cdk/aws-cloudfront"
-import { AaaaRecord, HostedZone, RecordTarget, IHostedZone } from "@aws-cdk/aws-route53"
+import { ARecord, AaaaRecord, HostedZone, RecordTarget, IHostedZone } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
@@ -35,7 +35,7 @@ export class AppStack extends Stack {
       zoneName,
     })
 
-    const dnsRecord = new AaaaRecord(this, "DnsRecord", {
+    const dnsRecord = new ARecord(this, "DnsRecord", {
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
       zone,
     })
