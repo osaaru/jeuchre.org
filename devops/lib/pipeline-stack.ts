@@ -2,7 +2,7 @@
 import { Artifact } from "@aws-cdk/aws-codepipeline"
 import { GitHubSourceAction, GitHubTrigger } from "@aws-cdk/aws-codepipeline-actions"
 import { Construct, SecretValue, Stack, StackProps, Stage, StageProps } from "@aws-cdk/core"
-import { CdkPipeline, SimpleSynthAction } from "@aws-cdk/pipelines"
+import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
 import { config } from "dotenv"
 
 import { AppStack } from "./app-stack"
@@ -72,7 +72,7 @@ export class PipelineStack extends Stack {
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
         additionalArtifacts: [{ artifact: siteArtifact, directory: "site" }],
-        buildCommand: "HOST_NAME=$BRANCH_NAME.$DOMAIN_NAME env && cd ../site && yarn build",
+        // buildCommand: "HOST_NAME=$BRANCH_NAME.$DOMAIN_NAME env && cd ../site && yarn build",
         cloudAssemblyArtifact,
         environmentVariables,
         // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
@@ -83,6 +83,12 @@ export class PipelineStack extends Stack {
 
     const appStage = new AppStage(this, "master", { resourcesStack }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)
+
+    const buildAction = new ShellScriptAction({
+      actionName: "appBuild",
+      commands: ["env", "ls"],
+    })
+    appPipelineStage.addActions(buildAction)
 
     // const buildStage = new JeuchreOrgStage(this, "app-build")
     //   const masterApplicationStage = pipeline.addApplicationStage(masterStage)

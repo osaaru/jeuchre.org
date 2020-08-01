@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Distribution, S3Origin } from "@aws-cdk/aws-cloudfront"
 import { AaaaRecord, RecordTarget } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
+
 import { ResourcesStack } from "./resources-stack"
 
 const domainName = "jeuchre.org"
@@ -19,15 +19,12 @@ export class AppStack extends Stack {
 
     const { resourcesStack } = props
 
-    const hostName = `${id}.${domainName}`
-
     this.hostName = new CfnOutput(this, "hostName", {
-      value: hostName,
+      value: `${id}.${domainName}`,
     })
 
     // TODO: Origin behavior
 
-    // DNS record
     const dnsRecord = new AaaaRecord(this, "DnsRecord", {
       target: RecordTarget.fromAlias(new CloudFrontTarget(resourcesStack.distribution)),
       zone: resourcesStack.hostedZone,

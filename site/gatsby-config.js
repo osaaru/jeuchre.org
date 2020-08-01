@@ -4,7 +4,7 @@
 const path = require("path")
 const CWD = process.cwd()
 
-const hostName = process.env.HOST_NAME || "www.jeuchre.org"
+const hostName = process.env.APP_HOST_NAME || "www.jeuchre.org"
 const protocol = "https"
 const siteTitle = "Jeuchre"
 const siteDescription = "Jeuchre is a card game that is the anti-euchre."
