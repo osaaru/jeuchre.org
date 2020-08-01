@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AaaaRecord, RecordTarget } from "@aws-cdk/aws-route53"
+import { Distribution } from "@aws-cdk/aws-cloudfront"
+import { AaaaRecord, HostedZone, RecordTarget, IHostedZone } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
-import { ResourcesStack } from "./resources-stack"
-
-const domainName = "jeuchre.org"
-
 interface AppStackProps extends StackProps {
-  resourcesStack: ResourcesStack
+  distributionId: string
+  domainName: string
+  hostedZoneId: string
+  zoneName: string
 }
 
 export class AppStack extends Stack {
@@ -17,7 +17,7 @@ export class AppStack extends Stack {
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props)
 
-    const { resourcesStack } = props
+    const { distributionId, domainName, hostedZoneId, zoneName } = props
 
     this.hostName = new CfnOutput(this, "hostName", {
       value: `${id}.${domainName}`,
@@ -25,9 +25,19 @@ export class AppStack extends Stack {
 
     // TODO: Origin behavior
 
+    const distribution = Distribution.fromDistributionAttributes(this, "Distribution", {
+      distributionId,
+      domainName,
+    })
+
+    const zone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
+      hostedZoneId,
+      zoneName,
+    })
+
     const dnsRecord = new AaaaRecord(this, "DnsRecord", {
-      target: RecordTarget.fromAlias(new CloudFrontTarget(resourcesStack.distribution)),
-      zone: resourcesStack.hostedZone,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      zone,
     })
   }
 }

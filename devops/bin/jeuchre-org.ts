@@ -2,9 +2,12 @@
 import "source-map-support/register"
 
 import { App } from "@aws-cdk/core"
+import { config } from "dotenv"
 
 import { PipelineStack } from "../lib/pipeline-stack"
 import { ResourcesStack } from "../lib/resources-stack"
+
+config({ path: process.env.ENVFILE })
 
 const domainName = "jeuchre.org"
 
@@ -17,9 +20,11 @@ const resourcesStack = new ResourcesStack(app, "jeuchre-org-resources", {
 })
 
 const pipelineStack = new PipelineStack(app, "jeuchre-org-pipeline", {
+  distributionId: resourcesStack.distributionId.value,
   domainName,
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
-  resourcesStack,
+  hostedZoneId: resourcesStack.hostedZoneId.value,
+  zoneName: resourcesStack.hostedZoneName.value,
 })
 pipelineStack.addDependency(resourcesStack)
 

@@ -3,15 +3,14 @@ import { Artifact } from "@aws-cdk/aws-codepipeline"
 import { GitHubSourceAction, GitHubTrigger } from "@aws-cdk/aws-codepipeline-actions"
 import { Construct, SecretValue, Stack, StackProps, Stage, StageProps } from "@aws-cdk/core"
 import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
-import { config } from "dotenv"
 
 import { AppStack } from "./app-stack"
-import { ResourcesStack } from "./resources-stack"
-
-config({ path: process.env.ENVFILE })
 
 interface AppStageProps extends StageProps {
-  resourcesStack: ResourcesStack
+  distributionId: string
+  domainName: string
+  hostedZoneId: string
+  zoneName: string
 }
 
 export class AppStage extends Stage {
@@ -20,30 +19,31 @@ export class AppStage extends Stage {
   constructor(scope: Construct, id: string, props: AppStageProps) {
     super(scope, id, props)
 
-    const { resourcesStack } = props
+    const { distributionId, domainName, hostedZoneId, zoneName } = props
 
     this.appStack = new AppStack(this, id, {
-      resourcesStack,
-      // env has to be explicitly set in order for it to use HostedZone
-      // env: {
-      //   account: "220379026029", // TODO: How do we get this from pipeline env?
-      //   region: "us-east-1", // Must be us-east-1 in order to create ACM certificates
-      // },
+      distributionId,
+      domainName,
+      env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+      hostedZoneId,
       stackName: `jeuchre-org-${id}`,
+      zoneName,
     })
   }
 }
 
 interface PipelineStackProps extends StackProps {
+  distributionId: string
   domainName: string
-  resourcesStack: ResourcesStack
+  hostedZoneId: string
+  zoneName: string
 }
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const { domainName, resourcesStack } = props
+    const { distributionId, domainName, hostedZoneId, zoneName } = props
 
     const sourceArtifact = new Artifact()
     const siteArtifact = new Artifact("site")
@@ -71,7 +71,7 @@ export class PipelineStack extends Stack {
       pipelineName: "jeuchre-org",
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
-        additionalArtifacts: [{ artifact: siteArtifact, directory: "site" }],
+        // additionalArtifacts: [{ artifact: siteArtifact, directory: "site" }],
         // buildCommand: "HOST_NAME=$BRANCH_NAME.$DOMAIN_NAME env && cd ../site && yarn build",
         cloudAssemblyArtifact,
         environmentVariables,
@@ -81,11 +81,17 @@ export class PipelineStack extends Stack {
       }),
     })
 
-    const appStage = new AppStage(this, "master", { resourcesStack }) // TODO: Use branch name
+    const appStage = new AppStage(this, "master", {
+      distributionId,
+      domainName,
+      hostedZoneId,
+      zoneName,
+    }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)
 
     const buildAction = new ShellScriptAction({
       actionName: "appBuild",
+      additionalArtifacts: [sourceArtifact],
       commands: ["env", "ls"],
     })
     appPipelineStage.addActions(buildAction)
