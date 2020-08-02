@@ -42,9 +42,9 @@ export class PipelineStack extends Stack {
 
     const { domainName, resourcesStack } = props
 
-    const sourceArtifact = new Artifact()
+    const sourceArtifact = new Artifact("source")
     const appBuildArtifact = new Artifact("appBuild")
-    const cloudAssemblyArtifact = new Artifact()
+    const cloudAssemblyArtifact = new Artifact("cloudAssembly")
 
     const sourceAction = new GitHubSourceAction({
       actionName: "GitHub",
@@ -68,7 +68,7 @@ export class PipelineStack extends Stack {
       pipelineName: "jeuchre-org",
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
-        additionalArtifacts: [{ artifact: appBuildArtifact, directory: "site/public" }],
+        additionalArtifacts: [{ artifact: appBuildArtifact, directory: "../site/public" }],
         buildCommand: "env && ls && yarn build",
         cloudAssemblyArtifact,
         environmentVariables,
