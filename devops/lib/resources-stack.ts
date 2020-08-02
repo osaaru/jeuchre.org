@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
-import { Distribution, S3Origin, IDistribution } from "@aws-cdk/aws-cloudfront"
+import { Distribution, IDistribution } from "@aws-cdk/aws-cloudfront"
 import { PublicHostedZone, IHostedZone } from "@aws-cdk/aws-route53"
 import { Bucket } from "@aws-cdk/aws-s3"
 import { CfnOutput, Construct, RemovalPolicy, Stack, StackProps } from "@aws-cdk/core"

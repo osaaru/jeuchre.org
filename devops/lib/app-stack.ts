@@ -64,7 +64,7 @@ export class AppStack extends Stack {
       destinationBucket: bucket,
       distribution,
       distributionPaths: ["/*"],
-      sources: [Source.asset("site/public")],
+      sources: [Source.asset("../site/public")],
     })
   }
 }
