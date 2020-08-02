@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Distribution } from "@aws-cdk/aws-cloudfront"
+import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
+import { Distribution, S3Origin } from "@aws-cdk/aws-cloudfront"
 import { ARecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
+import { Bucket } from "@aws-cdk/aws-s3"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
 interface AppStackProps extends StackProps {
-  distributionDomainName: string
-  distributionId: string
+  distributionDomainName?: string
+  distributionId?: string
   domainName: string
 }
 
@@ -18,15 +20,10 @@ export class AppStack extends Stack {
 
     const { distributionDomainName, distributionId, domainName } = props
 
+    const hostName = `${id}.${domainName}`
+
     this.hostName = new CfnOutput(this, "hostName", {
-      value: `${id}.${domainName}`,
-    })
-
-    // TODO: Origin behavior
-
-    const distribution = Distribution.fromDistributionAttributes(this, "DistributionX", {
-      distributionId,
-      domainName: distributionDomainName,
+      value: hostName,
     })
 
     const zoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
@@ -36,9 +33,28 @@ export class AppStack extends Stack {
       zoneName: domainName,
     })
 
-    // const dnsRecord = new ARecord(this, "DnsRecord", {
-    //   target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-    //   zone,
-    // })
+    /* Once we're able to do this...
+    const distribution = Distribution.fromDistributionAttributes(this, "Distribution", {
+      distributionId,
+      domainName: distributionDomainName,
+    })
+*/
+
+    const bucket = Bucket.fromBucketName(this, "Bucket", domainName)
+
+    const certificate = new Certificate(this, "Certificate", {
+      domainName: hostName,
+      validation: CertificateValidation.fromDns(zone),
+    })
+
+    const distribution = new Distribution(this, "CloudfrontDistribution", {
+      certificate,
+      defaultBehavior: { origin: new S3Origin({ bucket, originPath: id }) },
+    })
+
+    const dnsRecord = new ARecord(this, "DnsRecord", {
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      zone,
+    })
   }
 }

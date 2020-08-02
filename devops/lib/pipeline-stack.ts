@@ -5,10 +5,11 @@ import { Construct, SecretValue, Stack, StackProps, Stage, StageProps } from "@a
 import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
 
 import { AppStack } from "./app-stack"
+import { ResourcesStack } from "./resources-stack"
 
 interface AppStageProps extends StageProps {
-  distributionDomainName: string
-  distributionId: string
+  distributionDomainName?: string
+  distributionId?: string
   domainName: string
 }
 
@@ -31,16 +32,15 @@ export class AppStage extends Stage {
 }
 
 interface PipelineStackProps extends StackProps {
-  distributionDomainName: string
-  distributionId: string
   domainName: string
+  resourcesStack: ResourcesStack
 }
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const { distributionDomainName, distributionId, domainName } = props
+    const { domainName, resourcesStack } = props
 
     const sourceArtifact = new Artifact()
     const siteArtifact = new Artifact("site")
@@ -79,8 +79,8 @@ export class PipelineStack extends Stack {
     })
 
     const appStage = new AppStage(this, "master", {
-      distributionDomainName,
-      distributionId,
+      // distributionDomainName: resourcesStack.distributionDomainName.value,
+      // distributionId: resourcesStack.distributionId.value,
       domainName,
     }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)

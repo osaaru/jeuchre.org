@@ -21,6 +21,13 @@ export class ResourcesStack extends Stack {
 
     const { domainName } = props
 
+    const bucket = new Bucket(this, "S3Bucket", {
+      bucketName: domainName,
+      removalPolicy: RemovalPolicy.DESTROY,
+    })
+
+    /* Until we can get a reference to the distribution in the app stage stack...
+
     const hostedZoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 
     this.hostedZone = PublicHostedZone.fromHostedZoneAttributes(this, "HostedZone", {
@@ -37,11 +44,6 @@ export class ResourcesStack extends Stack {
       validation: CertificateValidation.fromDns(this.hostedZone),
     })
 
-    const bucket = new Bucket(this, "S3Bucket", {
-      bucketName: domainName,
-      removalPolicy: RemovalPolicy.DESTROY,
-    })
-
     this.distribution = new Distribution(this, "CloudfrontDistribution", {
       certificate,
       defaultBehavior: { origin: new S3Origin({ bucket, originPath: "www" }) },
@@ -54,5 +56,6 @@ export class ResourcesStack extends Stack {
     this.distributionDomainName = new CfnOutput(this, "distributionDomainName", {
       value: this.distribution.domainName,
     })
+    */
   }
 }
