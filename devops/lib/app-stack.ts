@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
-import { Distribution, S3Origin } from "@aws-cdk/aws-cloudfront"
+import { Distribution } from "@aws-cdk/aws-cloudfront"
+import { S3Origin } from "@aws-cdk/aws-cloudfront-origins"
 import { ARecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { Bucket } from "@aws-cdk/aws-s3"
+import { BucketDeployment, Source } from "@aws-cdk/aws-s3-deployment"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
 interface AppStackProps extends StackProps {
@@ -49,13 +51,20 @@ export class AppStack extends Stack {
 
     const distribution = new Distribution(this, "CloudfrontDistribution", {
       certificate,
-      defaultBehavior: { origin: new S3Origin({ bucket, originPath: id }) },
+      defaultBehavior: { origin: new S3Origin(bucket, { originPath: "master" }) },
     })
 
     const dnsRecord = new ARecord(this, "DnsRecord", {
       recordName: hostName,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
       zone,
+    })
+
+    const bucketDeployment = new BucketDeployment(this, "DeployWithInvalidation", {
+      destinationBucket: bucket,
+      distribution,
+      distributionPaths: ["/*"],
+      sources: [Source.asset("site/public")],
     })
   }
 }

@@ -69,7 +69,7 @@ export class PipelineStack extends Stack {
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
         additionalArtifacts: [{ artifact: appBuildArtifact, directory: "../site/public" }],
-        buildCommand: "env && ls && yarn build",
+        buildCommand: "env && cd .. && yarn build",
         cloudAssemblyArtifact,
         environmentVariables,
         // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
