@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Distribution } from "@aws-cdk/aws-cloudfront"
-import { ARecord, AaaaRecord, HostedZone, RecordTarget, IHostedZone } from "@aws-cdk/aws-route53"
+import { ARecord, PublicHostedZone, RecordTarget, IHostedZone } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
 interface AppStackProps extends StackProps {
+  distributionDomainName: string
   distributionId: string
   domainName: string
-  hostedZoneId: string
-  zoneName: string
 }
 
 export class AppStack extends Stack {
@@ -17,7 +16,7 @@ export class AppStack extends Stack {
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props)
 
-    const { distributionId, domainName, hostedZoneId, zoneName } = props
+    const { distributionDomainName, distributionId, domainName } = props
 
     this.hostName = new CfnOutput(this, "hostName", {
       value: `${id}.${domainName}`,
@@ -27,12 +26,14 @@ export class AppStack extends Stack {
 
     const distribution = Distribution.fromDistributionAttributes(this, "Distribution", {
       distributionId,
-      domainName,
+      domainName: distributionDomainName,
     })
 
-    const zone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
-      hostedZoneId,
-      zoneName,
+    const zoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
+
+    const zone = PublicHostedZone.fromHostedZoneAttributes(this, "HostedZone", {
+      hostedZoneId: zoneProxy.hostedZoneId,
+      zoneName: domainName,
     })
 
     const dnsRecord = new ARecord(this, "DnsRecord", {

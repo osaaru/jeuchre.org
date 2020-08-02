@@ -20,11 +20,10 @@ const resourcesStack = new ResourcesStack(app, "jeuchre-org-resources", {
 })
 
 const pipelineStack = new PipelineStack(app, "jeuchre-org-pipeline", {
+  distributionDomainName: resourcesStack.distributionDomainName.value,
   distributionId: resourcesStack.distributionId.value,
   domainName,
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
-  hostedZoneId: resourcesStack.hostedZoneId.value,
-  zoneName: resourcesStack.hostedZoneName.value,
 })
 pipelineStack.addDependency(resourcesStack)
 

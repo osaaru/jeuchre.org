@@ -7,10 +7,9 @@ import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipe
 import { AppStack } from "./app-stack"
 
 interface AppStageProps extends StageProps {
+  distributionDomainName: string
   distributionId: string
   domainName: string
-  hostedZoneId: string
-  zoneName: string
 }
 
 export class AppStage extends Stage {
@@ -19,31 +18,29 @@ export class AppStage extends Stage {
   constructor(scope: Construct, id: string, props: AppStageProps) {
     super(scope, id, props)
 
-    const { distributionId, domainName, hostedZoneId, zoneName } = props
+    const { distributionDomainName, distributionId, domainName } = props
 
     this.appStack = new AppStack(this, id, {
+      distributionDomainName,
       distributionId,
       domainName,
       env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
-      hostedZoneId,
       stackName: `jeuchre-org-${id}`,
-      zoneName,
     })
   }
 }
 
 interface PipelineStackProps extends StackProps {
+  distributionDomainName: string
   distributionId: string
   domainName: string
-  hostedZoneId: string
-  zoneName: string
 }
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const { distributionId, domainName, hostedZoneId, zoneName } = props
+    const { distributionDomainName, distributionId, domainName } = props
 
     const sourceArtifact = new Artifact()
     const siteArtifact = new Artifact("site")
@@ -82,10 +79,9 @@ export class PipelineStack extends Stack {
     })
 
     const appStage = new AppStage(this, "master", {
+      distributionDomainName,
       distributionId,
       domainName,
-      hostedZoneId,
-      zoneName,
     }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)
 

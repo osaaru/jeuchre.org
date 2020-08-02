@@ -15,7 +15,6 @@ export class ResourcesStack extends Stack {
   public readonly distributionDomainName: CfnOutput
   public readonly hostedZone: IHostedZone
   public readonly hostedZoneId: CfnOutput
-  public readonly hostedZoneName: CfnOutput
 
   constructor(scope: Construct, id: string, props: ResourcesStackProps) {
     super(scope, id, props)
@@ -31,10 +30,6 @@ export class ResourcesStack extends Stack {
 
     this.hostedZoneId = new CfnOutput(this, "hostedZoneId", {
       value: this.hostedZone.hostedZoneId,
-    })
-
-    this.hostedZoneName = new CfnOutput(this, "hostedZoneName", {
-      value: this.hostedZone.zoneName,
     })
 
     const certificate = new Certificate(this, "Certificate", {
