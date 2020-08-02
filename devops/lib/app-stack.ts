@@ -53,6 +53,7 @@ export class AppStack extends Stack {
     })
 
     const dnsRecord = new ARecord(this, "DnsRecord", {
+      recordName: hostName,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
       zone,
     })

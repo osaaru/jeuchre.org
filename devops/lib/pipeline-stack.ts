@@ -43,7 +43,7 @@ export class PipelineStack extends Stack {
     const { domainName, resourcesStack } = props
 
     const sourceArtifact = new Artifact()
-    const siteArtifact = new Artifact("site")
+    const appBuildArtifact = new Artifact("appBuild")
     const cloudAssemblyArtifact = new Artifact()
 
     const sourceAction = new GitHubSourceAction({
@@ -68,8 +68,8 @@ export class PipelineStack extends Stack {
       pipelineName: "jeuchre-org",
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
-        // additionalArtifacts: [{ artifact: siteArtifact, directory: "site" }],
-        // buildCommand: "HOST_NAME=$BRANCH_NAME.$DOMAIN_NAME env && cd ../site && yarn build",
+        additionalArtifacts: [{ artifact: appBuildArtifact, directory: "site/public" }],
+        buildCommand: "env && ls && yarn build",
         cloudAssemblyArtifact,
         environmentVariables,
         // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
@@ -82,15 +82,23 @@ export class PipelineStack extends Stack {
       // distributionDomainName: resourcesStack.distributionDomainName.value,
       // distributionId: resourcesStack.distributionId.value,
       domainName,
+      env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
     }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)
 
-    const buildAction = new ShellScriptAction({
-      actionName: "appBuild",
-      additionalArtifacts: [sourceArtifact],
-      commands: ["env", "ls"],
-    })
-    appPipelineStage.addActions(buildAction)
+    // const buildAction = new ShellScriptAction({
+    //   actionName: "appBuild",
+    //   additionalArtifacts: [sourceArtifact],
+    //   commands: ["env", "yarn", "cd site", "yarn build"],
+    // })
+    // appPipelineStage.addActions(buildAction)
+
+    // const deployAction = new ShellScriptAction({
+    //   actionName: "appDeploy",
+    //   additionalArtifacts: [appBuildArtifact],
+    //   commands: ["env", "yarn", "cd site", "yarn build"],
+    // })
+    // appPipelineStage.addActions(buildAction)
 
     // const buildStage = new JeuchreOrgStage(this, "app-build")
     //   const masterApplicationStage = pipeline.addApplicationStage(masterStage)
