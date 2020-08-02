@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Distribution } from "@aws-cdk/aws-cloudfront"
-import { ARecord, PublicHostedZone, RecordTarget, IHostedZone } from "@aws-cdk/aws-route53"
+import { ARecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
 
@@ -24,7 +24,7 @@ export class AppStack extends Stack {
 
     // TODO: Origin behavior
 
-    const distribution = Distribution.fromDistributionAttributes(this, "Distribution", {
+    const distribution = Distribution.fromDistributionAttributes(this, "DistributionX", {
       distributionId,
       domainName: distributionDomainName,
     })
@@ -36,9 +36,9 @@ export class AppStack extends Stack {
       zoneName: domainName,
     })
 
-    const dnsRecord = new ARecord(this, "DnsRecord", {
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-      zone,
-    })
+    // const dnsRecord = new ARecord(this, "DnsRecord", {
+    //   target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+    //   zone,
+    // })
   }
 }
