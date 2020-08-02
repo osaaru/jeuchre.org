@@ -56,7 +56,7 @@ export class AppStack extends Stack {
       },
       defaultRootObject: "index.html",
       originConfigs: [
-        { behaviors: [{ isDefaultBehavior: true }], s3OriginSource: { originPath: "master", s3BucketSource: bucket } },
+        { behaviors: [{ isDefaultBehavior: true }], s3OriginSource: { originPath: "/master", s3BucketSource: bucket } },
       ],
     })
 
