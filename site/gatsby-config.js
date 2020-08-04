@@ -71,19 +71,7 @@ module.exports = {
         background_color: "#663399",
         description: siteDescription,
         display: "minimal-ui",
-        icon: "src/images/icon.png",
-        icons: [
-          {
-            sizes: "512x512",
-            src: "icons/icon_512x512.png",
-            types: "image/png",
-          },
-          {
-            sizes: "192x192",
-            src: "icons/icon_192x192.png",
-            types: "image/png",
-          },
-        ],
+        icon: "src/images/gatsby-icon.png",
         name: siteTitle,
         short_name: siteTitle,
         start_url: "/",

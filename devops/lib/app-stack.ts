@@ -46,29 +46,29 @@ export class AppStack extends Stack {
       validation: CertificateValidation.fromDns(zone),
     })
 
-    // TODO: The new hotness is Distribution but it doesn't seem to update the bucket policy for the OAI yet
-    const distribution = new Distribution(this, "Distribution", {
-      certificate,
-      defaultBehavior: { origin: new S3Origin(bucket) },
-    })
-
-    // const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
-    // bucket.grantRead(originAccessIdentity)
-    // const distribution = new CloudFrontWebDistribution(this, "CloudfrontDistribution", {
-    //   aliasConfiguration: {
-    //     acmCertRef: certificate.certificateArn,
-    //     names: [hostName],
-    //     securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
-    //   },
-    //   comment: hostName,
-    //   defaultRootObject: "index.html",
-    //   originConfigs: [
-    //     {
-    //       behaviors: [{ isDefaultBehavior: true }],
-    //       s3OriginSource: { originAccessIdentity, originPath: "/master", s3BucketSource: bucket },
-    //     },
-    //   ],
+    // TODO: The new hotness is Distribution but it doesn't appear to be complete yet
+    // const distribution = new Distribution(this, "Distribution", {
+    //   certificate,
+    //   defaultBehavior: { origin: new S3Origin(bucket) },
     // })
+
+    const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
+    bucket.grantRead(originAccessIdentity)
+    const distribution = new CloudFrontWebDistribution(this, "CloudfrontWebDistribution", {
+      aliasConfiguration: {
+        acmCertRef: certificate.certificateArn,
+        names: [hostName],
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
+      },
+      comment: hostName,
+      defaultRootObject: "index.html",
+      originConfigs: [
+        {
+          behaviors: [{ isDefaultBehavior: true }],
+          s3OriginSource: { originAccessIdentity, s3BucketSource: bucket },
+        },
+      ],
+    })
 
     const dnsRecord = new ARecord(this, "DnsRecord", {
       recordName: hostName,

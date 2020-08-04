@@ -1,13 +1,13 @@
+import { graphql, useStaticQuery } from "gatsby"
 import React from "react"
-import styled, { ThemeProvider } from "styled-components"
-import { useStaticQuery, graphql } from "gatsby"
-import { theme, GlobalStyles } from "../../styles"
 import { Helmet } from "react-helmet"
+import styled, { ThemeProvider } from "styled-components"
+import { GlobalStyles, theme } from "../../styles"
 
 // Components
 import { CSSDebugger } from "../css-debugger"
-import { Link } from "../link"
 import { Footer } from "../footer"
+import { Link } from "../link"
 
 const Container = styled.div`
   margin: 0 auto;
@@ -40,13 +40,13 @@ const Layout: React.FC = ({ children }) => {
     }
   `)
 
-  const { title, description } = data.site.siteMetadata
+  const { description, title } = data.site.siteMetadata
 
   return (
     <ThemeProvider theme={theme()}>
       <Container>
         <Helmet>
-          <link href="https://fonts.googleapis.com/css2?family=Diplomata+SC&display=swap" rel="stylesheet" />
+          <Link href="https://fonts.googleapis.com/css2?family=Diplomata+SC&display=swap" rel="stylesheet" />
         </Helmet>
         <GlobalStyles />
         <CSSDebugger />
