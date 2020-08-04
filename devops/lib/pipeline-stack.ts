@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Artifact } from "@aws-cdk/aws-codepipeline"
-import { GitHubSourceAction, GitHubTrigger } from "@aws-cdk/aws-codepipeline-actions"
+import { CodeBuildAction, GitHubSourceAction, GitHubTrigger } from "@aws-cdk/aws-codepipeline-actions"
 import { Construct, SecretValue, Stack, StackProps, Stage, StageProps } from "@aws-cdk/core"
 import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipelines"
 
@@ -8,6 +8,7 @@ import { AppStack } from "./app-stack"
 import { ResourcesStack } from "./resources-stack"
 
 interface AppStageProps extends StageProps {
+  branchName: string
   distributionDomainName?: string
   distributionId?: string
   domainName: string
@@ -19,9 +20,10 @@ export class AppStage extends Stage {
   constructor(scope: Construct, id: string, props: AppStageProps) {
     super(scope, id, props)
 
-    const { distributionDomainName, distributionId, domainName } = props
+    const { branchName, distributionDomainName, distributionId, domainName } = props
 
     this.appStack = new AppStack(this, id, {
+      branchName,
       distributionDomainName,
       distributionId,
       domainName,
@@ -45,9 +47,11 @@ export class PipelineStack extends Stack {
     const sourceArtifact = new Artifact("source")
     const appBuildArtifact = new Artifact("appBuild")
     const cloudAssemblyArtifact = new Artifact("cloudAssembly")
+    const branchName = "prod"
 
     const sourceAction = new GitHubSourceAction({
       actionName: "GitHub",
+      branch: branchName,
       oauthToken: SecretValue.secretsManager(process.env.SECRET_NAME || "jeuchre/org", {
         jsonField: "github_access_token",
       }),
@@ -59,6 +63,7 @@ export class PipelineStack extends Stack {
     })
 
     const environmentVariables = {
+      APP_HOST_NAME: { value: `${sourceAction.variables.branchName}.${domainName}` },
       BRANCH_NAME: { value: sourceAction.variables.branchName },
       DOMAIN_NAME: { value: domainName },
     }
@@ -69,7 +74,7 @@ export class PipelineStack extends Stack {
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
         additionalArtifacts: [{ artifact: appBuildArtifact, directory: "../site/public" }],
-        buildCommand: "APP_HOST_NAME=$BRANCH_NAME.$DOMAIN_NAME env && cd .. && yarn build && cd devops",
+        buildCommand: "env && echo $BRANCH_NAME && cd .. && yarn build && cd devops", // If we don't cd back to devops, the synth command fails
         cloudAssemblyArtifact,
         environmentVariables,
         // copyEnvironmentVariables: ["HOSTED_ZONE_ID"],
@@ -78,7 +83,8 @@ export class PipelineStack extends Stack {
       }),
     })
 
-    const appStage = new AppStage(this, "master", {
+    const appStage = new AppStage(this, "deploy", {
+      branchName,
       // distributionDomainName: resourcesStack.distributionDomainName.value,
       // distributionId: resourcesStack.distributionId.value,
       domainName,

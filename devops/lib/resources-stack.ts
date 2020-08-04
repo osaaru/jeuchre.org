@@ -2,6 +2,7 @@
 import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
 import { Distribution, IDistribution } from "@aws-cdk/aws-cloudfront"
 import { PublicHostedZone, IHostedZone } from "@aws-cdk/aws-route53"
+import { HttpsRedirect } from "@aws-cdk/aws-route53-patterns"
 import { Bucket } from "@aws-cdk/aws-s3"
 import { CfnOutput, Construct, RemovalPolicy, Stack, StackProps } from "@aws-cdk/core"
 
@@ -13,20 +14,33 @@ export class ResourcesStack extends Stack {
   public readonly distribution: IDistribution
   public readonly distributionId: CfnOutput
   public readonly distributionDomainName: CfnOutput
-  public readonly hostedZone: IHostedZone
-  public readonly hostedZoneId: CfnOutput
 
   constructor(scope: Construct, id: string, props: ResourcesStackProps) {
     super(scope, id, props)
 
     const { domainName } = props
 
+    const hostedZoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
+
+    const zone = PublicHostedZone.fromHostedZoneAttributes(this, "HostedZone", {
+      hostedZoneId: hostedZoneProxy.hostedZoneId,
+      zoneName: domainName,
+    })
+
+    const apexRedirect = new HttpsRedirect(this, "ApexRedirect", {
+      recordNames: [domainName],
+      targetDomain: `www.${domainName}`,
+      zone,
+    })
+
+    // Originally the idea was to try and share one bucket and one distribution...
+
+    /* Until we can get a reference to the distribution in the app stage stack...
+
     const bucket = new Bucket(this, "S3Bucket", {
       bucketName: domainName,
       removalPolicy: RemovalPolicy.DESTROY,
     })
-
-    /* Until we can get a reference to the distribution in the app stage stack...
 
     const hostedZoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 

@@ -2,6 +2,7 @@
 import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
 import {
   CloudFrontWebDistribution,
+  Distribution,
   HttpVersion,
   OriginAccessIdentity,
   SSLMethod,
@@ -12,27 +13,21 @@ import { ARecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
 import { Bucket } from "@aws-cdk/aws-s3"
 import { BucketDeployment, Source } from "@aws-cdk/aws-s3-deployment"
-import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core"
+import { CfnOutput, Construct, RemovalPolicy, Stack, StackProps } from "@aws-cdk/core"
 
 interface AppStackProps extends StackProps {
+  branchName: string
   distributionDomainName?: string
   distributionId?: string
   domainName: string
 }
 
 export class AppStack extends Stack {
-  public readonly hostName: CfnOutput
-
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props)
 
-    const { distributionDomainName, distributionId, domainName } = props
-
-    const hostName = `${id}.${domainName}`
-
-    this.hostName = new CfnOutput(this, "hostName", {
-      value: hostName,
-    })
+    const { branchName, domainName } = props
+    const hostName = `${branchName === "prod" ? "www" : branchName}.${domainName}`
 
     const zoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 
@@ -41,14 +36,10 @@ export class AppStack extends Stack {
       zoneName: domainName,
     })
 
-    /* Once we're able to do this...
-    const distribution = Distribution.fromDistributionAttributes(this, "Distribution", {
-      distributionId,
-      domainName: distributionDomainName,
+    const bucket = new Bucket(this, "S3Bucket", {
+      bucketName: hostName,
+      removalPolicy: RemovalPolicy.DESTROY,
     })
-*/
-
-    const bucket = Bucket.fromBucketName(this, "Bucket", domainName)
 
     const certificate = new Certificate(this, "Certificate", {
       domainName: hostName,
@@ -56,23 +47,28 @@ export class AppStack extends Stack {
     })
 
     // TODO: The new hotness is Distribution but it doesn't seem to update the bucket policy for the OAI yet
-    const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
-    bucket.grantRead(originAccessIdentity)
-    const distribution = new CloudFrontWebDistribution(this, "CloudfrontDistribution", {
-      aliasConfiguration: {
-        acmCertRef: certificate.certificateArn,
-        names: [hostName],
-        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
-      },
-      comment: hostName,
-      defaultRootObject: "index.html",
-      originConfigs: [
-        {
-          behaviors: [{ isDefaultBehavior: true }],
-          s3OriginSource: { originAccessIdentity, originPath: "/master", s3BucketSource: bucket },
-        },
-      ],
+    const distribution = new Distribution(this, "Distribution", {
+      certificate,
+      defaultBehavior: { origin: new S3Origin(bucket) },
     })
+
+    // const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
+    // bucket.grantRead(originAccessIdentity)
+    // const distribution = new CloudFrontWebDistribution(this, "CloudfrontDistribution", {
+    //   aliasConfiguration: {
+    //     acmCertRef: certificate.certificateArn,
+    //     names: [hostName],
+    //     securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
+    //   },
+    //   comment: hostName,
+    //   defaultRootObject: "index.html",
+    //   originConfigs: [
+    //     {
+    //       behaviors: [{ isDefaultBehavior: true }],
+    //       s3OriginSource: { originAccessIdentity, originPath: "/master", s3BucketSource: bucket },
+    //     },
+    //   ],
+    // })
 
     const dnsRecord = new ARecord(this, "DnsRecord", {
       recordName: hostName,
@@ -82,9 +78,9 @@ export class AppStack extends Stack {
 
     const bucketDeployment = new BucketDeployment(this, "DeployWithInvalidation", {
       destinationBucket: bucket,
-      destinationKeyPrefix: "master",
+      // destinationKeyPrefix: "master",
       distribution,
-      distributionPaths: ["/master/index.html"],
+      distributionPaths: ["/index.html"],
       sources: [Source.asset("../site/public")],
     })
   }
