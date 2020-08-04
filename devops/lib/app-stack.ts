@@ -82,8 +82,9 @@ export class AppStack extends Stack {
 
     const bucketDeployment = new BucketDeployment(this, "DeployWithInvalidation", {
       destinationBucket: bucket,
+      destinationKeyPrefix: "/master",
       distribution,
-      distributionPaths: ["/*"],
+      distributionPaths: ["/master/index.html"],
       sources: [Source.asset("../site/public")],
     })
   }
