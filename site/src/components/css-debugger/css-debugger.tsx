@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react"
-import styled, { createGlobalStyle } from "styled-components"
 import { motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
+import styled, { createGlobalStyle } from "styled-components"
 
 const ToggleDebugButton = styled(motion.button).attrs(() => ({
   drag: true,
@@ -20,7 +20,7 @@ const ToggleDebugButton = styled(motion.button).attrs(() => ({
   z-index: 5000;
 `
 
-const getDebugStyles = ({ debug, color }: ComponentProps): string => {
+const getDebugStyles = ({ color, debug }: ComponentProps): string => {
   if (!debug) {
     return ""
   }
@@ -39,19 +39,19 @@ background-image: linear-gradient(to right, lightgray 1px, transparent 1px), lin
 `
 
 interface CSSDebuggerProps {
-  debug?: boolean
-  showToggle?: boolean
-  color?: string
-  showGrid?: boolean
   buttonStyle?: React.CSSProperties
+  color?: string
+  debug?: boolean
+  showGrid?: boolean
+  showToggle?: boolean
 }
 
 const CSSDebugger: React.FC<CSSDebuggerProps> = ({
-  debug = false,
-  showToggle = true,
-  showGrid = true,
   buttonStyle,
   color = "rgba(255, 0, 0, .75)",
+  debug = false,
+  showGrid = true,
+  showToggle = location.port === "8000",
 }) => {
   const [isDebug, setIsDebug] = useState(debug)
   const GlobalStyle = createGlobalStyle<{
@@ -62,7 +62,7 @@ const CSSDebugger: React.FC<CSSDebuggerProps> = ({
     html, * {
       ${(props) => getDebugStyles(props)};
     }
-  
+
     html {
       ${(props) => props.debug && props.showGrid && gridStyles};
     }
@@ -77,14 +77,14 @@ const CSSDebugger: React.FC<CSSDebuggerProps> = ({
   }
 
   const maybeRenderToggleButton = showToggle && (
-    <ToggleDebugButton style={buttonStyle} debug={isDebug} onTap={toggle}>
+    <ToggleDebugButton debug={isDebug} onTap={toggle} style={buttonStyle}>
       Debug CSS
     </ToggleDebugButton>
   )
 
   return (
     <>
-      <GlobalStyle debug={isDebug} showGrid={showGrid} color={color} />
+      <GlobalStyle color={color} debug={isDebug} showGrid={showGrid} />
       {maybeRenderToggleButton}
     </>
   )
