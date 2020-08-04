@@ -78,9 +78,9 @@ const CSSDebugger: React.FC<CSSDebuggerProps> = ({
 
   if (typeof showToggle === "undefined" && typeof window !== "undefined") {
     // eslint-disable-next-line no-param-reassign
-    showToggle = window.location.port === "8000"
+    showToggle = location.port === "8000"
   }
-
+  console.log(showToggle)
   const maybeRenderToggleButton = showToggle && (
     <ToggleDebugButton debug={isDebug} onTap={toggle} style={buttonStyle}>
       Debug CSS

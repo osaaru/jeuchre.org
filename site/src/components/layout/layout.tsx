@@ -53,7 +53,7 @@ const Layout: React.FC = ({ children }) => {
         <Title>{title.toUpperCase()}</Title>
         <Tagline>{description}</Tagline>
         <br />
-        <p>More to come soon...</p>
+        <p>More to come soon...wtf?</p>
         <main>{children}</main>
         <Footer />
       </Container>
