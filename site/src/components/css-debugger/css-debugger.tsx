@@ -51,7 +51,7 @@ const CSSDebugger: React.FC<CSSDebuggerProps> = ({
   color = "rgba(255, 0, 0, .75)",
   debug = false,
   showGrid = true,
-  showToggle = location.port === "8000",
+  showToggle,
 }) => {
   const [isDebug, setIsDebug] = useState(debug)
   const GlobalStyle = createGlobalStyle<{
@@ -74,6 +74,11 @@ const CSSDebugger: React.FC<CSSDebuggerProps> = ({
 
   const toggle = () => {
     setIsDebug((v) => !v)
+  }
+
+  if (typeof showToggle === "undefined" && typeof window !== "undefined") {
+    // eslint-disable-next-line no-param-reassign
+    showToggle = window.location.port === "8000"
   }
 
   const maybeRenderToggleButton = showToggle && (
