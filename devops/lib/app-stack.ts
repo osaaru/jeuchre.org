@@ -55,8 +55,9 @@ export class AppStack extends Stack {
       validation: CertificateValidation.fromDns(zone),
     })
 
-    const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: "Used by " })
-
+    // TODO: The new hotness is Distribution but it doesn't seem to update the bucket policy for the OAI yet
+    const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
+    bucket.grantRead(originAccessIdentity)
     const distribution = new CloudFrontWebDistribution(this, "CloudfrontDistribution", {
       aliasConfiguration: {
         acmCertRef: certificate.certificateArn,
