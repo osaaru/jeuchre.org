@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Certificate, CertificateValidation } from "@aws-cdk/aws-certificatemanager"
-import { CloudFrontWebDistribution, SSLMethod } from "@aws-cdk/aws-cloudfront"
+import {
+  CloudFrontWebDistribution,
+  HttpVersion,
+  OriginAccessIdentity,
+  SSLMethod,
+  SecurityPolicyProtocol,
+} from "@aws-cdk/aws-cloudfront"
 import { S3Origin } from "@aws-cdk/aws-cloudfront-origins"
 import { ARecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets"
@@ -49,14 +55,21 @@ export class AppStack extends Stack {
       validation: CertificateValidation.fromDns(zone),
     })
 
+    const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: "Used by " })
+
     const distribution = new CloudFrontWebDistribution(this, "CloudfrontDistribution", {
       aliasConfiguration: {
         acmCertRef: certificate.certificateArn,
         names: [hostName],
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
       },
+      comment: hostName,
       defaultRootObject: "index.html",
       originConfigs: [
-        { behaviors: [{ isDefaultBehavior: true }], s3OriginSource: { originPath: "/master", s3BucketSource: bucket } },
+        {
+          behaviors: [{ isDefaultBehavior: true }],
+          s3OriginSource: { originAccessIdentity, originPath: "/master", s3BucketSource: bucket },
+        },
       ],
     })
 
