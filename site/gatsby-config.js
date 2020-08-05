@@ -15,7 +15,7 @@ const siteKeywords = ["anti", "card", "euchre", "game", "jeuchre", "trick"]
 
 module.exports = {
   plugins: [
-    {
+    /*    {
       options: {
         // Setting this parameter is also optional
         // respectDNT: true,
@@ -34,21 +34,30 @@ module.exports = {
       },
       resolve: "gatsby-plugin-google-analytics",
     },
-    // {
-    //   options: {
-    //     bucketName: process.env.BUCKET_NAME || "jeuchre.org",
-    //     bucketPrefix: process.env.BUCKET_PREFIX || "www",
-    //     hostName,
-    //     protocol,
-    //   },
-    //   resolve: "gatsby-plugin-s3",
-    // },
+    */
+    /*
+    {
+      options: {
+        bucketName: process.env.BUCKET_NAME || "jeuchre.org",
+        bucketPrefix: process.env.BUCKET_PREFIX || "www",
+        hostName,
+        protocol,
+      },
+      resolve: "gatsby-plugin-s3",
+    },
     {
       options: {
         name: "images",
         path: path.join(CWD, "src/images"),
       },
       resolve: "gatsby-source-filesystem",
+    },
+    */
+    {
+      options: {
+        trackingId: "UA-174557777-1",
+      },
+      resolve: "gatsby-plugin-gtag",
     },
     {
       options: {

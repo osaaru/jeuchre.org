@@ -7,6 +7,7 @@
     "gatsby": "^2.19.32",
     "gatsby-image": "^2.2.43",
     "gatsby-plugin-google-analytics": "^2.3.13",
+    "gatsby-plugin-gtag": "^1.0.13",
     "gatsby-plugin-manifest": "^2.2.44",
     "gatsby-plugin-offline": "^3.0.37",
     "gatsby-plugin-react-axe": "^0.4.0",
