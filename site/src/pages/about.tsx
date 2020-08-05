@@ -1,7 +1,7 @@
+import { RouteComponentProps } from "@reach/router"
+import { motion } from "framer-motion"
 import React from "react"
 import styled from "styled-components"
-import { motion } from "framer-motion"
-import { RouteComponentProps } from "@reach/router"
 import { Layout } from "../components/layout"
 import { SEO } from "../components/seo"
 
@@ -14,16 +14,16 @@ import { SEO } from "../components/seo"
   1. A basic styled component using the theme.
 */
 const StyledComponent1 = styled.p`
-  color: ${(props) => props.theme.colors.orange};
+  color: ${(props) => props.theme.colors.text};
   font-size: 1.2rem;
 `
 
 /*
-  2. A styled component that changes color based on the screen size 
+  2. A styled component that changes color based on the screen size
   using the theme.
 */
 const StyledComponent2 = styled.p`
-  color: ${({ theme }) => (theme.screens.sm ? theme.colors.blue : theme.colors.orange)};
+  color: ${({ theme }) => (theme.screens.sm ? theme.colors.marigold : theme.colors.text)};
   font-size: 1.2rem;
 `
 
@@ -33,7 +33,7 @@ const StyledComponent2 = styled.p`
 */
 
 const OrangeBlock = styled(motion.div)`
-  background: ${(props) => props.theme.colors.orange};
+  background: ${(props) => props.theme.colors.cambridgeBlue};
   height: 100px;
   width: 100px;
   border-radius: 10px;
@@ -42,7 +42,7 @@ const OrangeBlock = styled(motion.div)`
 
 /*
   4. A styled component that extends a framer-motion component.
-  (animation props applied in the styled-component definition 
+  (animation props applied in the styled-component definition
   via the attrs method)
 */
 const BlueBlock = styled(motion.div).attrs(() => ({
@@ -69,8 +69,8 @@ const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
   return (
     <Layout>
       <SEO
-        title="About gatsby-starter-template-deluxe"
         description="Examples using the gatsby-starter-template-deluxe."
+        title="About gatsby-starter-template-deluxe"
       />
       <h3>
         Hi, you are on the <code>{path}</code> page!

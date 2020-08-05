@@ -94,7 +94,7 @@ export class AppStack extends Stack {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: bucket,
       distribution,
-      sources: [Source.asset("../site/public", { exclude: ["!**/*.html"] })],
+      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
     })
   }
 }

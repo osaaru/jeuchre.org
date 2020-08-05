@@ -80,7 +80,7 @@ const CSSDebugger: React.FC<CSSDebuggerProps> = ({
     // eslint-disable-next-line no-param-reassign
     showToggle = location.port === "8000"
   }
-  console.log(showToggle)
+
   const maybeRenderToggleButton = showToggle && (
     <ToggleDebugButton debug={isDebug} onTap={toggle} style={buttonStyle}>
       Debug CSS
