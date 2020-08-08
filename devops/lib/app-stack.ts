@@ -40,6 +40,7 @@ export class AppStack extends Stack {
 
     const prodBucket = new Bucket(this, "ProdBucket", {
       bucketName: prodHostName,
+      publicReadAccess: true,
       removalPolicy: RemovalPolicy.DESTROY,
       websiteErrorDocument: "404.html",
       websiteIndexDocument: "index.html",
@@ -81,32 +82,56 @@ export class AppStack extends Stack {
       errorResponses: [{ httpStatus: 403, responseHttpStatus: 404, responsePagePath: "/404.html" }],
     })
 */
-    /*
-    const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
-    bucket.grantRead(originAccessIdentity)
-    const distribution = new CloudFrontWebDistribution(this, "CloudfrontWebDistribution", {
+
+    const productionDistribution = new CloudFrontWebDistribution(this, "ProductionWebDistribution", {
       aliasConfiguration: {
-        acmCertRef: certificate.certificateArn,
-        names: [hostName],
+        acmCertRef: prodCertificate.certificateArn,
+        names: [prodHostName],
         securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
       },
-      comment: hostName,
+      comment: prodHostName,
+      defaultRootObject: "index.html",
+      errorConfigurations: [
+        // {
+        //   errorCode: 403,
+        //   responseCode: 404,
+        //   responsePagePath: "/404.html",
+        // },
+      ],
+      originConfigs: [
+        {
+          behaviors: [{ isDefaultBehavior: true }],
+          s3OriginSource: { s3BucketSource: prodBucket },
+        },
+      ],
+    })
+
+    const stagingOriginAccessIdentity = new OriginAccessIdentity(this, "StagingOriginAccessIdentity", {
+      comment: stagingHostName,
+    })
+    stagingBucket.grantRead(stagingOriginAccessIdentity)
+    const stagingDistribution = new CloudFrontWebDistribution(this, "StagingWebDistribution", {
+      aliasConfiguration: {
+        acmCertRef: stagingCertificate.certificateArn,
+        names: [stagingHostName],
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
+      },
+      comment: stagingHostName,
       defaultRootObject: "index.html",
       errorConfigurations: [
         {
-          errorCode: 404,
-          responseCode: 200,
+          errorCode: 403,
+          responseCode: 404,
           responsePagePath: "/404.html",
         },
       ],
       originConfigs: [
         {
           behaviors: [{ isDefaultBehavior: true }],
-          s3OriginSource: { originAccessIdentity, s3BucketSource: bucket },
+          s3OriginSource: { originAccessIdentity: stagingOriginAccessIdentity, s3BucketSource: stagingBucket },
         },
       ],
     })
-*/
 
     //   const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
     //     recordName: prodHostName,

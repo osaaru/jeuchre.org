@@ -55,6 +55,12 @@ module.exports = {
     */
     {
       options: {
+        siteUrl,
+      },
+      resolve: "gatsby-plugin-canonical-urls",
+    },
+    {
+      options: {
         trackingId: "UA-174557777-1",
       },
       resolve: "gatsby-plugin-gtag",
