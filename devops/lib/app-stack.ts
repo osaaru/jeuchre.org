@@ -57,7 +57,7 @@ export class AppStack extends Stack {
     })
 
     const stagingCertificate = new Certificate(this, "StagingCertificate", {
-      domainName: prodHostName,
+      domainName: stagingHostName,
       validation: CertificateValidation.fromDns(zone),
     })
 
