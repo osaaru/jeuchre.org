@@ -7,6 +7,7 @@ import {
   OriginAccessIdentity,
   SSLMethod,
   SecurityPolicyProtocol,
+  ViewerProtocolPolicy,
 } from "@aws-cdk/aws-cloudfront"
 import { S3Origin } from "@aws-cdk/aws-cloudfront-origins"
 import { ARecord, PublicHostedZone, RecordTarget } from "@aws-cdk/aws-route53"
@@ -60,17 +61,26 @@ export class AppStack extends Stack {
     })
 
     // TODO: The new hotness is Distribution but it doesn't appear to be complete yet
+    /*
     const prodDistribution = new Distribution(this, "ProdDistribution", {
       certificate: prodCertificate,
-      defaultBehavior: { origin: new S3Origin(prodBucket) },
+      defaultBehavior: {
+        compress: true,
+        origin: new S3Origin(prodBucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      },
     })
 
     const stagingDistribution = new Distribution(this, "StagingDistribution", {
       certificate: stagingCertificate,
-      defaultBehavior: { origin: new S3Origin(stagingBucket) },
+      defaultBehavior: {
+        compress: true,
+        origin: new S3Origin(stagingBucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      },
       errorResponses: [{ httpStatus: 403, responseHttpStatus: 404, responsePagePath: "/404.html" }],
     })
-
+*/
     /*
     const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
     bucket.grantRead(originAccessIdentity)
@@ -97,30 +107,31 @@ export class AppStack extends Stack {
       ],
     })
 */
-    const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
-      recordName: prodHostName,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(prodDistribution)),
-      zone,
-    })
 
-    const stagingDnsRecord = new ARecord(this, "StagingDnsRecord", {
-      recordName: stagingHostName,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(stagingDistribution)),
-      zone,
-    })
+    //   const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
+    //     recordName: prodHostName,
+    //     target: RecordTarget.fromAlias(new CloudFrontTarget(prodDistribution)),
+    //     zone,
+    //   })
 
-    const notHtmlBucketDeployment = new BucketDeployment(this, "DeployNonHtml", {
-      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-      destinationBucket: stagingBucket,
-      distribution: stagingDistribution,
-      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    })
+    //   const stagingDnsRecord = new ARecord(this, "StagingDnsRecord", {
+    //     recordName: stagingHostName,
+    //     target: RecordTarget.fromAlias(new CloudFrontTarget(stagingDistribution)),
+    //     zone,
+    //   })
 
-    const htmlBucketDeployment = new BucketDeployment(this, "DeployHtml", {
-      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-      destinationBucket: stagingBucket,
-      distribution: stagingDistribution,
-      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
-    })
+    //   const notHtmlBucketDeployment = new BucketDeployment(this, "DeployNonHtml", {
+    //     cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+    //     destinationBucket: stagingBucket,
+    //     distribution: stagingDistribution,
+    //     sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
+    //   })
+
+    //   const htmlBucketDeployment = new BucketDeployment(this, "DeployHtml", {
+    //     cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+    //     destinationBucket: stagingBucket,
+    //     distribution: stagingDistribution,
+    //     sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
+    //   })
   }
 }
