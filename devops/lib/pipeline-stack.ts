@@ -12,6 +12,8 @@ interface AppStageProps extends StageProps {
   distributionDomainName?: string
   distributionId?: string
   domainName: string
+  prodHostName: string
+  stagingHostName: string
 }
 
 export class AppStage extends Stage {
@@ -20,7 +22,7 @@ export class AppStage extends Stage {
   constructor(scope: Construct, id: string, props: AppStageProps) {
     super(scope, id, props)
 
-    const { branchName, distributionDomainName, distributionId, domainName } = props
+    const { branchName, distributionDomainName, distributionId, domainName, prodHostName, stagingHostName } = props
 
     this.appStack = new AppStack(this, id, {
       branchName,
@@ -28,21 +30,25 @@ export class AppStage extends Stage {
       distributionId,
       domainName,
       env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+      prodHostName,
       stackName: `jeuchre-org-${id}`,
+      stagingHostName,
     })
   }
 }
 
 interface PipelineStackProps extends StackProps {
   domainName: string
+  prodHostName: string
   resourcesStack: ResourcesStack
+  stagingHostName: string
 }
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const { domainName, resourcesStack } = props
+    const { domainName, prodHostName, stagingHostName } = props
 
     const sourceArtifact = new Artifact("source")
     const appBuildArtifact = new Artifact("appBuild")
@@ -63,7 +69,7 @@ export class PipelineStack extends Stack {
     })
 
     const environmentVariables = {
-      APP_HOST_NAME: { value: `${sourceAction.variables.branchName}.${domainName}` },
+      // APP_HOST_NAME: { value: `${sourceAction.variables.branchName}.${domainName}` },
       BRANCH_NAME: { value: sourceAction.variables.branchName },
       DOMAIN_NAME: { value: domainName },
     }
@@ -89,6 +95,8 @@ export class PipelineStack extends Stack {
       // distributionId: resourcesStack.distributionId.value,
       domainName,
       env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+      prodHostName,
+      stagingHostName,
     }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)
 

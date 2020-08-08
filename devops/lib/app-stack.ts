@@ -20,14 +20,15 @@ interface AppStackProps extends StackProps {
   distributionDomainName?: string
   distributionId?: string
   domainName: string
+  prodHostName: string
+  stagingHostName: string
 }
 
 export class AppStack extends Stack {
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props)
 
-    const { branchName, domainName } = props
-    const hostName = `${branchName === "prod" ? "www" : branchName}.${domainName}`
+    const { branchName, domainName, prodHostName, stagingHostName } = props
 
     const zoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 
@@ -36,22 +37,41 @@ export class AppStack extends Stack {
       zoneName: domainName,
     })
 
-    const bucket = new Bucket(this, "S3Bucket", {
-      bucketName: hostName,
+    const prodBucket = new Bucket(this, "ProdBucket", {
+      bucketName: prodHostName,
+      removalPolicy: RemovalPolicy.DESTROY,
+      websiteErrorDocument: "404.html",
+      websiteIndexDocument: "index.html",
+    })
+
+    const stagingBucket = new Bucket(this, "StagingBucket", {
+      bucketName: stagingHostName,
       removalPolicy: RemovalPolicy.DESTROY,
     })
 
-    const certificate = new Certificate(this, "Certificate", {
-      domainName: hostName,
+    const prodCertificate = new Certificate(this, "ProdCertificate", {
+      domainName: prodHostName,
+      validation: CertificateValidation.fromDns(zone),
+    })
+
+    const stagingCertificate = new Certificate(this, "StagingCertificate", {
+      domainName: prodHostName,
       validation: CertificateValidation.fromDns(zone),
     })
 
     // TODO: The new hotness is Distribution but it doesn't appear to be complete yet
-    // const distribution = new Distribution(this, "Distribution", {
-    //   certificate,
-    //   defaultBehavior: { origin: new S3Origin(bucket) },
-    // })
+    const prodDistribution = new Distribution(this, "ProdDistribution", {
+      certificate: prodCertificate,
+      defaultBehavior: { origin: new S3Origin(prodBucket) },
+    })
 
+    const stagingDistribution = new Distribution(this, "StagingDistribution", {
+      certificate: stagingCertificate,
+      defaultBehavior: { origin: new S3Origin(stagingBucket) },
+      errorResponses: [{ httpStatus: 403, responseHttpStatus: 404, responsePagePath: "/404.html" }],
+    })
+
+    /*
     const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity", { comment: hostName })
     bucket.grantRead(originAccessIdentity)
     const distribution = new CloudFrontWebDistribution(this, "CloudfrontWebDistribution", {
@@ -76,24 +96,30 @@ export class AppStack extends Stack {
         },
       ],
     })
+*/
+    const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
+      recordName: prodHostName,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(prodDistribution)),
+      zone,
+    })
 
-    const dnsRecord = new ARecord(this, "DnsRecord", {
-      recordName: hostName,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+    const stagingDnsRecord = new ARecord(this, "StagingDnsRecord", {
+      recordName: stagingHostName,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(stagingDistribution)),
       zone,
     })
 
     const notHtmlBucketDeployment = new BucketDeployment(this, "DeployNonHtml", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-      destinationBucket: bucket,
-      distribution,
+      destinationBucket: stagingBucket,
+      distribution: stagingDistribution,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
     const htmlBucketDeployment = new BucketDeployment(this, "DeployHtml", {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-      destinationBucket: bucket,
-      distribution,
+      destinationBucket: stagingBucket,
+      distribution: stagingDistribution,
       sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
     })
   }
