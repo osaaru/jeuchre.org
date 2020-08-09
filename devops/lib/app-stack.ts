@@ -83,7 +83,7 @@ export class AppStack extends Stack {
     })
 */
 
-    const productionDistribution = new CloudFrontWebDistribution(this, "ProductionWebDistribution", {
+    const prodDistribution = new CloudFrontWebDistribution(this, "ProductionWebDistribution", {
       aliasConfiguration: {
         acmCertRef: prodCertificate.certificateArn,
         names: [prodHostName],
@@ -133,30 +133,44 @@ export class AppStack extends Stack {
       ],
     })
 
-    //   const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
-    //     recordName: prodHostName,
-    //     target: RecordTarget.fromAlias(new CloudFrontTarget(prodDistribution)),
-    //     zone,
-    //   })
+    const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
+      recordName: prodHostName,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(prodDistribution)),
+      zone,
+    })
 
-    //   const stagingDnsRecord = new ARecord(this, "StagingDnsRecord", {
-    //     recordName: stagingHostName,
-    //     target: RecordTarget.fromAlias(new CloudFrontTarget(stagingDistribution)),
-    //     zone,
-    //   })
+    const stagingDnsRecord = new ARecord(this, "StagingDnsRecord", {
+      recordName: stagingHostName,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(stagingDistribution)),
+      zone,
+    })
 
-    //   const notHtmlBucketDeployment = new BucketDeployment(this, "DeployNonHtml", {
-    //     cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-    //     destinationBucket: stagingBucket,
-    //     distribution: stagingDistribution,
-    //     sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    //   })
+    const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdDeployNonHtml", {
+      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+      destinationBucket: prodBucket,
+      distribution: prodDistribution,
+      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
+    })
 
-    //   const htmlBucketDeployment = new BucketDeployment(this, "DeployHtml", {
-    //     cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-    //     destinationBucket: stagingBucket,
-    //     distribution: stagingDistribution,
-    //     sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
-    //   })
+    const prodHtmlBucketDeployment = new BucketDeployment(this, "ProdDeployHtml", {
+      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+      destinationBucket: prodBucket,
+      distribution: prodDistribution,
+      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
+    })
+
+    const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingDeployNonHtml", {
+      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+      destinationBucket: stagingBucket,
+      distribution: stagingDistribution,
+      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
+    })
+
+    const stagingHtmlBucketDeployment = new BucketDeployment(this, "StagingDeployHtml", {
+      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+      destinationBucket: stagingBucket,
+      distribution: stagingDistribution,
+      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
+    })
   }
 }
