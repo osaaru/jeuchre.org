@@ -145,31 +145,33 @@ export class AppStack extends Stack {
       zone,
     })
 
-    const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdDeployNonHtml", {
+    const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdNotHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: prodBucket,
       distribution: prodDistribution,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
-    const prodHtmlBucketDeployment = new BucketDeployment(this, "ProdDeployHtml", {
+    const prodHtmlBucketDeployment = new BucketDeployment(this, "ProdHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: prodBucket,
       distribution: prodDistribution,
+      distributionPaths: ["/*"],
       sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
     })
 
-    const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingDeployNonHtml", {
+    const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingNotHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: stagingBucket,
       distribution: stagingDistribution,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
-    const stagingHtmlBucketDeployment = new BucketDeployment(this, "StagingDeployHtml", {
+    const stagingHtmlBucketDeployment = new BucketDeployment(this, "StagingHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: stagingBucket,
       distribution: stagingDistribution,
+      distributionPaths: ["/*"],
       sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
     })
   }
