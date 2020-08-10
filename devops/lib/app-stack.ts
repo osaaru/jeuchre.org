@@ -145,36 +145,46 @@ export class AppStack extends Stack {
       zone,
     })
 
-    const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdNotHtmlDeployment", {
-      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-      destinationBucket: prodBucket,
-      prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    })
+    // This strategy does not work
+    // const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdNotHtmlDeployment", {
+    //   cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+    //   destinationBucket: prodBucket,
+    //   prune: false,
+    //   sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
+    // })
 
-    const prodHtmlBucketDeployment = new BucketDeployment(this, "ProdHtmlDeployment", {
-      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+    // const prodHtmlBucketDeployment = new BucketDeployment(this, "ProdHtmlDeployment", {
+    //   cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+    //   destinationBucket: prodBucket,
+    //   distribution: prodDistribution,
+    //   distributionPaths: ["/*"],
+    //   prune: false,
+    //   sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
+    // })
+
+    // const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingNotHtmlDeployment", {
+    //   cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+    //   destinationBucket: stagingBucket,
+    //   prune: false,
+    //   sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
+    // })
+
+    // const stagingHtmlBucketDeployment = new BucketDeployment(this, "StagingHtmlDeployment", {
+    //   cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+    //   destinationBucket: stagingBucket,
+    //   distribution: stagingDistribution,
+    //   distributionPaths: ["/*"],
+    //   prune: false,
+    //   sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
+    // })
+
+    const prodBucketDeployment = new BucketDeployment(this, "ProdDeployment", {
+      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: prodBucket,
       distribution: prodDistribution,
       distributionPaths: ["/*"],
       prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
-    })
-
-    const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingNotHtmlDeployment", {
-      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-      destinationBucket: stagingBucket,
-      prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    })
-
-    const stagingHtmlBucketDeployment = new BucketDeployment(this, "StagingHtmlDeployment", {
-      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-      destinationBucket: stagingBucket,
-      distribution: stagingDistribution,
-      distributionPaths: ["/*"],
-      prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
+      sources: [Source.asset("../site/public")],
     })
   }
 }
