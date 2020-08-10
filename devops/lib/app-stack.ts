@@ -155,7 +155,7 @@ export class AppStack extends Stack {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: prodBucket,
       distribution: prodDistribution,
-      distributionPaths: ["*"],
+      distributionPaths: ["/*"],
       sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
     })
 
@@ -169,7 +169,7 @@ export class AppStack extends Stack {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: stagingBucket,
       distribution: stagingDistribution,
-      distributionPaths: ["*"],
+      distributionPaths: ["/*"],
       sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
     })
   }
