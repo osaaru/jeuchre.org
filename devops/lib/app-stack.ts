@@ -148,6 +148,7 @@ export class AppStack extends Stack {
     const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdNotHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: prodBucket,
+      prune: false,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
@@ -156,12 +157,14 @@ export class AppStack extends Stack {
       destinationBucket: prodBucket,
       distribution: prodDistribution,
       distributionPaths: ["/*"],
+      prune: false,
       sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
     })
 
     const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingNotHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: stagingBucket,
+      prune: false,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
@@ -170,6 +173,7 @@ export class AppStack extends Stack {
       destinationBucket: stagingBucket,
       distribution: stagingDistribution,
       distributionPaths: ["/*"],
+      prune: false,
       sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
     })
   }
