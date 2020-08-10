@@ -148,7 +148,6 @@ export class AppStack extends Stack {
     const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdNotHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: prodBucket,
-      distribution: prodDistribution,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
@@ -156,14 +155,13 @@ export class AppStack extends Stack {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: prodBucket,
       distribution: prodDistribution,
-      distributionPaths: ["/*"],
-      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
+      distributionPaths: ["*"],
+      sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
     })
 
     const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingNotHtmlDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: stagingBucket,
-      distribution: stagingDistribution,
       sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
 
@@ -171,8 +169,8 @@ export class AppStack extends Stack {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: stagingBucket,
       distribution: stagingDistribution,
-      distributionPaths: ["/*"],
-      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
+      distributionPaths: ["*"],
+      sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
     })
   }
 }
