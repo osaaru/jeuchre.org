@@ -2,10 +2,9 @@ import { createGlobalStyle } from "styled-components"
 
 const GlobalStyles = createGlobalStyle`
   body {
-    margin: 0;
-    padding: 0;
-    background: ${(props) => props.theme.colors.spanishGreen};
-    color: white;
+    background-color: #f8ffff;
+    margin: 0px;
+    padding: 0px;
   }
   html {
     font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;

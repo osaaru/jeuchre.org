@@ -101,6 +101,11 @@ module.exports = {
     description: siteDescription,
     image: siteImage,
     keywords: siteKeywords,
+    menuLinks: [
+      { name: "Home", url: "/" },
+      { name: "Rules", url: "/rules" },
+      { name: "About", url: "/about" },
+    ],
     title: siteTitle,
     url: siteUrl,
   },

@@ -2,6 +2,7 @@ import { RouteComponentProps } from "@reach/router"
 import { motion } from "framer-motion"
 import React from "react"
 import styled from "styled-components"
+
 import { Layout } from "../components/layout"
 import { SEO } from "../components/seo"
 
@@ -68,7 +69,7 @@ const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
   const path = location.pathname
   return (
     <Layout>
-      <SEO
+      {/* <SEO
         description="Examples using the gatsby-starter-template-deluxe."
         title="About gatsby-starter-template-deluxe"
       />
@@ -82,7 +83,8 @@ const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
       <BlocksWrapper>
         <OrangeBlock animate={{ rotate: 360 }} transition={{ duration: 2 }} whileHover={{ rotate: 1.1 }} />
         <BlueBlock />
-      </BlocksWrapper>
+      </BlocksWrapper> */}
+      <p>How did Jeuchre get started? This page is gonna let you know soon...</p>
     </Layout>
   )
 }

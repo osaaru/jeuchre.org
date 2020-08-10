@@ -1,9 +1,10 @@
-export { GlobalStyles } from "./global-styles"
-import { useContext } from "react"
-import { ThemeContext, DefaultTheme } from "styled-components"
-import media from "use-media"
-import themeObject from "./theme"
 import "modern-css-reset/dist/reset.min.css"
+import { useContext } from "react"
+import { DefaultTheme, ThemeContext } from "styled-components"
+import media from "use-media"
+
+export { GlobalStyles } from "./global-styles"
+import themeObject from "./theme"
 
 type DefaultThemeObject = Omit<typeof themeObject, "screens"> & {
   screens: {
