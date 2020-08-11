@@ -7,7 +7,19 @@ import { CdkPipeline, ShellScriptAction, SimpleSynthAction } from "@aws-cdk/pipe
 import { AppStack } from "./app-stack"
 import { ResourcesStack } from "./resources-stack"
 
-interface AppStageProps extends StageProps {
+interface AppBuildStageProps extends StageProps {
+  hostName: string
+}
+
+export class AppBuildStage extends Stage {
+  public readonly appStack: AppStack
+
+  constructor(scope: Construct, id: string, props: AppBuildStageProps) {
+    super(scope, id, props)
+  }
+}
+
+interface AppDeployStageProps extends StageProps {
   branchName: string
   distributionDomainName?: string
   distributionId?: string
@@ -16,10 +28,10 @@ interface AppStageProps extends StageProps {
   stagingHostName: string
 }
 
-export class AppStage extends Stage {
+export class AppDeployStage extends Stage {
   public readonly appStack: AppStack
 
-  constructor(scope: Construct, id: string, props: AppStageProps) {
+  constructor(scope: Construct, id: string, props: AppDeployStageProps) {
     super(scope, id, props)
 
     const { branchName, distributionDomainName, distributionId, domainName, prodHostName, stagingHostName } = props
@@ -89,6 +101,20 @@ export class PipelineStack extends Stack {
       }),
     })
 
+    const nextBuildStage = new AppBuildStage(this, "app-build-next", {
+      env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+      hostName: prodHostName,
+    })
+    const nextBuildPipelineStage = pipeline.addApplicationStage(nextBuildStage)
+    nextBuildPipelineStage.addActions(
+      new ShellScriptAction({
+        actionName: "build-next",
+        additionalArtifacts: [sourceArtifact],
+        commands: ["env", "ls"],
+      }),
+    )
+
+    /*
     const appStage = new AppStage(this, "deploy", {
       branchName,
       // distributionDomainName: resourcesStack.distributionDomainName.value,
@@ -99,6 +125,7 @@ export class PipelineStack extends Stack {
       stagingHostName,
     }) // TODO: Use branch name
     const appPipelineStage = pipeline.addApplicationStage(appStage)
+*/
 
     // const buildAction = new ShellScriptAction({
     //   actionName: "appBuild",
