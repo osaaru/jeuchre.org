@@ -8,7 +8,7 @@ import { AppStack } from "./app-stack"
 import { ResourcesStack } from "./resources-stack"
 
 interface AppDeployStageProps extends StageProps {
-  branchName: string
+  deploymentName: string
   domainName: string
   hostName: string
 }
@@ -22,13 +22,14 @@ export class AppDeployStage extends Stage {
     this.appStack = new AppStack(this, id, {
       ...props,
       env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
-      stackName: `jeuchre-org-${props.branchName}`,
+      stackName: `jeuchre-org-${props.deploymentName}`,
     })
   }
 }
 
 interface PipelineStackProps extends StackProps {
   branchName: string
+  deploymentName: string
   domainName: string
   resourcesStack: ResourcesStack
 }
@@ -37,8 +38,8 @@ export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const { branchName, domainName, resourcesStack } = props
-    const hostName = `${branchName}.${domainName}`
+    const { branchName, deploymentName, domainName, resourcesStack } = props
+    const hostName = `${deploymentName}.${domainName}`
 
     const sourceArtifact = new Artifact("source")
     const appBuildArtifact = new Artifact("appBuild")
@@ -58,13 +59,13 @@ export class PipelineStack extends Stack {
 
     const environmentVariables = {
       APP_HOST_NAME: { value: hostName },
-      BRANCH_NAME: { value: branchName },
+      DEPLOYMENT_NAME: { value: deploymentName },
       DOMAIN_NAME: { value: domainName },
     }
 
-    const pipeline = new CdkPipeline(this, `JeuchreOrgCodePipeline-${branchName}`, {
+    const pipeline = new CdkPipeline(this, `JeuchreOrgCodePipeline-${deploymentName}`, {
       cloudAssemblyArtifact,
-      pipelineName: `jeuchre-org-${branchName}`,
+      pipelineName: `jeuchre-org-${deploymentName}`,
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
         additionalArtifacts: [{ artifact: appBuildArtifact, directory: "../site/public" }],
@@ -77,7 +78,7 @@ export class PipelineStack extends Stack {
     })
 
     const appDeployStage = new AppDeployStage(this, "deploy", {
-      branchName,
+      deploymentName,
       domainName,
       env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
       hostName,

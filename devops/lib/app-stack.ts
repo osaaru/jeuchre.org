@@ -17,7 +17,7 @@ import { BucketDeployment, CacheControl, Source } from "@aws-cdk/aws-s3-deployme
 import { CfnOutput, Construct, RemovalPolicy, Stack, StackProps } from "@aws-cdk/core"
 
 interface AppStackProps extends StackProps {
-  branchName: string
+  deploymentName: string
   domainName: string
   hostName: string
 }
@@ -26,7 +26,7 @@ export class AppStack extends Stack {
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props)
 
-    const { branchName, domainName, hostName } = props
+    const { deploymentName, domainName, hostName } = props
 
     const zoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 

@@ -25,6 +25,7 @@ const resourcesStack = new ResourcesStack(app, "jeuchre-org-resources", {
 
 const nextPipelineStack = new PipelineStack(app, "jeuchre-org-pipeline-next", {
   branchName: "prod",
+  deploymentName: "next",
   domainName,
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
   resourcesStack,
