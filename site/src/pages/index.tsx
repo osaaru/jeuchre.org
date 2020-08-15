@@ -27,7 +27,7 @@ const App = () => {
     <Layout>
       <Tagline>{description}</Tagline>
       <br />
-      <p>More to come. Stay tuned...</p>
+      <p>More to come. Soon. Stay tuned...</p>
     </Layout>
   )
 }
