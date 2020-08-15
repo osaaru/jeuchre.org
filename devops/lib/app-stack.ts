@@ -48,41 +48,31 @@ export class AppStack extends Stack {
       validation: CertificateValidation.fromDns(zone),
     })
 
-    // TODO: The new hotness is Distribution but it doesn't appear to be complete yet
-    const distribution = new Distribution(this, "Distribution", {
-      certificate: certificate,
-      comment: hostName,
-      defaultBehavior: {
-        compress: true,
-        origin: new S3Origin(bucket),
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      },
-    })
+    // TODO: The new hotness is Distribution but it doesn't support CNAME aliases yet https://github.com/aws/aws-cdk/issues/9430
+    // const distribution = new Distribution(this, "Distribution", {
+    //   certificate: certificate,
+    //   comment: hostName,
+    //   defaultBehavior: {
+    //     compress: true,
+    //     origin: new S3Origin(bucket),
+    //     viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+    //   },
+    // })
 
-    /*
-    const prodDistribution = new CloudFrontWebDistribution(this, "ProductionWebDistribution", {
+    const distribution = new CloudFrontWebDistribution(this, "CloudFrontWebDistribution", {
       aliasConfiguration: {
-        acmCertRef: prodCertificate.certificateArn,
-        names: [prodHostName],
+        acmCertRef: certificate.certificateArn,
+        names: [hostName],
         securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
       },
-      comment: prodHostName,
-      defaultRootObject: "index.html",
-      errorConfigurations: [
-        // {
-        //   errorCode: 403,
-        //   responseCode: 404,
-        //   responsePagePath: "/404.html",
-        // },
-      ],
+      comment: hostName,
       originConfigs: [
         {
           behaviors: [{ isDefaultBehavior: true }],
-          s3OriginSource: { s3BucketSource: prodBucket },
+          s3OriginSource: { s3BucketSource: bucket },
         },
       ],
     })
-*/
 
     /*
     const stagingOriginAccessIdentity = new OriginAccessIdentity(this, "StagingOriginAccessIdentity", {

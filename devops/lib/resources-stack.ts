@@ -9,7 +9,6 @@ import { CfnOutput, Construct, RemovalPolicy, Stack, StackProps } from "@aws-cdk
 interface ResourcesStackProps extends StackProps {
   domainName: string
   prodHostName: string
-  stagingHostName: string
 }
 
 export class ResourcesStack extends Stack {
@@ -20,7 +19,7 @@ export class ResourcesStack extends Stack {
   constructor(scope: Construct, id: string, props: ResourcesStackProps) {
     super(scope, id, props)
 
-    const { domainName, prodHostName, stagingHostName } = props
+    const { domainName, prodHostName } = props
 
     const hostedZoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 

@@ -31,6 +31,7 @@ interface PipelineStackProps extends StackProps {
   branchName: string
   deploymentName: string
   domainName: string
+  hostName: string
   resourcesStack: ResourcesStack
 }
 
@@ -38,8 +39,7 @@ export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props)
 
-    const { branchName, deploymentName, domainName, resourcesStack } = props
-    const hostName = `${deploymentName}.${domainName}`
+    const { branchName, deploymentName, domainName, hostName, resourcesStack } = props
 
     const sourceArtifact = new Artifact("source")
     const appBuildArtifact = new Artifact("appBuild")

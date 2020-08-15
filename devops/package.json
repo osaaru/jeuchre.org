@@ -29,7 +29,7 @@
   "name": "@jeuchre/jeuchre-org-devops",
   "scripts": {
     "build": "cdk build",
-    "deploy": "cdk deploy jeuchre-org-resources jeuchre-org-pipeline-next",
+    "deploy": "cdk deploy jeuchre-org-resources jeuchre-org-pipeline-next jeuchre-org-pipeline-prod",
     "lint": "yarn lint:js",
     "lint:js": "eslint .",
     "lint:js:fix": "eslint . --fix",

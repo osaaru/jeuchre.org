@@ -11,7 +11,6 @@ config({ path: process.env.ENVFILE })
 
 const domainName = "jeuchre.org"
 const prodHostName = "www.jeuchre.org"
-const stagingHostName = "staging.jeuchre.org"
 
 const app = new App()
 
@@ -20,7 +19,6 @@ const resourcesStack = new ResourcesStack(app, "jeuchre-org-resources", {
   // Forced to us-east-1 because certificate validation only works in us-east-1
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
   prodHostName,
-  stagingHostName,
 })
 
 const nextPipelineStack = new PipelineStack(app, "jeuchre-org-pipeline-next", {
@@ -28,8 +26,19 @@ const nextPipelineStack = new PipelineStack(app, "jeuchre-org-pipeline-next", {
   deploymentName: "next",
   domainName,
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+  hostName: "next.jeuchre.org",
   resourcesStack,
 })
 nextPipelineStack.addDependency(resourcesStack)
+
+const prodPipelineStack = new PipelineStack(app, "jeuchre-org-pipeline-prod", {
+  branchName: "prod",
+  deploymentName: "prod",
+  domainName,
+  env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
+  hostName: prodHostName,
+  resourcesStack,
+})
+prodPipelineStack.addDependency(resourcesStack)
 
 app.synth()
