@@ -23,13 +23,12 @@ const resourcesStack = new ResourcesStack(app, "jeuchre-org-resources", {
   stagingHostName,
 })
 
-const pipelineStack = new PipelineStack(app, "jeuchre-org-pipeline", {
+const nextPipelineStack = new PipelineStack(app, "jeuchre-org-pipeline-next", {
+  branchName: "prod",
   domainName,
   env: { account: process.env.APP_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT, region: "us-east-1" },
-  prodHostName,
   resourcesStack,
-  stagingHostName,
 })
-pipelineStack.addDependency(resourcesStack)
+nextPipelineStack.addDependency(resourcesStack)
 
 app.synth()

@@ -18,18 +18,15 @@ import { CfnOutput, Construct, RemovalPolicy, Stack, StackProps } from "@aws-cdk
 
 interface AppStackProps extends StackProps {
   branchName: string
-  distributionDomainName?: string
-  distributionId?: string
   domainName: string
-  prodHostName: string
-  stagingHostName: string
+  hostName: string
 }
 
 export class AppStack extends Stack {
   constructor(scope: Construct, id: string, props: AppStackProps) {
     super(scope, id, props)
 
-    const { branchName, domainName, prodHostName, stagingHostName } = props
+    const { branchName, domainName, hostName } = props
 
     const zoneProxy = PublicHostedZone.fromLookup(this, "HostedZoneProxy", { domainName })
 
@@ -38,51 +35,31 @@ export class AppStack extends Stack {
       zoneName: domainName,
     })
 
-    const prodBucket = new Bucket(this, "ProdBucket", {
-      bucketName: prodHostName,
+    const bucket = new Bucket(this, "Bucket", {
+      bucketName: hostName,
       publicReadAccess: true,
       removalPolicy: RemovalPolicy.DESTROY,
       websiteErrorDocument: "404.html",
       websiteIndexDocument: "index.html",
     })
 
-    const stagingBucket = new Bucket(this, "StagingBucket", {
-      bucketName: stagingHostName,
-      removalPolicy: RemovalPolicy.DESTROY,
-    })
-
-    const prodCertificate = new Certificate(this, "ProdCertificate", {
-      domainName: prodHostName,
-      validation: CertificateValidation.fromDns(zone),
-    })
-
-    const stagingCertificate = new Certificate(this, "StagingCertificate", {
-      domainName: stagingHostName,
+    const certificate = new Certificate(this, "Certificate", {
+      domainName: hostName,
       validation: CertificateValidation.fromDns(zone),
     })
 
     // TODO: The new hotness is Distribution but it doesn't appear to be complete yet
+    const distribution = new Distribution(this, "Distribution", {
+      certificate: certificate,
+      comment: hostName,
+      defaultBehavior: {
+        compress: true,
+        origin: new S3Origin(bucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      },
+    })
+
     /*
-    const prodDistribution = new Distribution(this, "ProdDistribution", {
-      certificate: prodCertificate,
-      defaultBehavior: {
-        compress: true,
-        origin: new S3Origin(prodBucket),
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      },
-    })
-
-    const stagingDistribution = new Distribution(this, "StagingDistribution", {
-      certificate: stagingCertificate,
-      defaultBehavior: {
-        compress: true,
-        origin: new S3Origin(stagingBucket),
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      },
-      errorResponses: [{ httpStatus: 403, responseHttpStatus: 404, responsePagePath: "/404.html" }],
-    })
-*/
-
     const prodDistribution = new CloudFrontWebDistribution(this, "ProductionWebDistribution", {
       aliasConfiguration: {
         acmCertRef: prodCertificate.certificateArn,
@@ -105,7 +82,9 @@ export class AppStack extends Stack {
         },
       ],
     })
+*/
 
+    /*
     const stagingOriginAccessIdentity = new OriginAccessIdentity(this, "StagingOriginAccessIdentity", {
       comment: stagingHostName,
     })
@@ -132,59 +111,37 @@ export class AppStack extends Stack {
         },
       ],
     })
-
-    const prodDnsRecord = new ARecord(this, "ProdDnsRecord", {
-      recordName: prodHostName,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(prodDistribution)),
+*/
+    const dnsRecord = new ARecord(this, "DnsRecord", {
+      recordName: hostName,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
       zone,
     })
 
-    const stagingDnsRecord = new ARecord(this, "StagingDnsRecord", {
-      recordName: stagingHostName,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(stagingDistribution)),
-      zone,
-    })
-
+    // Deployments run in parallel
     // This strategy does not work
-    // const prodNotHtmlBucketDeployment = new BucketDeployment(this, "ProdNotHtmlDeployment", {
-    //   cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-    //   destinationBucket: prodBucket,
-    //   prune: false,
-    //   sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    // })
-
-    // const prodHtmlBucketDeployment = new BucketDeployment(this, "ProdHtmlDeployment", {
-    //   cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-    //   destinationBucket: prodBucket,
-    //   distribution: prodDistribution,
-    //   distributionPaths: ["/*"],
-    //   prune: false,
-    //   sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
-    // })
-
-    // const stagingNotHtmlBucketDeployment = new BucketDeployment(this, "StagingNotHtmlDeployment", {
-    //   cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-    //   destinationBucket: stagingBucket,
-    //   prune: false,
-    //   sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    // })
-
-    // const stagingHtmlBucketDeployment = new BucketDeployment(this, "StagingHtmlDeployment", {
-    //   cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-    //   destinationBucket: stagingBucket,
-    //   distribution: stagingDistribution,
-    //   distributionPaths: ["/*"],
-    //   prune: false,
-    //   sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
-    // })
-
-    const prodBucketDeployment = new BucketDeployment(this, "ProdDeployment", {
+    const notHtmlBucketDeployment = new BucketDeployment(this, "NotHtmlBucketDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-      destinationBucket: prodBucket,
-      distribution: prodDistribution,
-      distributionPaths: ["/*"],
+      destinationBucket: bucket,
       prune: false,
-      sources: [Source.asset("../site/public")],
+      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
     })
+
+    const htmlBucketDeployment = new BucketDeployment(this, "HtmlBucketDeployment", {
+      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+      destinationBucket: bucket,
+      prune: false,
+      sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
+    })
+
+    // Sigh. Just invalidate everything
+    //   const bucketDeployment = new BucketDeployment(this, "BucketDeployment", {
+    //     cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+    //     destinationBucket: bucket,
+    //     distribution: distribution,
+    //     distributionPaths: ["/*"],
+    //     prune: false,
+    //     sources: [Source.asset("../site/public")],
+    //   })
   }
 }
