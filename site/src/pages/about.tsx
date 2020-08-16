@@ -86,9 +86,9 @@ const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
         <BlueBlock />
       </BlocksWrapper> */}
       <p>
-        Julian's boredom with Euchre had been building for years. A result of the rote systems of Euchre that everyone
-        follows reducing them to automatons. Too many hands spent like a dummy, a passenger, laying cards, but not
-        really playing.
+        Julian's boredom with Euchre had been building for years. A result of the rote conventions of Euchre that
+        everyone follows, reducing them to automatons. Too many hands spent like a dummy, a passenger, laying cards, but
+        not really playing.
       </p>
       <p>
         When the Coronavirus pandemic hit in 2020, he decided to do something about it. A complete reversal of the rules
@@ -98,11 +98,12 @@ const AboutPage: React.FC<RouteComponentProps> = ({ location = {} }) => {
       <p>
         Julian and his sons Odin, Noah and Kobe began experimenting with different rule variations to figure out what
         worked and what didn't. Once they found something they liked, they started trialling the rules with other Euchre
-        and non-Euchre players alike. The results were clear. It was fun! Jeuchre was born.
+        and non-Euchre players alike. The results were astonishing. It was fun! Jeuchre was born.
       </p>
       <p>
-        For Euchre players you might find Jeuchre a novelty at first, but you'll soon find that it's just a little more
-        unpredictable which results in a more fun game. Check out the <Link to="/rules">Rules</Link> and give it a try.
+        For Euchre players you might find Jeuchre a novelty at first. One that challenges the subconscious reflexes
+        developed from playing Euchre. But you'll soon find that it's just a little more unpredictable which results in
+        a more fun game. Check out the <Link to="/rules">Rules</Link> and give it a try.
       </p>
     </Layout>
   )
