@@ -10,7 +10,12 @@ const StyledHeader = styled.header`
 `
 
 const HeaderContainer = styled.div`
-  max-width: container;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 1rem;
 `
 
 const Title = styled.h1`
