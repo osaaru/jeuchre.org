@@ -109,7 +109,7 @@ export class AppStack extends Stack {
     })
 
     // Deployments run in parallel
-    // This strategy does not work
+    // This strategy does not work - doesn't deploy any folders with a lone html file
     const notHtmlBucketDeployment = new BucketDeployment(this, "NotHtmlBucketDeployment", {
       cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
       destinationBucket: bucket,
@@ -121,7 +121,7 @@ export class AppStack extends Stack {
       cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
       destinationBucket: bucket,
       prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["*", "!**/*.html"] })],
+      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
     })
 
     // Sigh. Just invalidate everything

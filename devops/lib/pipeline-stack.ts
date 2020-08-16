@@ -69,7 +69,7 @@ export class PipelineStack extends Stack {
       sourceAction,
       synthAction: SimpleSynthAction.standardYarnSynth({
         additionalArtifacts: [{ artifact: appBuildArtifact, directory: "../site/public" }],
-        buildCommand: "env && cd .. && yarn build && cd devops", // If we don't cd back to devops, the synth command fails
+        buildCommand: "cd .. && env && yarn build && ls public && cd devops", // If we don't cd back to devops, the synth command fails
         cloudAssemblyArtifact,
         environmentVariables,
         sourceArtifact,
