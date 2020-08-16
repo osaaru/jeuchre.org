@@ -110,28 +110,29 @@ export class AppStack extends Stack {
 
     // Deployments run in parallel
     // This strategy does not work - doesn't deploy any folders with a lone html file
-    const notHtmlBucketDeployment = new BucketDeployment(this, "NotHtmlBucketDeployment", {
-      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-      destinationBucket: bucket,
-      prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
-    })
 
-    const htmlBucketDeployment = new BucketDeployment(this, "HtmlBucketDeployment", {
-      cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
-      destinationBucket: bucket,
-      prune: false,
-      sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
-    })
+    // const notHtmlBucketDeployment = new BucketDeployment(this, "NotHtmlBucketDeployment", {
+    //   cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+    //   destinationBucket: bucket,
+    //   prune: false,
+    //   sources: [Source.asset("../site/public", { exclude: ["**/*.html"] })],
+    // })
+
+    // const htmlBucketDeployment = new BucketDeployment(this, "HtmlBucketDeployment", {
+    //   cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+    //   destinationBucket: bucket,
+    //   prune: false,
+    //   sources: [Source.asset("../site/public", { exclude: ["**", "!**/*.html"] })],
+    // })
 
     // Sigh. Just invalidate everything
-    //   const bucketDeployment = new BucketDeployment(this, "BucketDeployment", {
-    //     cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
-    //     destinationBucket: bucket,
-    //     distribution: distribution,
-    //     distributionPaths: ["/*"],
-    //     prune: false,
-    //     sources: [Source.asset("../site/public")],
-    //   })
+    const bucketDeployment = new BucketDeployment(this, "BucketDeployment", {
+      cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+      destinationBucket: bucket,
+      distribution: distribution,
+      distributionPaths: ["/*"],
+      prune: false,
+      sources: [Source.asset("../site/public")],
+    })
   }
 }
