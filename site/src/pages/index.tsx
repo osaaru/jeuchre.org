@@ -5,9 +5,7 @@ import styled from "styled-components"
 import { Layout } from "../components/layout"
 
 const Tagline = styled.h2`
-  font-size: 1.1rem;
   font-weight: 400;
-  color: ${(props) => props.theme.colors.text};
 `
 
 const App = () => {

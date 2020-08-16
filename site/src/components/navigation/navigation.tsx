@@ -29,6 +29,10 @@ const MenuItem = styled.li`
   }
 `
 
+// const MenuLink = styled.Link`
+//   color: #fff;
+// `
+
 const Navigation: React.FC = () => {
   const data = useStaticQuery(
     graphql`
@@ -51,7 +55,14 @@ const Navigation: React.FC = () => {
       <Menu>
         {menuLinks.map((link: { name: string; url: string }) => (
           <MenuItem key={link.name}>
-            <Link to={link.url}>{link.name}</Link>
+            <Link
+              css={`
+                color: #fff;
+              `}
+              to={link.url}
+            >
+              {link.name}
+            </Link>
           </MenuItem>
         ))}
       </Menu>
