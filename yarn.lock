@@ -9462,7 +9462,12 @@ eslint-plugin-prettier@^3.1.2:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-plugin-react-hooks@^1.7.0, eslint-plugin-react-hooks@^4.0.8:
+eslint-plugin-react-hooks@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.7.0.tgz#6210b6d5a37205f0b92858f895a4e827020a7d04"
+  integrity sha512-iXTCFcOmlWvw4+TOE8CLWj6yX1GwzT0Y6cUfHHZqWnSk144VmVIRcVGtUAzrLES7C798lmvnt02C7rxaOX1HNA==
+
+eslint-plugin-react-hooks@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.0.8.tgz#a9b1e3d57475ccd18276882eff3d6cba00da7a56"
   integrity sha512-6SSb5AiMCPd8FDJrzah+Z4F44P2CdOaK026cXFV+o/xSRzfOiV1FNFeLl2z6xm3yqWOQEZ5OfVgiec90qV2xrQ==
@@ -21038,6 +21043,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typeface-diplomata-sc@^0.0.71:
+  version "0.0.71"
+  resolved "https://registry.yarnpkg.com/typeface-diplomata-sc/-/typeface-diplomata-sc-0.0.71.tgz#138ed334cfd18c935251f8d2996145c2cc270be2"
+  integrity sha512-QnntRX08Z2S933vN9qDsSlxxMuOXP36W2jpR4wDyFYQuLSqtBBdNCq9rubqJY5L++Wudyht59+jberi3E8BVEw==
 
 typescript@3.9.2:
   version "3.9.2"
