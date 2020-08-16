@@ -2,7 +2,8 @@ import { createGlobalStyle } from "styled-components"
 
 const GlobalStyles = createGlobalStyle`
   body {
-    background-color: #f8ffff;
+    background-color: #e9e4d9;
+    color: #403233;
     font-size: 16pt;
     margin: 0px;
     padding: 0px;

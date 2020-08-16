@@ -9,6 +9,7 @@ import { Header } from "../header"
 import { SEO } from "../seo"
 
 const Container = styled.div`
+  background-color: ${({ theme }) => theme.colors.background};
   display: flex;
   flex: 1;
   margin: 0 auto;

@@ -4,11 +4,8 @@ import { useTheme } from "../../styles"
 import { GithubIcon } from "../github-icon"
 
 const StyledFooter = styled.footer`
-  bottom: 0;
-  color: #aaa;
-  font-size: ${({ theme }) => theme.fontSizes.small}px;
-  left: 0;
-  position: absolute;
+  color: ${({ theme }) => theme.colors.mutedText};
+  font-size: ${({ theme }) => theme.fontSizes.small}pt;
   width: 100%;
 `
 
@@ -23,7 +20,6 @@ const FooterContainer = styled.div`
 `
 
 const Footer: React.FC = () => {
-  const { forestGreen } = useTheme().colors
   return (
     <StyledFooter>
       <FooterContainer>Copyright © 2020 The Jeuchre Foundation</FooterContainer>

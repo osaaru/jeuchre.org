@@ -3,10 +3,11 @@ import React from "react"
 import styled from "styled-components"
 
 import { useTheme } from "../../styles"
+import { Link } from "../link"
 import { Navigation } from "../navigation"
 
 const StyledHeader = styled.header`
-  background-color: ${(props) => props.theme.colors.spanishGreen};
+  background-color: ${(props) => props.theme.colors.green1};
 `
 
 const HeaderContainer = styled.div`
@@ -21,7 +22,7 @@ const HeaderContainer = styled.div`
 const Title = styled.h1`
   font-family: "Diplomata SC", cursive;
   font-size: ${(props) => (props.theme.screens.sm ? "1.8rem" : "2.8rem")};
-  color: ${({ theme }) => theme.colors.marigold};
+  color: ${({ theme }) => theme.colors.accent};
   padding: 1rem;
 `
 
@@ -40,7 +41,16 @@ const Header: React.FC = () => {
   return (
     <StyledHeader>
       <HeaderContainer>
-        <Title>{title.toUpperCase()}</Title>
+        <Link
+          css={`
+            :hover {
+              text-decoration: none;
+            }
+          `}
+          to="/"
+        >
+          <Title>{title.toUpperCase()}</Title>
+        </Link>
         <Navigation />
       </HeaderContainer>
     </StyledHeader>

@@ -66,6 +66,7 @@ export class AppStack extends Stack {
         securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
       },
       comment: hostName,
+      defaultRootObject: "index.html",
       originConfigs: [
         {
           behaviors: [{ isDefaultBehavior: true }],

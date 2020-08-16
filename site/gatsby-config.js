@@ -104,7 +104,6 @@ module.exports = {
     menuLinks: [
       { name: "Home", url: "/" },
       { name: "Rules", url: "/rules" },
-      { name: "About", url: "/about" },
     ],
     title: siteTitle,
     url: siteUrl,

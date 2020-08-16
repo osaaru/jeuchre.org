@@ -18,9 +18,7 @@ const Menu = styled.ul`
 `
 
 const MenuItem = styled.li`
-  color: ${({ theme }) => theme.colors.marigold};
   display: inline;
-  font-size: ${({ theme }) => theme.fontSizes.large}px;
   font-weight: bold;
   margin: 0;
   padding: 0.5rem;
@@ -57,7 +55,9 @@ const Navigation: React.FC = () => {
           <MenuItem key={link.name}>
             <Link
               css={`
-                color: #fff;
+                color: ${({ theme }) => theme.colors.background};
+                font-family: "Times New Roman", Times, serif;
+                font-size: ${({ theme }) => theme.fontSizes.large}pt;
               `}
               to={link.url}
             >
