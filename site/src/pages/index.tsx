@@ -6,7 +6,8 @@ import { Layout } from "../components/layout"
 import { Link } from "../components/link"
 
 const Tagline = styled.h2`
-  font-weight: 400;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 700;
   margin-bottom: 1em;
   text-align: center;
 `
@@ -43,9 +44,9 @@ const App = () => {
         and non-Euchre players alike. The results were astonishing. It was fun! Jeuchre was born.
       </p>
       <p>
-        For Euchre players you might find Jeuchre a novelty at first. One that challenges the subconscious reflexes
-        developed from playing Euchre. But you'll soon find that it's just a little more unpredictable which results in
-        a more fun game. Check out the <Link to="/rules">Rules</Link> and give it a try.
+        Euchre players might find Jeuchre a novelty at first. One that challenges the subconscious reflexes developed
+        from playing Euchre. But you'll soon find that it's just a little more unpredictable which results in a more fun
+        game. Check out the <Link to="/rules">Rules</Link> and give it a try.
       </p>
     </Layout>
   )
