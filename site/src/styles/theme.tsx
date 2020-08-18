@@ -2,10 +2,10 @@ export default {
   colors: {
     accent: "#EF8A17",
     background: "#e9e4d9",
-    cambridgeBlue: "#BCD8C1",
     dimGray: "#6D6A75",
     green1: "#034732",
     green2: "#008148",
+    green3: "#BCD8C1",
     invertedText: "#d2c7bb",
     mutedText: "#6c5e52",
     red1: "#701d1e",
