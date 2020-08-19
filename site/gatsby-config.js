@@ -95,18 +95,20 @@ module.exports = {
     "gatsby-plugin-typescript",
     {
       options: {
-        background_color: "#663399",
+        background_color: "#e9e4d9",
+        categories: ["games"],
         description: siteDescription,
         display: "minimal-ui",
         icon: "src/images/gatsby-icon.png",
+        lang: "en-US",
         name: siteTitle,
         short_name: siteTitle,
         start_url: "/",
-        theme_color: "#663399",
+        theme_color: "#034732",
       },
       resolve: "gatsby-plugin-manifest",
     },
-    "gatsby-plugin-offline",
+    "gatsby-plugin-offline", // should be after manifest plugin to ensure manifest file is included in service worker
   ],
   siteMetadata: {
     author: siteAuthor,

@@ -9,5 +9,18 @@ This repository currently contains the public website for jeuchre.org.
 
 # TODO
 
-- supreme hall of shame
+- make rules in-page nav crawlable using bookmarks
 - mailing list + blog
+- contact info
+- supreme hall of shame
+- transfer repo to the jeuchre foundation
+- fix ts
+- fix linting
+- lint-staged
+- storybook
+- put next.jeuchre.org behing pw protection
+- add manual approval for www.jeuchre.org
+- make sure we're generating all the right favicons
+- check manifest behavior by bookmarking page on mobile device
+- i18n
+- translations
