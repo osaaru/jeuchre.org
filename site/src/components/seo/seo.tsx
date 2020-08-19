@@ -14,7 +14,6 @@ type SEOProps = {
   keywords?: string[]
   meta?: MetaItem[]
   title?: string
-  url?: string
 }
 
 const SEO: React.FC<SEOProps> = (props) => {
@@ -25,7 +24,7 @@ const SEO: React.FC<SEOProps> = (props) => {
           title
           description
           author
-          url
+          siteUrl
           keywords
           image
         }
@@ -35,10 +34,9 @@ const SEO: React.FC<SEOProps> = (props) => {
 
   const { siteMetadata } = data.site
 
-  const { author, description, image, keywords = [], meta = [], title, url } = siteMetadata
+  const { author, description, image, keywords = [], meta = [], siteUrl, title } = siteMetadata
   const siteTitle = props.title || title
   const siteDescription = props.description || description
-  const siteUrl = props.url || url
   const siteAuthor = props.author || author
   const siteImage = props.image || image
   const siteKeywords = [...keywords, props.keywords].join(",")

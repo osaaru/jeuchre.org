@@ -79,6 +79,18 @@ module.exports = {
     "gatsby-plugin-styled-components",
     "gatsby-transformer-sharp",
     "gatsby-plugin-sharp",
+    {
+      options: {
+        exclude: [
+          "/dev-404-page",
+          "/404",
+          "/404.html",
+          "/offline-plugin-app-shell-fallback",
+
+        ]
+      },
+      resolve: "gatsby-plugin-advanced-sitemap"
+    },
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-typescript",
     {
@@ -105,7 +117,7 @@ module.exports = {
       { name: "Home", url: "/" },
       { name: "Rules", url: "/rules" },
     ],
+    siteUrl,
     title: siteTitle,
-    url: siteUrl,
   },
 }
