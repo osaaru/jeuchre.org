@@ -9,7 +9,9 @@ This repository currently contains the public website for jeuchre.org.
 
 # TODO
 
-- make rules in-page nav crawlable using bookmarks
+- robots.txt
+- register w duck duck go and bing
+- poll
 - mailing list + blog
 - contact info
 - supreme hall of shame
@@ -24,3 +26,8 @@ This repository currently contains the public website for jeuchre.org.
 - check manifest behavior by bookmarking page on mobile device
 - i18n
 - translations
+
+# Linking
+
+- wikipedia
+- pagat

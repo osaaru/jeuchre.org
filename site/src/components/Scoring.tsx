@@ -11,13 +11,13 @@ const Header3 = styled.h3`
 
 const Scoring: React.FC = () => {
   return (
-      <>
+    <>
       <Header3>SCORING HANDS</Header3>
       <Table>
         <tr>
-        <TableHeaderCell>Result of hand</TableHeaderCell>
-        <TableHeaderCell>Points taken by trump maker</TableHeaderCell>
-        <TableHeaderCell>Points taken by non-trump maker</TableHeaderCell>
+          <TableHeaderCell>Result of hand</TableHeaderCell>
+          <TableHeaderCell>Points taken by trump maker</TableHeaderCell>
+          <TableHeaderCell>Points taken by non-trump maker</TableHeaderCell>
         </tr>
         <tr>
           <TableCell>Euchre. Team that made trump takes 1 or 2 tricks.</TableCell>
@@ -44,9 +44,9 @@ const Scoring: React.FC = () => {
           <TableCell>Automatic loss of game</TableCell>
           <TableCell>0</TableCell>
         </tr>
-    </Table>
+      </Table>
     </>
-    )
+  )
 }
 
 export default Scoring
