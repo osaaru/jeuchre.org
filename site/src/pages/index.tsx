@@ -5,6 +5,7 @@ import styled from "styled-components"
 import TryPoll from "../components/TryPoll"
 import { Layout } from "../components/layout"
 import { Link } from "../components/link"
+import OriginalScoreboard from "../images/original_scoreboard.jpg"
 
 const Tagline = styled.h2`
   font-family: "Times New Roman", Times, serif;
@@ -15,6 +16,12 @@ const Tagline = styled.h2`
 
 const PollContainer = styled.div`
   padding-bottom: 2rem;
+  text-align: center;
+`
+const Caption = styled.figcaption`
+  color: ${({ theme }) => theme.colors.red1};
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
   text-align: center;
 `
 
@@ -57,6 +64,10 @@ const App = () => {
         from playing Euchre. But you'll soon find that it's just a little more unpredictable which results in a more fun
         game. Check out the <Link to="/rules">Rules</Link> and give it a try.
       </p>
+      <figure>
+        <img alt="The original Jeuchre scoring system whiteboard" src={OriginalScoreboard} />
+        <Caption>The original jeuchre scoring system</Caption>
+      </figure>
     </Layout>
   )
 }
