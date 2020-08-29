@@ -15,36 +15,7 @@ const siteKeywords = ["anti", "card", "euchre", "game", "jeuchre", "trick"]
 
 module.exports = {
   plugins: [
-    /*    {
-      options: {
-        // Setting this parameter is also optional
-        // respectDNT: true,
-        // Enables Google Optimize using your container Id
-        // optimizeId: "YOUR_GOOGLE_OPTIMIZE_TRACKING_ID",
-        // Enables Google Optimize Experiment ID
-        // experimentId: "YOUR_GOOGLE_EXPERIMENT_ID",
-        // Set Variation ID. 0 for original 1,2,3....
-        // variationId: "YOUR_GOOGLE_OPTIMIZE_VARIATION_ID",
-        // Defers execution of google analytics script after page load
-        defer: false,
-        // Defines where to place the tracking script - `true` in the head and `false` in the body
-        head: true,
-        // The property ID; the tracking code won't be generated without it
-        trackingId: "UA-174557777-1",
-      },
-      resolve: "gatsby-plugin-google-analytics",
-    },
-    */
     /*
-    {
-      options: {
-        bucketName: process.env.BUCKET_NAME || "jeuchre.org",
-        bucketPrefix: process.env.BUCKET_PREFIX || "www",
-        hostName,
-        protocol,
-      },
-      resolve: "gatsby-plugin-s3",
-    },
     {
       options: {
         name: "images",
@@ -76,20 +47,15 @@ module.exports = {
       },
       resolve: "gatsby-plugin-react-axe",
     },
+    "gatsby-source-fontawesome",
     "gatsby-plugin-styled-components",
     "gatsby-transformer-sharp",
     "gatsby-plugin-sharp",
     {
       options: {
-        exclude: [
-          "/dev-404-page",
-          "/404",
-          "/404.html",
-          "/offline-plugin-app-shell-fallback",
-
-        ]
+        exclude: ["/dev-404-page", "/404", "/404.html", "/offline-plugin-app-shell-fallback"],
       },
-      resolve: "gatsby-plugin-advanced-sitemap"
+      resolve: "gatsby-plugin-advanced-sitemap",
     },
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-typescript",

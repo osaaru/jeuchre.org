@@ -58,6 +58,9 @@ const Navigation: React.FC = () => {
                 color: ${({ theme }) => theme.colors.background};
                 font-family: "Times New Roman", Times, serif;
                 font-size: ${({ theme }) => theme.fontSizes.large}pt;
+                :visited {
+                  color: ${({ theme }) => theme.colors.background};
+                }
               `}
               to={link.url}
             >

@@ -2,6 +2,7 @@ import { graphql, useStaticQuery } from "gatsby"
 import React from "react"
 import styled from "styled-components"
 
+import TryPoll from "../components/TryPoll"
 import { Layout } from "../components/layout"
 import { Link } from "../components/link"
 
@@ -9,6 +10,11 @@ const Tagline = styled.h2`
   font-family: "Times New Roman", Times, serif;
   font-weight: 700;
   margin-bottom: 1em;
+  text-align: center;
+`
+
+const PollContainer = styled.div`
+  padding-bottom: 2rem;
   text-align: center;
 `
 
@@ -28,6 +34,9 @@ const App = () => {
   return (
     <Layout>
       <Tagline>{description}</Tagline>
+      <PollContainer>
+        <TryPoll />
+      </PollContainer>
       <p>
         Julian's boredom with Euchre had been building for years. A result of the rote conventions of Euchre that
         everyone follows, reducing them to automatons. Too many hands spent like a dummy, a passenger, laying cards, but

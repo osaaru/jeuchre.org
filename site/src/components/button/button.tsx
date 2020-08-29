@@ -1,11 +1,12 @@
 import styled from "styled-components"
 
 const Button = styled.button`
-  height: 30px;
+  min-height: 52px;
   min-width: 100px;
   border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 16pt;
+  padding: 1rem;
   cursor: pointer;
   :disabled {
     background: lightgray;

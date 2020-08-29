@@ -6,6 +6,9 @@ const Link = styled(GatsbyLink)`
   :hover {
     text-decoration: underline;
   }
+  :visited {
+    color: ${({ theme }) => theme.colors.red2};
+  }
 `
 
 export { Link }

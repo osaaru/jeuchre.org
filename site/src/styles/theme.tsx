@@ -1,6 +1,7 @@
 export default {
   colors: {
     accent: "#EF8A17",
+    accent2: "#bd6d11",
     background: "#e9e4d9",
     dimGray: "#6D6A75",
     green1: "#034732",
