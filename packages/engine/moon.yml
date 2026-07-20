@@ -1,0 +1,12 @@
+language: "typescript"
+toolchains:
+  node: {}
+layer: "library"
+
+tasks:
+  typecheck:
+    command: "pnpm exec tsc --noEmit"
+  test:
+    command: "pnpm exec vitest run"
+  lint:
+    command: "pnpm exec biome check ."

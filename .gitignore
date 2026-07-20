@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.moon/cache/
+test-results/
+playwright-report/
+*.local
+.env
+.env.*
+.DS_Store

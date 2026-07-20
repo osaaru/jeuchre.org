@@ -1,0 +1,14 @@
+projects:
+  globs:
+    - "apps/*"
+    - "packages/*"
+
+vcs:
+  client: "git"
+  provider: "github"
+  defaultBranch: "main"
+
+pipeline:
+  installDependencies: ["node"]
+
+telemetry: false
