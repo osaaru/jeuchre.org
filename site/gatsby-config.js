@@ -64,7 +64,13 @@ module.exports = {
         categories: ["games"],
         description: siteDescription,
         display: "minimal-ui",
-        icon: "src/images/gatsby-icon.png",
+        icons: [
+          {
+            sizes: "32x32",
+            src: "/favicons/jeuchre-j-32x32.png",
+            type: "image/png"
+          }
+        ],
         lang: "en-US",
         name: siteTitle,
         short_name: siteTitle,
