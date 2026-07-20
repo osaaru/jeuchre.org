@@ -11,3 +11,5 @@ catalog:
 
 allowBuilds:
   esbuild: true
+
+verifyDepsBeforeRun: warn
