@@ -1,8 +1,22 @@
 # AGENTS.md — working in this repo
 
 This repo builds jeuchre.org: the site, rules, and browser game for Jeuchre, the anti-Euchre
-card game. **Read [PLAN.md](PLAN.md) first** — it holds the decision record, architecture,
-and phases. Do not contradict a recorded decision without the owner asking for it.
+card game. **Start every session by reading, in order: [PLAN.md](PLAN.md)** (decision record,
+architecture, phases), **this file** (how to work), **[STATE.md](STATE.md)** (the ledger —
+where things stand right now). Do not contradict a recorded decision without the owner asking
+for it.
+
+## The ledger (handoff contract)
+
+This project is developed by multiple AI agents over a long period. STATE.md is the handoff
+mechanism, and it only works if it never drifts:
+
+- **Every PR must update STATE.md**: refresh the Snapshot (phase, done, in-flight, next
+  actions) and append a dated Journal entry (what changed, why, gotchas discovered).
+- The Journal is append-only. Record surprises there (tool behavior changes, workarounds,
+  broken assumptions) — the next agent should never have to rediscover them.
+- Assume your session can end at any moment: keep STATE.md accurate enough that a brand-new
+  agent could resume from `main` alone, with no access to your conversation.
 
 ## Commands
 
