@@ -43,6 +43,7 @@ July 2026), noted where load-bearing.
 | 24 | Org identity | "Jeuchre Foundation" branding | The site presents the (informal, unincorporated) Jeuchre Foundation as steward of the game and its content; honest about its nature; structure the community can grow into |
 | 25 | Rules canon | Owner-as-steward, variants welcome | Canonical rules change only by Julian's decision, with a public changelog; community variants encouraged under CC BY-SA |
 | 26 | Agent handoff ledger | STATE.md, updated in every PR | Long multi-agent project: a Snapshot (current state/next actions) + append-only Journal (changes, rationale, gotchas) lets any new agent resume from `main` alone; enforced via AGENTS.md convention |
+| 27 | MCP servers | Committed `.mcp.json`: Astro docs, Cloudflare docs, `moon mcp`, Playwright | Version-controlled agent tool access; each user approves on first run. GitHub MCP skipped (redundant with `gh` CLI); Cloudflare OAuth servers (unified API/bindings/observability) added when Phase 1 deploy/DNS work starts; Context7 stays user-scope (API key) |
 
 ## Architecture
 

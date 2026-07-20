@@ -43,5 +43,9 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 - CI first run failed: setup-toolchain needs `auto-install: true` to run `proto install`
   on the runner; fixed in the same PR.
 - Added this ledger (STATE.md) + AGENTS.md handoff contract + PLAN decision #26.
+- Added committed `.mcp.json` (PLAN decision #27): Astro docs + Cloudflare docs (remote,
+  no auth), `moon mcp` (task graph), Playwright MCP (browser driving). Verified current as of
+  2026-07-20. Cloudflare OAuth servers (unified `mcp.cloudflare.com`, bindings, observability)
+  deliberately deferred to Phase 1 deploy/DNS work. GitHub MCP skipped: `gh` CLI covers it.
 - The old site remains live on AWS (CloudFront/S3 via CDK) and untouched; DNS cutover and
   AWS decommission are Phase 1 exit steps.

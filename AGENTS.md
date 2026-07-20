@@ -18,6 +18,12 @@ mechanism, and it only works if it never drifts:
 - Assume your session can end at any moment: keep STATE.md accurate enough that a brand-new
   agent could resume from `main` alone, with no access to your conversation.
 
+## MCP servers
+
+`.mcp.json` (committed) provides: `astro-docs` and `cloudflare-docs` (remote documentation
+lookup — prefer these over memory for Astro/Cloudflare APIs), `moon` (project/task graph),
+`playwright` (browser driving). Approve them on first run. Use `gh` CLI for GitHub work.
+
 ## Commands
 
 Toolchain is pinned by proto (`.prototools`) and tasks run through moon:
