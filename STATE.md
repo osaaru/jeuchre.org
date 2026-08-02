@@ -47,6 +47,9 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   `pnpm exec`, so parallel moon tasks raced concurrent installs (ENOENT on `.bin` linking,
   exit 254). Fix: explicit `pnpm install --frozen-lockfile` step in CI before `moon ci`, and
   `verifyDepsBeforeRun: warn` in pnpm-workspace.yaml. Run `pnpm install` after every pull.
+- Added `.vscode/` extensions (Astro, Biome, moon console, Vitest, Playwright) + settings:
+  `typescript.tsdk` points at the workspace TS so VS Code uses pinned 6.x, Biome formats on
+  save (Astro files formatted by the Astro extension).
 - Added committed `.mcp.json` (PLAN decision #27): Astro docs + Cloudflare docs (remote,
   no auth), `moon mcp` (task graph), Playwright MCP (browser driving). Verified current as of
   2026-07-20. Cloudflare OAuth servers (unified `mcp.cloudflare.com`, bindings, observability)
