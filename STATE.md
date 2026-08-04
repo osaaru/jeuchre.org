@@ -7,19 +7,17 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 
 ## Snapshot
 
-- **Phase:** 0 (repo reset + scaffold) — nearly complete
-- **Done:** branch surgery (orphan `main` default; Gatsby era on `archive/gatsby-2020`;
-  `master`/`prod` deleted); repo public; squash-only + auto-delete + topics;
-  `main-protection` ruleset (PRs required; CI check NOT yet required); labels; Project board
-  (Backlog/Ready/In progress/Done); full monorepo scaffold (this PR)
-- **In flight:** scaffold PR #1 awaiting CI + owner merge
+- **Phase:** 1 (site relaunch) — starting
+- **Done:** Phase 0 complete. Repo public with `main` default; scaffold merged (PR #1);
+  `main-protection` ruleset now REQUIRES the `CI` check + PRs + squash-only; Project board
+  seeded with Phase 1 issues #2–#10; committed `.mcp.json` + `.vscode/`; ledger system live
+- **In flight:** nothing
 - **Next actions:**
-  1. Merge PR #1, then add the CI check as *required* in the `main-protection` ruleset
-  2. Owner: install the Renovate GitHub App on the repo
-  3. Seed the Project board with Phase 1 issues (see PLAN.md → Phase 1)
-  4. Phase 1 starts with: design system + content model for the rules pages
-- **Blocked/waiting:** Cloudflare account + API token (owner) — needed for deploy wiring,
-  not for starting Phase 1 site work
+  1. Owner: install the Renovate GitHub App on the repo
+  2. Start issue #2 (design system) and #3 (rules content model) — they unblock most of Phase 1
+  3. Issue #8 (Cloudflare deploy wiring) can proceed in parallel once owner provides the
+     Cloudflare account + API token; #10 (DNS cutover) is the Phase 1 exit
+- **Blocked/waiting:** Cloudflare account + API token (owner) — blocks #8/#10 only
 
 ## Journal
 
@@ -60,3 +58,13 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   deliberately deferred to Phase 1 deploy/DNS work. GitHub MCP skipped: `gh` CLI covers it.
 - The old site remains live on AWS (CloudFront/S3 via CDK) and untouched; DNS cutover and
   AWS decommission are Phase 1 exit steps.
+
+### 2026-08-03 — Phase 0 closed out; Phase 1 opened
+
+- PR #1 squash-merged by owner. CI check made *required* in the `main-protection` ruleset
+  (rules now: deletion, non_fast_forward, pull_request/squash, required_status_checks: CI).
+- Seeded the Project board with the nine Phase 1 issues (#2–#10), written agent-ready with
+  acceptance criteria and PLAN.md references. Board items start with no Status — owner drags
+  to Backlog/Ready as part of grooming (lightweight kanban, decision #16).
+- License question revisited (MIT vs AGPL-3.0) with owner; decision #14 (MIT) reaffirmed —
+  the CC BY-SA share-alike on the rules is the moat for the game itself.
