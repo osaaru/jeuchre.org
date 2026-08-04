@@ -11,10 +11,10 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 - **Done:** Phase 0 complete. Repo public with `main` default; scaffold merged (PR #1);
   `main-protection` ruleset now REQUIRES the `CI` check + PRs + squash-only; Project board
   seeded with Phase 1 issues #2–#10; committed `.mcp.json` + `.vscode/`; ledger system live
-- **In flight:** nothing
+- **In flight:** issue #2 (design system) — PR open
 - **Next actions:**
   1. Owner: install the Renovate GitHub App on the repo
-  2. Start issue #2 (design system) and #3 (rules content model) — they unblock most of Phase 1
+  2. After #2 merges: start issue #3 (rules content model) — it unblocks #4/#6/#7
   3. Issue #8 (Cloudflare deploy wiring) can proceed in parallel once owner provides the
      Cloudflare account + API token; #10 (DNS cutover) is the Phase 1 exit
 - **Blocked/waiting:** Cloudflare account + API token (owner) — blocks #8/#10 only
@@ -68,3 +68,18 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   to Backlog/Ready as part of grooming (lightweight kanban, decision #16).
 - License question revisited (MIT vs AGPL-3.0) with owner; decision #14 (MIT) reaffirmed —
   the CC BY-SA share-alike on the rules is the moat for the game itself.
+
+### 2026-08-03 — Issue #2: design system and visual identity (PR)
+
+- Design tokens (`apps/site/src/styles/tokens.css`): the 2020 palette systematized into roles
+  (paper/ink/red/felt/gold) with dark mode via `prefers-color-scheme`; fluid type scale
+  (system serif display stack nodding to the old Times New Roman; system sans body); spacing,
+  radii, `--measure` content width. Global stylesheet + `Base.astro` layout (header/nav/footer,
+  skip link, canonical/OG meta). Home page rebuilt on the layout with the scoreboard photo via
+  `astro:assets` (responsive widths). Verified in browser: light, dark, mobile.
+- Assets recovered from `archive/gatsby-2020`: scoreboard photo, the custom J favicon.
+  Social preview `og-default.png` (1280×640 playing-card motif) generated from the tokens via
+  a Playwright screenshot; owner must upload it in repo Settings → Social preview (API can't).
+- Gotchas: Astro `<Image>` requires `sharp` as an explicit dependency (added to site).
+  Nav links to /rules, /blog, /foundation intentionally 404 until issues #3–#5 land.
+- `.claude/launch.json` added so agents can preview via the in-app browser (`moon run site:dev`).

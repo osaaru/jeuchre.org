@@ -1,0 +1,119 @@
+@import "./tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  color: var(--color-ink);
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+h1 {
+  font-size: var(--text-2xl);
+}
+
+h2 {
+  font-size: var(--text-xl);
+}
+
+h3 {
+  font-size: var(--text-lg);
+}
+
+p,
+ul,
+ol {
+  margin: 0 0 var(--space-3);
+}
+
+a {
+  color: var(--color-red);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--color-red-bright);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+figure {
+  margin: var(--space-4) 0;
+}
+
+figcaption {
+  color: var(--color-red-deep);
+  font-size: var(--text-sm);
+  text-align: center;
+  margin-top: var(--space-2);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: var(--space-4) 0;
+}
+
+th,
+td {
+  border: var(--border);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-family: var(--font-display);
+  background: var(--color-surface);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-felt-bright);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  header nav,
+  footer {
+    display: none;
+  }
+}
