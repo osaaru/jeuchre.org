@@ -33,8 +33,8 @@ proto install         # install pinned node/pnpm/moon (first time)
 pnpm install          # install workspace dependencies
 moon check --all      # run build/test/lint/typecheck for all projects
 moon ci               # what CI runs (affected-only)
-moon site:dev         # Astro dev server
-moon engine:test      # rules-engine unit tests
+moon run site:dev     # Astro dev server
+moon run engine:test  # rules-engine unit tests
 ```
 
 Never invoke `npm`/`npx`/`yarn`; this is a pnpm workspace with a pnpm `catalog:` for shared
