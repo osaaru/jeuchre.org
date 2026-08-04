@@ -47,6 +47,10 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   `pnpm exec`, so parallel moon tasks raced concurrent installs (ENOENT on `.bin` linking,
   exit 254). Fix: explicit `pnpm install --frozen-lockfile` step in CI before `moon ci`, and
   `verifyDepsBeforeRun: warn` in pnpm-workspace.yaml. Run `pnpm install` after every pull.
+- VS Code renamed `typescript.tsdk` → `js/ts.tsdk.path`; we set BOTH because the Astro
+  extension's Volar server still reads the old key (withastro/astro#16155) — drop the old
+  one when that closes. moon v2 caches to `cache/` at workspace root (not `.moon/cache/`);
+  both gitignored.
 - Added `.vscode/` extensions (Astro, Biome, moon console, Vitest, Playwright) + settings:
   `typescript.tsdk` points at the workspace TS so VS Code uses pinned 6.x, Biome formats on
   save (Astro files formatted by the Astro extension).

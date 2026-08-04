@@ -1,4 +1,7 @@
 {
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  // Deprecated alias of js/ts.tsdk.path — kept because the Astro extension's Volar
+  // language server still reads the old key (withastro/astro#16155). Drop when fixed.
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "biomejs.biome",
