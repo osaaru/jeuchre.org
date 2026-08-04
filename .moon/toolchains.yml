@@ -1,0 +1,8 @@
+proto:
+  version: "0.58.2"
+
+node:
+  versionFromPrototools: true
+
+pnpm:
+  versionFromPrototools: true

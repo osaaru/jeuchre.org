@@ -1,0 +1,16 @@
+{
+  "name": "@jeuchre/ui-game",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@jeuchre/bots": "workspace:*",
+    "@jeuchre/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "typescript": "catalog:"
+  }
+}
