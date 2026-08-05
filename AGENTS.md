@@ -28,7 +28,9 @@ mechanism, and it only works if it never drifts:
   Columns are execution state: Backlog (unscoped/proposals), Ready (accepted + groomed),
   In progress, Done. Labels: `proposal` = awaiting owner decision;
   `owner-task` = only Julian can do it. Start sessions by checking In progress/Ready.
-- PRs link their issue (`Closes #N`). STATE.md never enumerates the work queue — it points at
+- Every PR body contains a closing keyword — `Closes #N` (NOT "Implements"; squash commits
+  use the PR body, so the link must live there). CI enforces this ("Linked issue" job);
+  truly issueless PRs need a `No-Issue: <reason>` line. STATE.md never enumerates the work queue — it points at
   the board; its job is narrative context and the journal.
 
 ## MCP servers

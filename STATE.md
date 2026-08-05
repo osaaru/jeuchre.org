@@ -109,6 +109,11 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 
 ### 2026-08-05 — Work tracking moves to GitHub issues; karma-development adoption analysis
 
+- PR↔issue linkage: "Implements #N" does NOT create a GitHub closing link — only
+  closes/fixes/resolves keywords do, and (squash: PR_BODY) they must be in the PR BODY.
+  Closing refs only activate against the default branch, so stacked PRs link late (harmless:
+  the squash commit still closes on merge). CI "Linked issue" job now enforces body linkage;
+  make it a required check after the current PR chain merges (see #25).
 - PLAN decision #29: issues + ONE permanent Project board — "jeuchre.org development"
   (renamed from "jeuchre.org rebuild"; owner: a single board to choose from, ever) — are the
   canonical work/decision queue. Board stays private until owner comfort (#24); repo Projects
