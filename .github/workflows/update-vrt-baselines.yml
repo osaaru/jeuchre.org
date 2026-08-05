@@ -15,6 +15,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - run: apt-get update -q && apt-get install -yq xz-utils
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: moonrepo/setup-toolchain@v0
         with:
           auto-install: true
