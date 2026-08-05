@@ -99,6 +99,11 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   (workflow_dispatch on a branch — commits regenerated snapshots back to it).
 - Claude Design handoff documented in AGENTS.md: DesignSync/`/design-sync` uses specimens as
   the incremental sync bundle. First actual sync deferred until a design project exists.
+- CI now runs INSIDE `mcr.microsoft.com/playwright:v1.61.1-noble` (keep the tag in lockstep
+  with `@playwright/test`): VRT demands a pinned rendering environment — bare ubuntu-latest
+  fonts differ from the container's (3% pixel drift). Container adoption needed two shims,
+  now in both workflows: `apt-get install xz-utils` (proto's installer) and
+  `git config --global --add safe.directory "$GITHUB_WORKSPACE"` (moon's affected-detection).
 - Gotchas: `workflow_dispatch` workflows can't run until they exist on the DEFAULT branch —
   first-time linux baselines were bootstrapped locally instead via the official Playwright
   docker image (isolated /work copy, fresh linux pnpm install, `--update-snapshots`, copy
