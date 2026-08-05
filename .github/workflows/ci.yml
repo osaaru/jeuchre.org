@@ -18,4 +18,5 @@ jobs:
         with:
           auto-install: true
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @jeuchre/site exec playwright install --with-deps chromium
       - run: moon ci

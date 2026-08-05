@@ -11,7 +11,8 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 - **Done:** Phase 0 complete. Repo public with `main` default; scaffold merged (PR #1);
   `main-protection` ruleset now REQUIRES the `CI` check + PRs + squash-only; Project board
   seeded with Phase 1 issues #2–#10; committed `.mcp.json` + `.vscode/`; ledger system live
-- **In flight:** issue #2 (design system) — PR open
+- **In flight:** issue #2 (design system) — PR #12 open; issue #13 (design manifest +
+  specimen microsite + VRT) — PR stacked on #12
 - **Next actions:**
   1. Owner: install the Renovate GitHub App on the repo
   2. After #2 merges: start issue #3 (rules content model) — it unblocks #4/#6/#7
@@ -83,3 +84,21 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 - Gotchas: Astro `<Image>` requires `sharp` as an explicit dependency (added to site).
   Nav links to /rules, /blog, /foundation intentionally 404 until issues #3–#5 land.
 - `.claude/launch.json` added so agents can preview via the in-app browser (`moon run site:dev`).
+
+### 2026-08-04 — Issue #13: DTCG manifest, specimen microsite, visual regression (PR)
+
+- `apps/site/tokens/tokens.json` + `tokens.dark.json` (W3C DTCG 2025.10) are now the design
+  source of truth; `src/styles/tokens.css`/`tokens-dark.css` are GENERATED (gitignored) by
+  Style Dictionary v4 via `moon run site:tokens`; site tasks depend on it in the moon graph.
+- `/design` specimen microsite (index/colors/typography/spacing/components) — routes injected
+  by an inline Astro integration only in dev or `DESIGN=1` builds; specimens render FROM the
+  JSON manifest so they cannot drift. Prod builds contain no trace.
+- VRT: Playwright `toHaveScreenshot` over the five specimen pages; `site:e2e` now builds with
+  `DESIGN=1` into `dist-design/` and runs in CI (browser install step added). Baselines are
+  per-platform; linux baselines come from the manual "Update VRT baselines" workflow
+  (workflow_dispatch on a branch — commits regenerated snapshots back to it).
+- Claude Design handoff documented in AGENTS.md: DesignSync/`/design-sync` uses specimens as
+  the incremental sync bundle. First actual sync deferred until a design project exists.
+- Gotchas: Astro dev toolbar rendered into VRT screenshots — disabled in config. Multi-line
+  JSX-ish text nodes in .astro collapse the whitespace before inline links (hit twice now:
+  home page, footer) — keep text+link on one line or use &nbsp;. PLAN decision #28.

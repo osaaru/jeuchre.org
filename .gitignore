@@ -9,3 +9,8 @@ playwright-report/
 .env.*
 .DS_Store
 cache/
+
+# generated from tokens/*.json
+apps/site/src/styles/tokens.css
+apps/site/src/styles/tokens-dark.css
+dist-design/

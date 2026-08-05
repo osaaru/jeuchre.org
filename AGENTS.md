@@ -52,6 +52,21 @@ dependency versions (edit `pnpm-workspace.yaml` to bump a shared version).
 - Rules prose is single-sourced: scoring/rules data renders into both the diff-view and
   full-rules pages — never duplicate rule text.
 
+## Design system
+
+- `apps/site/tokens/tokens.json` (+ `tokens.dark.json`) is the single source of truth for all
+  design decisions, in W3C DTCG format. `src/styles/tokens.css` is GENERATED (`moon run
+  site:tokens`) — never edit it, never hardcode a color/size/font in components, never invent
+  an ad-hoc token. New tokens land via tokens.json + a specimen, in a PR.
+- The `/design` microsite (dev-only; `DESIGN=1` builds it for tests) renders specimens for
+  every token group and styled component. A new component isn't done until it has a specimen.
+- Specimen pages are visual-regression targets (`tests/design.spec.ts`). If a PR intentionally
+  changes rendering, regenerate baselines via the "Update VRT baselines" workflow (Actions)
+  on the PR branch; unexplained VRT failures are design drift — fix the code, not the baseline.
+- Handoff to claude.ai/design uses the DesignSync tool / `/design-sync` skill: specimens are
+  the sync bundle. Pull remote edits, diff into tokens.json/components — never wholesale
+  replace either side.
+
 ## Conventions
 
 - Every rule of jeuchre encoded in the engine gets a named test. Rule ambiguities are not

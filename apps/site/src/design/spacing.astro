@@ -1,0 +1,58 @@
+---
+import tokens from "../../tokens/tokens.json";
+import Base from "../layouts/Base.astro";
+
+const spaces = Object.entries(tokens.space).filter(([k]) => !k.startsWith("$"));
+---
+
+<Base title="Spacing & shape — design system">
+  <h1>Spacing &amp; shape</h1>
+
+  <h2>Space scale</h2>
+  {spaces.map(([name, v]) => (
+    <div class="row">
+      <code>--space-{name}</code>
+      <span class="bar" style={`width: var(--space-${name})`}></span>
+      <code>{(v as { $value: string }).$value}</code>
+    </div>
+  ))}
+
+  <h2>Radii</h2>
+  <div class="chips">
+    <div class="chip" style="border-radius: var(--radius)"><code>--radius</code></div>
+    <div class="chip" style="border-radius: var(--radius-card)"><code>--radius-card</code></div>
+  </div>
+
+  <h2>Measure</h2>
+  <p>
+    Content column is <code>--measure</code> wide with <code>--page-pad</code> inline padding —
+    this page demonstrates it.
+  </p>
+</Base>
+
+<style>
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .bar {
+    display: inline-block;
+    height: 1em;
+    background: var(--color-felt-bright);
+    border-radius: 2px;
+  }
+
+  .chips {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .chip {
+    border: var(--border);
+    background: var(--color-surface);
+    padding: var(--space-4);
+  }
+</style>

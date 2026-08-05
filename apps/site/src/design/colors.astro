@@ -1,0 +1,49 @@
+---
+import dark from "../../tokens/tokens.dark.json";
+import tokens from "../../tokens/tokens.json";
+import Base from "../layouts/Base.astro";
+
+type TokenGroup = Record<string, { $value?: string; $description?: string } | string>;
+const entries = Object.entries(tokens.color as TokenGroup).filter(([k]) => !k.startsWith("$"));
+const darkColors = dark.color as TokenGroup;
+const val = (v: { $value?: string } | string) => (typeof v === "string" ? v : (v.$value ?? ""));
+const desc = (v: { $description?: string } | string) =>
+  typeof v === "object" ? (v.$description ?? "") : "";
+---
+
+<Base title="Colors — design system">
+  <h1>Colors</h1>
+  <table>
+    <thead>
+      <tr><th>Token</th><th>Light</th><th>Dark</th><th>Role</th></tr>
+    </thead>
+    <tbody>
+      {entries.map(([name, v]) => (
+        <tr>
+          <td><code>--color-{name}</code></td>
+          <td>
+            <span class="swatch" style={`background:${val(v)}`}></span>
+            <code>{val(v)}</code>
+          </td>
+          <td>
+            <span class="swatch" style={`background:${val(darkColors[name] ?? "")}`}></span>
+            <code>{val(darkColors[name] ?? "—")}</code>
+          </td>
+          <td>{desc(v)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</Base>
+
+<style>
+  .swatch {
+    display: inline-block;
+    width: 1.4em;
+    height: 1.4em;
+    border-radius: var(--radius);
+    border: var(--border);
+    vertical-align: middle;
+    margin-right: var(--space-2);
+  }
+</style>
