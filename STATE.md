@@ -99,6 +99,10 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   (workflow_dispatch on a branch — commits regenerated snapshots back to it).
 - Claude Design handoff documented in AGENTS.md: DesignSync/`/design-sync` uses specimens as
   the incremental sync bundle. First actual sync deferred until a design project exists.
+- Gotchas: `workflow_dispatch` workflows can't run until they exist on the DEFAULT branch —
+  first-time linux baselines were bootstrapped locally instead via the official Playwright
+  docker image (isolated /work copy, fresh linux pnpm install, `--update-snapshots`, copy
+  `*-linux.png` back). Future regenerations use the workflow once it's on main.
 - Gotchas: Astro dev toolbar rendered into VRT screenshots — disabled in config. Multi-line
   JSX-ish text nodes in .astro collapse the whitespace before inline links (hit twice now:
   home page, footer) — keep text+link on one line or use &nbsp;. PLAN decision #28.
