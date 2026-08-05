@@ -109,7 +109,11 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 
 ### 2026-08-05 — Work tracking moves to GitHub issues; karma-development adoption analysis
 
-- PLAN decision #29: issues + the Project board are the canonical work/decision queue. Rule:
+- PLAN decision #29: issues + ONE permanent Project board — "jeuchre.org development"
+  (renamed from "jeuchre.org rebuild"; owner: a single board to choose from, ever) — are the
+  canonical work/decision queue. Board stays private until owner comfort (#24); repo Projects
+  tab re-enabled (Phase 0 had disabled it, which hides linked org projects — PLAN's Phase 0
+  checklist line is stale on this point). Rule:
   anything that exists only in conversation doesn't exist — file an issue at the moment it
   arises. New labels `proposal` and `owner-task`. STATE.md no longer enumerates next actions.
 - Analyzed ~/Documents/karma/karma-development (27 skills + guidance corpus + hooks) and

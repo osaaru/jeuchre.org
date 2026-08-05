@@ -23,8 +23,10 @@ mechanism, and it only works if it never drifts:
 - A decision or work item that exists only in conversation **doesn't exist**. The moment one
   arises — an accepted proposal, a discovered task, a deferred idea, an owner-only action —
   capture it: `gh issue create`, self-contained (context, acceptance criteria, links).
-- The Project board (osaaru org, project 1) is execution state: Backlog (unscoped/proposals),
-  Ready (accepted + groomed), In progress, Done. Labels: `proposal` = awaiting owner decision;
+- There is exactly ONE board, ever: "jeuchre.org development" (osaaru org, project 1) — the
+  single permanent queue for all work (site, game, community). Never create another project.
+  Columns are execution state: Backlog (unscoped/proposals), Ready (accepted + groomed),
+  In progress, Done. Labels: `proposal` = awaiting owner decision;
   `owner-task` = only Julian can do it. Start sessions by checking In progress/Ready.
 - PRs link their issue (`Closes #N`). STATE.md never enumerates the work queue — it points at
   the board; its job is narrative context and the journal.
