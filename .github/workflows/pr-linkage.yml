@@ -1,0 +1,49 @@
+name: PR linkage
+
+on:
+  pull_request:
+    # "edited" matters: base-branch retargeting re-triggers the Development-link check
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  issues: read
+  pull-requests: read
+
+jobs:
+  linked-issue:
+    name: Linked issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce first-line closing reference, open issue, Development link
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: ${{ github.event.pull_request.body }}
+          ACTOR: ${{ github.actor }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+          DEFAULT: ${{ github.event.repository.default_branch }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          case "$ACTOR" in renovate*) echo "renovate PR — exempt"; exit 0;; esac
+          first=$(printf '%s' "$BODY" | sed -e 's/\r$//' | grep -m1 -v '^[[:space:]]*$' || true)
+          if printf '%s' "$first" | grep -qiE '^no-issue:'; then echo "No-Issue declared: $first"; exit 0; fi
+          num=$(printf '%s' "$first" | grep -oiE '^(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+' | grep -oE '[0-9]+' | head -1 || true)
+          if [ -z "$num" ]; then
+            echo "::error::The FIRST line of the PR body must be a closing reference ('Closes #123') or 'No-Issue: <reason>'. 'Implements #N' does not create a link."
+            exit 1
+          fi
+          state=$(gh api "repos/$REPO/issues/$num" --jq .state 2>/dev/null || echo missing)
+          if [ "$state" != "open" ]; then
+            echo "::error::PR claims to close #$num but that issue is '$state'."
+            exit 1
+          fi
+          if [ "$BASE" = "$DEFAULT" ]; then
+            linked=$(gh api graphql -f query="query{ repository(owner:\"${REPO%/*}\", name:\"${REPO#*/}\"){ pullRequest(number:$PR){ closingIssuesReferences(first:1){ totalCount } } } }" --jq '.data.repository.pullRequest.closingIssuesReferences.totalCount')
+            if [ "$linked" = "0" ]; then
+              echo "::error::Development section not linked: GitHub has not registered the closing reference. Edit the PR body (any edit re-parses it)."
+              exit 1
+            fi
+            echo "Development link verified: closes #$num"
+          else
+            echo "Stacked PR (base '$BASE'): body links #$num; Development activates on retarget to '$DEFAULT' and this check reruns then."
+          fi

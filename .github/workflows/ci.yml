@@ -25,19 +25,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: moon ci
 
-  linked-issue:
-    name: Linked issue
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Require a closing keyword in the PR body
-        env:
-          BODY: ${{ github.event.pull_request.body }}
-          ACTOR: ${{ github.actor }}
-        run: |
-          case "$ACTOR" in renovate*) echo "renovate PR — exempt"; exit 0;; esac
-          printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+|^no-issue:' && exit 0
-          echo "::error::PR body must link its issue with a closing keyword (e.g. 'Closes #123')."
-          echo "Squash merges use the PR body as the commit message, so the link must live in the body."
-          echo "'Implements #N' does NOT create a link. Escape hatch: a line 'No-Issue: <reason>'."
-          exit 1
