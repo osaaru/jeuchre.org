@@ -9,6 +9,7 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.1-noble
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,7 +18,6 @@ jobs:
         with:
           auto-install: true
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @jeuchre/site exec playwright install --with-deps chromium
       - run: moon run site:tokens && DESIGN=1 moon run site:build-design
       - run: cd apps/site && DESIGN=1 pnpm exec playwright test --update-snapshots
       - name: Commit baselines
