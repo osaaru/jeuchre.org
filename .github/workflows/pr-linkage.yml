@@ -18,6 +18,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           BODY: ${{ github.event.pull_request.body }}
+          TITLE: ${{ github.event.pull_request.title }}
           ACTOR: ${{ github.actor }}
           BASE: ${{ github.event.pull_request.base.ref }}
           DEFAULT: ${{ github.event.repository.default_branch }}
@@ -32,6 +33,13 @@ jobs:
             echo "::error::The FIRST line of the PR body must be a closing reference ('Closes #123') or 'No-Issue: <reason>'. 'Implements #N' does not create a link."
             exit 1
           fi
+          case "$TITLE" in
+            "Closes #$num - "*) ;;
+            *)
+              echo "::error::PR title must be 'Closes #$num - <issue title>' (matching the body's closing reference)."
+              exit 1
+              ;;
+          esac
           state=$(gh api "repos/$REPO/issues/$num" --jq .state 2>/dev/null || echo missing)
           if [ "$state" != "open" ]; then
             echo "::error::PR claims to close #$num but that issue is '$state'."
