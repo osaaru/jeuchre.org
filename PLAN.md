@@ -45,6 +45,7 @@ July 2026), noted where load-bearing.
 | 26 | Agent handoff ledger | STATE.md, updated in every PR | Long multi-agent project: a Snapshot (current state/next actions) + append-only Journal (changes, rationale, gotchas) lets any new agent resume from `main` alone; enforced via AGENTS.md convention |
 | 27 | MCP servers | Committed `.mcp.json`: Astro docs, Cloudflare docs, `moon mcp`, Playwright | Version-controlled agent tool access; each user approves on first run. GitHub MCP skipped (redundant with `gh` CLI); Cloudflare OAuth servers (unified API/bindings/observability) added when Phase 1 deploy/DNS work starts; Context7 stays user-scope (API key) |
 | 28 | Design manifest | DTCG `tokens.json` + dev-only specimen microsite + VRT | W3C DTCG 2025.10 is the stable interop format; `tokens.css` generated via Style Dictionary v4; `/design` routes exist only in dev (`DESIGN=1` for tests); Playwright screenshot baselines gate CI; specimens double as the Claude Design (DesignSync) sync bundle |
+| 29 | Work tracking | GitHub issues + ONE permanent Project board ("jeuchre.org development") | A decision or work item that exists only in conversation doesn't exist: agents capture it as an issue the moment it's made. Board = execution state; `proposal` label = awaiting owner acceptance; `owner-task` = human-only. STATE.md carries narrative + journal, never the work queue |
 
 ## Architecture
 

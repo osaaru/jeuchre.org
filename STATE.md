@@ -7,18 +7,13 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 
 ## Snapshot
 
-- **Phase:** 1 (site relaunch) — starting
-- **Done:** Phase 0 complete. Repo public with `main` default; scaffold merged (PR #1);
-  `main-protection` ruleset now REQUIRES the `CI` check + PRs + squash-only; Project board
-  seeded with Phase 1 issues #2–#10; committed `.mcp.json` + `.vscode/`; ledger system live
-- **In flight:** issue #2 (design system) — PR #12 open; issue #13 (design manifest +
-  specimen microsite + VRT) — PR stacked on #12
-- **Next actions:**
-  1. Owner: install the Renovate GitHub App on the repo
-  2. After #2 merges: start issue #3 (rules content model) — it unblocks #4/#6/#7
-  3. Issue #8 (Cloudflare deploy wiring) can proceed in parallel once owner provides the
-     Cloudflare account + API token; #10 (DNS cutover) is the Phase 1 exit
-- **Blocked/waiting:** Cloudflare account + API token (owner) — blocks #8/#10 only
+- **Phase:** 1 (site relaunch) — in progress
+- **Work queue:** the [Project board](https://github.com/orgs/osaaru/projects/1) is canonical
+  (PLAN decision #29). Issues: `proposal` = awaiting owner acceptance; `owner-task` = Julian.
+- **In flight:** PR #12 (design system, closes #2) and PR #14 (design manifest/VRT, closes
+  #13, stacked on #12) — both green, awaiting owner merge in that order. Ledger/work-tracking
+  PR stacked on #14.
+- **Blocked/waiting:** Cloudflare account + API token (owner) — blocks #8/#10 only.
 
 ## Journal
 
@@ -111,3 +106,33 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 - Gotchas: Astro dev toolbar rendered into VRT screenshots — disabled in config. Multi-line
   JSX-ish text nodes in .astro collapse the whitespace before inline links (hit twice now:
   home page, footer) — keep text+link on one line or use &nbsp;. PLAN decision #28.
+
+### 2026-08-05 — Work tracking moves to GitHub issues; karma-development adoption analysis
+
+- PR↔issue lore hardened (owner): PR titles are `Closes #N - <issue title>` (display-only —
+  GitHub does not parse titles for links; the gate cross-checks title against body);
+  closing reference is the FIRST line of every PR body;
+  PR template added; "Linked issue" check moved to its own workflow (pr-linkage.yml) with the
+  `edited` trigger so base-retargeting re-runs it, and it verifies the Development link via
+  API once base == main. GitHub limitation: Development links only activate against the
+  default branch — stacked PRs link late by design.
+- PR↔issue linkage: "Implements #N" does NOT create a GitHub closing link — only
+  closes/fixes/resolves keywords do, and (squash: PR_BODY) they must be in the PR BODY.
+  Closing refs only activate against the default branch, so stacked PRs link late (harmless:
+  the squash commit still closes on merge). CI "Linked issue" job now enforces body linkage;
+  make it a required check after the current PR chain merges (see #25).
+- PLAN decision #29: issues + ONE permanent Project board — "jeuchre.org development"
+  (renamed from "jeuchre.org rebuild"; owner: a single board to choose from, ever) — are the
+  canonical work/decision queue. Board stays private until owner comfort (#24); repo Projects
+  tab re-enabled (Phase 0 had disabled it, which hides linked org projects — PLAN's Phase 0
+  checklist line is stale on this point). Rule:
+  anything that exists only in conversation doesn't exist — file an issue at the moment it
+  arises. New labels `proposal` and `owner-task`. STATE.md no longer enumerates next actions.
+- Analyzed ~/Documents/karma/karma-development (27 skills + guidance corpus + hooks) and
+  ranked adoptions. Filed: #15 (drift gate — ACCEPTED, Ready), #16–#19 (proposals: git guard,
+  AGENTS hardening, guidance docs, distillation loop), #20 (Tier-2 triggers + Tier-3 skip
+  record), #21–#22 (owner tasks: social preview upload, Renovate install).
+- Owner walkthrough of the ranked list is in progress; item 1 (drift gate) accepted after
+  challenge ("why isn't this inherent in agent stewardship?" — answer journaled in #15:
+  probabilistic compliance vs deterministic invariants; AGENTS.md shipped a wrong moon
+  command as live proof). Items 2–5 pending — decide via their `proposal` issues.

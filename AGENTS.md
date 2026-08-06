@@ -18,6 +18,25 @@ mechanism, and it only works if it never drifts:
 - Assume your session can end at any moment: keep STATE.md accurate enough that a brand-new
   agent could resume from `main` alone, with no access to your conversation.
 
+## Work tracking (the queue lives on GitHub, not in your context)
+
+- A decision or work item that exists only in conversation **doesn't exist**. The moment one
+  arises — an accepted proposal, a discovered task, a deferred idea, an owner-only action —
+  capture it: `gh issue create`, self-contained (context, acceptance criteria, links).
+- There is exactly ONE board, ever: "jeuchre.org development" (osaaru org, project 1) — the
+  single permanent queue for all work (site, game, community). Never create another project.
+  Columns are execution state: Backlog (unscoped/proposals), Ready (accepted + groomed),
+  In progress, Done. Labels: `proposal` = awaiting owner decision;
+  `owner-task` = only Julian can do it. Start sessions by checking In progress/Ready.
+- Every PR is titled `Closes #N - <issue title>` and the FIRST line of its body is
+  `Closes #N` (NOT "Implements" — titles aren't parsed for links and squash commits reuse
+  the body, so the link must live in the body; the title makes it visible at a glance). Branch names carry the issue
+  number (`feat/13-design-manifest`). The "Linked issue" check hard-gates this: first-line
+  reference, issue open, and — once the PR targets main — the Development link actually
+  registered. Issueless PRs: first line `No-Issue: <reason>`.
+- STATE.md never enumerates the work queue — it points at the board; its job is narrative
+  context and the journal.
+
 ## MCP servers
 
 `.mcp.json` (committed) provides: `astro-docs` and `cloudflare-docs` (remote documentation
