@@ -43,6 +43,19 @@ mechanism, and it only works if it never drifts:
 - STATE.md never enumerates the work queue — it points at the board; its job is narrative
   context and the journal.
 
+## Worktrees (agent isolation)
+
+- Implementation work on an issue happens in a dedicated git worktree:
+  `git worktree add .claude/worktrees/<issue#>-<slug> -b <type>/<issue#>-<slug>` — NEVER
+  directly in the operator's checkout, and never touching servers/processes the operator
+  has running. The operator's dev server owns port 4321; agents use a free port ≥ 4400.
+- One worktree per issue/PR. After its PR merges: `git worktree remove` the directory and
+  delete the local branch (remote branch/PR history are preserved by GitHub). Do not create
+  a worktree just because the checkout is dirty — classify the dirty files first.
+- Fresh worktrees need `pnpm install --frozen-lockfile` and `moon run site:tokens`; a
+  SessionStart hook (`scripts/hooks/session-start-worktree-preflight.sh`) surfaces this
+  automatically when a session opens inside a worktree.
+
 ## MCP servers
 
 `.mcp.json` (committed) provides: `astro-docs` and `cloudflare-docs` (remote documentation
