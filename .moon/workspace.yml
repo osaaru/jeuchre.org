@@ -2,6 +2,8 @@ projects:
   globs:
     - "apps/*"
     - "packages/*"
+  sources:
+    repo: "."
 
 vcs:
   client: "git"

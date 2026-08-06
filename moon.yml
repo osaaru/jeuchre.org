@@ -1,0 +1,16 @@
+language: "bash"
+layer: "tool"
+
+tasks:
+  lint-docs:
+    command: "scripts/lint-docs.sh"
+    inputs:
+      - "PLAN.md"
+      - "AGENTS.md"
+      - "STATE.md"
+      - "CLAUDE.md"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "journal/**/*"
+      - "docs/**/*"
+      - "scripts/lint-docs.sh"
