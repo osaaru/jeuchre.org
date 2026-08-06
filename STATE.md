@@ -109,7 +109,9 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 
 ### 2026-08-05 — Work tracking moves to GitHub issues; karma-development adoption analysis
 
-- PR↔issue lore hardened (owner): closing reference is the FIRST line of every PR body;
+- PR↔issue lore hardened (owner): PR titles are `Closes #N - <issue title>` (display-only —
+  GitHub does not parse titles for links; the gate cross-checks title against body);
+  closing reference is the FIRST line of every PR body;
   PR template added; "Linked issue" check moved to its own workflow (pr-linkage.yml) with the
   `edited` trigger so base-retargeting re-runs it, and it verifies the Development link via
   API once base == main. GitHub limitation: Development links only activate against the
