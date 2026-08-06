@@ -8,15 +8,16 @@ for it.
 
 ## The ledger (handoff contract)
 
-This project is developed by multiple AI agents over a long period. STATE.md is the handoff
-mechanism, and it only works if it never drifts:
+This project is developed by multiple AI agents over a long period. The ledger is the
+handoff mechanism, and it only works if it never drifts:
 
-- **Every PR must update STATE.md**: refresh the Snapshot (phase, done, in-flight, next
-  actions) and append a dated Journal entry (what changed, why, gotchas discovered).
-- The Journal is append-only. Record surprises there (tool behavior changes, workarounds,
-  broken assumptions) — the next agent should never have to rediscover them.
-- Assume your session can end at any moment: keep STATE.md accurate enough that a brand-new
-  agent could resume from `main` alone, with no access to your conversation.
+- **Every PR adds one journal file**: `journal/YYYY-MM-DD-<slug>.md` — what changed, why,
+  and gotchas discovered (tool behavior changes, workarounds, broken assumptions). Never
+  edit existing entries. One file per PR means concurrent PRs cannot conflict on the ledger.
+- **STATE.md holds the thin Snapshot** (phase, board pointer, owner-blockers). Refresh it
+  only when it is wrong — typically at merge or kickoff — not in every PR.
+- Assume your session can end at any moment: keep the ledger accurate enough that a
+  brand-new agent could resume from `main` alone, with no access to your conversation.
 
 ## Work tracking (the queue lives on GitHub, not in your context)
 
