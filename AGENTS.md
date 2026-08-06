@@ -34,6 +34,12 @@ mechanism, and it only works if it never drifts:
   number (`feat/13-design-manifest`). The "Linked issue" check hard-gates this: first-line
   reference, issue open, and — once the PR targets main — the Development link actually
   registered. Issueless PRs: first line `No-Issue: <reason>`.
+- Board flow, left to right: Backlog → Ready → In progress → Needs review → Done.
+  **Kickoff = draft PR:** implementation on an issue STARTS by opening a draft PR (branch
+  `type/<issue#>-<slug>`, first-line `Closes #N`, ledger stub). Board states then follow the
+  PR automatically (board-sync workflow): draft open → In progress; ready-for-review (green,
+  self-reviewed) → Needs review; owner merge → issue closes → Done. Backlog→Ready is grooming
+  (owner accepts + criteria exist). Manual `gh project item-edit` is the correction fallback.
 - STATE.md never enumerates the work queue — it points at the board; its job is narrative
   context and the journal.
 

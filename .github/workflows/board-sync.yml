@@ -1,0 +1,42 @@
+name: Board sync
+
+# Moves the linked issue's card on the "jeuchre.org development" board (org project 1)
+# as the PR lifecycle progresses: draft PR -> In progress; ready for review -> Needs review.
+# (Merge closes the issue; the project's built-in workflow moves it to Done.)
+# Requires the org GitHub App credentials (BOARD_APP_ID var + BOARD_APP_PRIVATE_KEY secret);
+# until those exist this workflow no-ops.
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, converted_to_draft, reopened]
+
+jobs:
+  sync:
+    name: Sync board status
+    runs-on: ubuntu-latest
+    if: vars.BOARD_APP_ID != ''
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app
+        with:
+          app-id: ${{ vars.BOARD_APP_ID }}
+          private-key: ${{ secrets.BOARD_APP_PRIVATE_KEY }}
+          owner: osaaru
+      - name: Move linked issue card
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          BODY: ${{ github.event.pull_request.body }}
+          DRAFT: ${{ github.event.pull_request.draft }}
+          REPO: ${{ github.repository }}
+        run: |
+          num=$(printf '%s' "$BODY" | sed -e 's/\r$//' | grep -m1 -v '^[[:space:]]*$' | grep -oiE '^(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+' | grep -oE '[0-9]+' | head -1 || true)
+          [ -z "$num" ] && { echo "No linked issue; nothing to sync."; exit 0; }
+          if [ "$DRAFT" = "true" ]; then target="In progress"; else target="Needs review"; fi
+          proj=$(gh api graphql -f query='query{ organization(login:"osaaru"){ projectV2(number:1){ id field(name:"Status"){ ... on ProjectV2SingleSelectField { id options { id name } } } } } }')
+          pid=$(echo "$proj" | jq -r .data.organization.projectV2.id)
+          fid=$(echo "$proj" | jq -r .data.organization.projectV2.field.id)
+          oid=$(echo "$proj" | jq -r ".data.organization.projectV2.field.options[] | select(.name==\"$target\") | .id")
+          iid=$(gh api graphql -f query="query{ repository(owner:\"${REPO%/*}\", name:\"${REPO#*/}\"){ issue(number:$num){ projectItems(first:10){ nodes { id project { id } } } } } }" --jq ".data.repository.issue.projectItems.nodes[] | select(.project.id==\"$pid\") | .id")
+          [ -z "$iid" ] && { echo "Issue #$num is not on the board; skipping."; exit 0; }
+          gh api graphql -f query="mutation{ updateProjectV2ItemFieldValue(input:{projectId:\"$pid\", itemId:\"$iid\", fieldId:\"$fid\", value:{singleSelectOptionId:\"$oid\"}}) { clientMutationId } }" > /dev/null
+          echo "Issue #$num -> $target"
