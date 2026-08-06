@@ -30,6 +30,7 @@ for doc in "${GUIDANCE_DOCS[@]}"; do
       *'<'*|*'*'*|*'$'*|*'{'*|*YYYY*|*'#'*) continue ;;
     esac
     echo "$path" | grep -qE "$RUNTIME_ALLOW" && continue
+    echo "apps/site/$path" | grep -qE "$RUNTIME_ALLOW" && continue
     # tokens/ and src/ prefixes are meaningful only inside apps/packages context; try both
     if [ ! -e "$path" ] && [ ! -e "apps/site/$path" ]; then
       fail "$doc references missing path: $path"
