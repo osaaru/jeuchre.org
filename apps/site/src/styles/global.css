@@ -1,4 +1,9 @@
 @import "./tokens.css";
+@import "./tokens-dark.css";
+
+:root {
+  --border: 1px solid var(--color-line);
+}
 
 *,
 *::before,

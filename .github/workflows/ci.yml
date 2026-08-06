@@ -9,11 +9,16 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
+    # Playwright container pins the VRT rendering environment (fonts!).
+    # Keep the tag in lockstep with @playwright/test in apps/site.
+    container: mcr.microsoft.com/playwright:v1.61.1-noble
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           filter: "blob:none"
+      - run: apt-get update -q && apt-get install -yq xz-utils
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: moonrepo/setup-toolchain@v0
         with:
           auto-install: true

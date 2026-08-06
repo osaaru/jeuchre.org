@@ -1,0 +1,17 @@
+{
+  "$description": "Dark-scheme color overrides. Non-color tokens inherit from tokens.json.",
+  "color": {
+    "$type": "color",
+    "paper": { "$value": "#201713" },
+    "surface": { "$value": "#2a1f1a" },
+    "ink": { "$value": "#e8ded2" },
+    "ink-muted": { "$value": "#b3a595" },
+    "line": { "$value": "#4a3c33" },
+    "red": { "$value": "#de5954" },
+    "red-deep": { "$value": "#e8807c" },
+    "red-bright": { "$value": "#f06b66" },
+    "felt": { "$value": "#7dbf9a" },
+    "felt-bright": { "$value": "#4fa878" },
+    "gold": { "$value": "#f2a24b" }
+  }
+}

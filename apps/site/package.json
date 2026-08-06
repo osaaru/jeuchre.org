@@ -13,6 +13,7 @@
     "@astrojs/check": "^0.9.5",
     "@biomejs/biome": "catalog:",
     "@playwright/test": "^1.61.1",
+    "style-dictionary": "^5.5.0",
     "typescript": "catalog:"
   }
 }

@@ -1,0 +1,46 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Components — design system">
+  <h1>Components</h1>
+  <p>
+    Specimens of every styled element. New components must add a specimen here (and become a
+    visual-regression target) in the same PR.
+  </p>
+
+  <h2>Table</h2>
+  <table>
+    <thead>
+      <tr><th>Result of hand</th><th>Maker</th><th>Non-maker</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Euchre — makers take 1–2 tricks</td><td>0</td><td>1</td></tr>
+      <tr><td>Jeujeu — makers take all 5</td><td>4</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Figure</h2>
+  <figure>
+    <div class="placeholder" aria-hidden="true">16 × 9 placeholder</div>
+    <figcaption>A figcaption in the deep card-red</figcaption>
+  </figure>
+
+  <h2>Lists</h2>
+  <ul>
+    <li>The goal is to lose tricks</li>
+    <li>Both teams start with 10 points</li>
+  </ul>
+</Base>
+
+<style>
+  .placeholder {
+    aspect-ratio: 16 / 9;
+    display: grid;
+    place-items: center;
+    background: var(--color-surface);
+    border: var(--border);
+    border-radius: var(--radius-card);
+    color: var(--color-ink-muted);
+  }
+</style>

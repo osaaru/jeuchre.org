@@ -1,0 +1,31 @@
+name: Update VRT baselines
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.61.1-noble
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - run: apt-get update -q && apt-get install -yq xz-utils
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+      - run: pnpm install --frozen-lockfile
+      - run: moon run site:tokens && DESIGN=1 moon run site:build-design
+      - run: cd apps/site && DESIGN=1 pnpm exec playwright test --update-snapshots
+      - name: Commit baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A apps/site/tests
+          git diff --cached --quiet || git commit -m "Update VRT baselines (linux)"
+          git push

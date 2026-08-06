@@ -5,17 +5,30 @@ layer: "application"
 stack: "frontend"
 
 tasks:
+  tokens:
+    command: "pnpm exec node tokens/build-tokens.mjs"
+    inputs: ["tokens/**/*"]
+    outputs: ["src/styles/tokens.css", "src/styles/tokens-dark.css"]
   dev:
     command: "pnpm exec astro dev"
+    deps: ["~:tokens"]
   build:
     command: "pnpm exec astro build"
+    deps: ["~:tokens"]
     outputs: ["dist"]
+  build-design:
+    command: "pnpm exec astro build"
+    deps: ["~:tokens"]
+    env:
+      DESIGN: "1"
+    outputs: ["dist-design"]
   typecheck:
     command: "pnpm exec astro check"
+    deps: ["~:tokens"]
   e2e:
     command: "pnpm exec playwright test"
-    deps: ["build"]
-    options:
-      runInCI: false
+    deps: ["~:build-design"]
+    env:
+      DESIGN: "1"
   lint:
     command: "pnpm exec biome check ."

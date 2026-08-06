@@ -1,0 +1,36 @@
+---
+import tokens from "../../tokens/tokens.json";
+import Base from "../layouts/Base.astro";
+
+const sizes = Object.entries(tokens.text).filter(([k]) => !k.startsWith("$"));
+const families = Object.entries(tokens.font).filter(([k]) => !k.startsWith("$"));
+---
+
+<Base title="Typography — design system">
+  <h1>Typography</h1>
+
+  <h2>Families</h2>
+  {families.map(([name, v]) => (
+    <p style={`font-family: var(--font-${name})`}>
+      <strong>--font-{name}</strong>: The quick brown fox jumps over the lazy jack of hearts.
+      <br />
+      <code>{Array.isArray((v as { $value?: string[] }).$value) ? (v as { $value: string[] }).$value.join(", ") : ""}</code>
+    </p>
+  ))}
+
+  <h2>Scale</h2>
+  {sizes.map(([name]) => (
+    <p style={`font-size: var(--text-${name}); font-family: var(--font-display)`}>
+      --text-{name} · Jeuchre — the anti-Euchre
+    </p>
+  ))}
+
+  <h2>Headings in context</h2>
+  <h1>Heading one — Jeujeu Supreme</h1>
+  <h2>Heading two — Boom Euchre</h2>
+  <h3>Heading three — Order up</h3>
+  <p>
+    Body text with a <a href="#">link</a>, <em>emphasis</em>, <strong>strength</strong>, and
+    <code>inline code</code>.
+  </p>
+</Base>

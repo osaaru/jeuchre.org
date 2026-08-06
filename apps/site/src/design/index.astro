@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+
+const pages = [
+  { href: "/design/colors", label: "Colors", note: "Every color token, light + dark, with roles" },
+  { href: "/design/typography", label: "Typography", note: "Type scale, families, leading" },
+  { href: "/design/spacing", label: "Spacing & shape", note: "Space scale, radii, measure" },
+  { href: "/design/components", label: "Components", note: "Specimens of every styled element" },
+];
+---
+
+<Base title="Design system — jeuchre.org">
+  <h1>Design system</h1>
+  <p>
+    Dev-only microsite. The source of truth is <code>apps/site/tokens/tokens.json</code> (W3C
+    DTCG); <code>tokens.css</code> is generated from it. These pages double as visual-regression
+    targets and as the Claude Design sync bundle.
+  </p>
+  <ul>
+    {pages.map((p) => (
+      <li>
+        <a href={p.href}>{p.label}</a> — {p.note}
+      </li>
+    ))}
+  </ul>
+</Base>
