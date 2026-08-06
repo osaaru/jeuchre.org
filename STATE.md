@@ -10,7 +10,7 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 - **Phase:** 1 (site relaunch) — in progress
 - **Work queue:** the [board](https://github.com/orgs/osaaru/projects/1) is canonical; five
   states (Backlog/Ready/In progress/Needs review/Done) driven by the PR lifecycle.
-- **In flight:** #32 (board flow) — this PR.
+- **In flight:** #27 (worktree isolation) — PR open.
 - **Blocked/waiting on owner:** GitHub App + built-in workflow toggles (#33), Renovate (#22),
   social preview (#21), Cloudflare account (#8/#10).
 
@@ -164,3 +164,16 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   workflow moves cards on PR events (dormant until the org GitHub App exists — #33; GitHub
   App chosen over PAT for no-expiry, bot identity, and future automation headroom).
   Built-in "closed → Done" + auto-add toggles are owner UI steps (#33).
+
+### 2026-08-06 — Worktree isolation protocol (#27)
+
+- AGENTS.md Worktrees section: agent work happens in `.claude/worktrees/<issue#>-<slug>`
+  worktrees (gitignored), one per issue, teardown after merge; operator's checkout and
+  port 4321 are off-limits; agents use ports ≥ 4400.
+- Board-sync automation verified live (App secret fixed: key was initially saved as a
+  plaintext VARIABLE — exposed, rotated, re-stored as a secret). Board holds issues only;
+  PRs are kept off via the auto-add filter `is:issue is:open`.
+- SessionStart preflight hook (.claude/settings.json + scripts/hooks/) surfaces missing
+  node_modules / generated tokens when a session opens inside a worktree. Advisory only.
+- This PR was itself built in `.claude/worktrees/27-worktree-protocol` — first use of the
+  protocol, and the first live run of the #33 board-sync automation (draft PR → In progress).

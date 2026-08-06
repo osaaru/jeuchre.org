@@ -28,6 +28,7 @@ mechanism, and it only works if it never drifts:
   Columns are execution state: Backlog (unscoped/proposals), Ready (accepted + groomed),
   In progress, Done. Labels: `proposal` = awaiting owner decision;
   `owner-task` = only Julian can do it. Start sessions by checking In progress/Ready.
+  The board holds ISSUES only — never add PRs (auto-add filter is `is:issue is:open`).
 - Every PR is titled `Closes #N - <issue title>` and the FIRST line of its body is
   `Closes #N` (NOT "Implements" — titles aren't parsed for links and squash commits reuse
   the body, so the link must live in the body; the title makes it visible at a glance). Branch names carry the issue
@@ -42,6 +43,19 @@ mechanism, and it only works if it never drifts:
   (owner accepts + criteria exist). Manual `gh project item-edit` is the correction fallback.
 - STATE.md never enumerates the work queue — it points at the board; its job is narrative
   context and the journal.
+
+## Worktrees (agent isolation)
+
+- Implementation work on an issue happens in a dedicated git worktree:
+  `git worktree add .claude/worktrees/<issue#>-<slug> -b <type>/<issue#>-<slug>` — NEVER
+  directly in the operator's checkout, and never touching servers/processes the operator
+  has running. The operator's dev server owns port 4321; agents use a free port ≥ 4400.
+- One worktree per issue/PR. After its PR merges: `git worktree remove` the directory and
+  delete the local branch (remote branch/PR history are preserved by GitHub). Do not create
+  a worktree just because the checkout is dirty — classify the dirty files first.
+- Fresh worktrees need `pnpm install --frozen-lockfile` and `moon run site:tokens`; a
+  SessionStart hook (`scripts/hooks/session-start-worktree-preflight.sh`) surfaces this
+  automatically when a session opens inside a worktree.
 
 ## MCP servers
 

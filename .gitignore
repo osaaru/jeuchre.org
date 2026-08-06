@@ -14,3 +14,6 @@ cache/
 apps/site/src/styles/tokens.css
 apps/site/src/styles/tokens-dark.css
 dist-design/
+
+# agent worktrees (see AGENTS.md Worktrees)
+.claude/worktrees/
