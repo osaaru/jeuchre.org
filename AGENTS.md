@@ -18,6 +18,9 @@ handoff mechanism, and it only works if it never drifts:
   only when it is wrong — typically at merge or kickoff — not in every PR.
 - Assume your session can end at any moment: keep the ledger accurate enough that a
   brand-new agent could resume from `main` alone, with no access to your conversation.
+- A drift gate (`scripts/lint-docs.sh`, run by CI and a PostToolUse hook) machine-checks
+  guidance docs: referenced paths exist, journal filenames well-formed, and AGENTS.md +
+  CLAUDE.md stay within a 150-line budget — delete a line to add a line.
 
 ## Work tracking (the queue lives on GitHub, not in your context)
 
