@@ -8,12 +8,11 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
 ## Snapshot
 
 - **Phase:** 1 (site relaunch) — in progress
-- **Work queue:** the [Project board](https://github.com/orgs/osaaru/projects/1) is canonical
-  (PLAN decision #29). Issues: `proposal` = awaiting owner acceptance; `owner-task` = Julian.
-- **In flight:** PR #12 (design system, closes #2) and PR #14 (design manifest/VRT, closes
-  #13, stacked on #12) — both green, awaiting owner merge in that order. Ledger/work-tracking
-  PR stacked on #14.
-- **Blocked/waiting:** Cloudflare account + API token (owner) — blocks #8/#10 only.
+- **Work queue:** the [board](https://github.com/orgs/osaaru/projects/1) is canonical; five
+  states (Backlog/Ready/In progress/Needs review/Done) driven by the PR lifecycle.
+- **In flight:** #32 (board flow) — this PR.
+- **Blocked/waiting on owner:** GitHub App + built-in workflow toggles (#33), Renovate (#22),
+  social preview (#21), Cloudflare account (#8/#10).
 
 ## Journal
 
@@ -150,3 +149,18 @@ append a Journal entry. The Snapshot is rewritten in place; the Journal is appen
   challenge ("why isn't this inherent in agent stewardship?" — answer journaled in #15:
   probabilistic compliance vs deterministic invariants; AGENTS.md shipped a wrong moon
   command as live proof). Items 2–5 pending — decide via their `proposal` issues.
+
+### 2026-08-06 — Chain merged; board flow instituted (#32)
+
+- The #12→#14→#23→#30 chain squash-merged (painfully — see #31 evidence comment: STATE.md
+  collisions made every retarget DIRTY; required checks re-verified each sync). Issues
+  #2/#13/#25/#26 closed. "Linked issue" is now a REQUIRED check alongside CI. The gate
+  caught GitHub silently failing to register #30's closing reference after retarget —
+  fixed by re-editing the body (any edit re-parses).
+- Cadence lesson adopted: keep the PR queue at depth one — merge on green before starting
+  the next unit; ask rather than stack.
+- Board reformed (owner): added "Needs review" state; all 25+ cards swept to true states
+  (closed → Done; Phase 1 issues #3–#10 → Ready). New flow: kickoff = draft PR; board-sync
+  workflow moves cards on PR events (dormant until the org GitHub App exists — #33; GitHub
+  App chosen over PAT for no-expiry, bot identity, and future automation headroom).
+  Built-in "closed → Done" + auto-add toggles are owner UI steps (#33).
