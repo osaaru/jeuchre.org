@@ -55,7 +55,15 @@ mechanism, and it only works if it never drifts:
   a worktree just because the checkout is dirty — classify the dirty files first.
 - Fresh worktrees need `pnpm install --frozen-lockfile` and `moon run site:tokens`; a
   SessionStart hook (`scripts/hooks/session-start-worktree-preflight.sh`) surfaces this
-  automatically when a session opens inside a worktree.
+  automatically when a session opens inside a worktree, and claims the worktree's port lane.
+- **Registry:** every worktree registers in `.claude/worktrees/.registry.json` (via
+  `scripts/worktree-registry.mjs claim`) — location, branch, issue, and a port lane
+  (4400, 4410, …; dev = lane, preview = lane+1, e2e = lane+2; operator owns 4321). Dev
+  servers: `moon run site:dev -- --port <lane>`; e2e: `E2E_PORT=<lane+2> moon run site:e2e`.
+- **Teardown (end of session):** after the PR merges, run
+  `scripts/worktree-teardown.sh <name>` from the MAIN checkout (or invoke the
+  `end-session` skill) — kills the lane's processes, releases the registry entry, removes
+  the worktree and local branch. Report the observed end state it prints.
 
 ## MCP servers
 
