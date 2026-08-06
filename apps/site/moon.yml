@@ -28,7 +28,7 @@ tasks:
   e2e:
     command: "pnpm exec playwright test"
     deps: ["~:build-design"]
-    inputs: ["@group(sources)", "tests/**/*", "playwright.config.ts", "$E2E_PORT"]
+    inputs: ["src/**/*", "tests/**/*", "public/**/*", "playwright.config.ts", "astro.config.mjs", "$E2E_PORT"]
     env:
       DESIGN: "1"
   lint:
