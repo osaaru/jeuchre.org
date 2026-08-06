@@ -1,0 +1,69 @@
+/*
+ * Design tokens for jeuchre.org — "modernize, keep the soul."
+ * Hues are inherited from the 2020 site (warm paper, ink, card reds, felt greens);
+ * roles, scales, and dark mode are new. Change values here, never in components.
+ */
+:root {
+  /* Color: base */
+  --color-paper: #e9e4d9;
+  --color-surface: #f2eee6;
+  --color-ink: #362017;
+  --color-ink-muted: #6c5e52;
+  --color-line: #cfc7b8;
+
+  /* Color: brand */
+  --color-red: #ba3431; /* primary accent — links, actions */
+  --color-red-deep: #701d1e; /* headings' companion, captions */
+  --color-red-bright: #da3732; /* hovers, highlights */
+  --color-felt: #034732; /* card-table green — secondary accent */
+  --color-felt-bright: #008148;
+  --color-gold: #ef8a17; /* sparing use: callouts, the fun bits */
+
+  /* Typography */
+  --font-display:
+    "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-sm: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
+  --text-xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --text-2xl: clamp(2rem, 1.6rem + 2vw, 3rem);
+
+  --leading-body: 1.6;
+  --leading-tight: 1.15;
+
+  /* Space (4px base, like the old theme's single/double) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+
+  /* Shape */
+  --radius: 6px;
+  --radius-card: 10px;
+  --border: 1px solid var(--color-line);
+
+  /* Layout */
+  --measure: 42rem; /* content max-width */
+  --page-pad: clamp(1rem, 4vw, 2rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: #201713;
+    --color-surface: #2a1f1a;
+    --color-ink: #e8ded2;
+    --color-ink-muted: #b3a595;
+    --color-line: #4a3c33;
+    --color-red: #de5954;
+    --color-red-deep: #e8807c;
+    --color-red-bright: #f06b66;
+    --color-felt: #7dbf9a;
+    --color-felt-bright: #4fa878;
+    --color-gold: #f2a24b;
+  }
+}
