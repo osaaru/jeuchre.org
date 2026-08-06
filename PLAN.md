@@ -125,89 +125,28 @@ dragging React in. moon's affected-task graph keeps CI fast as packages accumula
   `wrangler`.
 - No persistent staging environment — per-PR previews cover it at this scale.
 
-## Phases
+## Roadmap
 
-### Phase 0 — Repo reset and GitHub setup
+Execution lives on the ONE board — "jeuchre.org development" (osaaru org, project 1); this
+section is sequencing narrative only. Phase 0 (repo reset, GitHub setup, monorepo scaffold,
+CI gates, ledger, MCP config) is complete — its record is the STATE.md journal.
 
-**Branch surgery** (`prod` is the latest lineage — it is ahead of `master`):
-1. Create and push `archive/gatsby-2020` from `prod`. The old implementation lives there
-   read-only; nothing is deleted from history.
-2. Create the new orphan `main` (first commit: PLAN.md; then the scaffold), push it, and set
-   it as the **default branch** in repo settings.
-3. Delete the `master` and `prod` branches (their history is preserved on the archive branch).
-
-**Repo settings:**
-- Description + topics (`jeuchre`, `euchre`, `card-game`, `astro`, `typescript`).
-- Squash-merge only (merge commits and rebase-merge disabled); PR title becomes the commit.
-- Auto-delete head branches after merge.
-- Disable wikis and classic projects; Discussions stays off until post-relaunch (decision #22).
-- Social preview image (Phase 1 design output).
-
-**Protection:** a ruleset on `main` — require PRs, require the CI status check, block
-force-pushes. No required-approvals count (solo owner: merging is approval, decision #10).
-
-**Community health files:** CONTRIBUTING.md (issues open to all; small PRs welcome; open an
-issue before building anything big; note the agent-driven workflow), CODE_OF_CONDUCT.md
-(Contributor Covenant), and the two LICENSE files with a clear README licensing section.
-
-**Automation & wiring:**
-- Cloudflare credentials (`CLOUDFLARE_API_TOKEN`, account ID) as Actions secrets.
-- Renovate app: grouped update PRs on a monthly cadence, security patches immediate,
-  moon/proto-aware (moon ≥ v2.4 ships Renovate support).
-- GitHub Project (kanban: Backlog / Ready / In progress / Done), seeded from this plan.
-- Minimal label set: `site`, `engine`, `game-ui`, `infra`, `content`, `bug`.
-
-**Scaffold** the monorepo per the layout above: proto pins, moon workspace, Astro app, empty
-engine/bots/ui-game packages, Biome, Vitest, Playwright, AGENTS.md/CLAUDE.md, CI workflow,
-Cloudflare project wired to GitHub deploys with per-PR previews.
-
-### Phase 1 (V1) — Site relaunch
-- Design system: modern typography/layout/palette that keeps the red-accent, hand-made soul;
-  origin story with the whiteboard scoreboard photo as a centerpiece artifact.
-- Pages: Home (story + hook), Rules (Euchre-diff view), Full Rules (standalone view), scoring
-  reference shared between them (single source: rules content lives in content collections /
-  structured data, rendered into both views — never duplicated prose).
-- **Foundation & governance page:** presents the Jeuchre Foundation (honestly: the informal,
-  unincorporated steward founded by Julian and his sons) and documents how everything is
-  managed — canonical rules change only by steward decision with a public rules changelog;
-  variants are encouraged under CC BY-SA; code is MIT and developed in the open on GitHub;
-  how to contribute (mirrors CONTRIBUTING.md); how the site is built and hosted. This page is
-  the public face of decisions #14 and #23–25.
-- Blog/news section via Astro content collections (Markdown).
-- Printable rules: print-optimized stylesheet + a linked PDF rules sheet.
-- SEO/cutover: 301-preserve `/rules` and `/full_rules` URLs, sitemap, canonical URLs,
-  Open Graph; Cloudflare Web Analytics snippet.
-- DNS: move nameservers (and optionally registration) from Route 53 to Cloudflare; cut
-  www.jeuchre.org over to the new deployment; then decommission AWS resources.
-- Explicitly dropped from V1: newsletter signup, poll widget, GA.
-
-### Phase 2 (V2) — The game
-- `packages/engine`: immutable, cheaply-cloneable game state; phase machine
-  (deal → bid round 1 → bid round 2/order-up → play → score); full jeuchre rule set incl.
-  redeal on double pass, renege detection hooks, countdown scoring with Jeujeu Supreme
-  auto-loss; `playerView(state, seat)` secret-state filtering (designed now so the future
-  server reuses it); seedable RNG for reproducible tests and shareable deals.
-- `packages/bots`: heuristic bidding tables + play policies with difficulty tiers; every
-  decision returns `{ move, because }` so the coach reuses bot reasoning verbatim.
-- `packages/ui-game` + site integration: responsive card table (DOM/CSS/SVG cards — no canvas
-  engine needed for 24 cards), legal-move highlighting, coach overlay with "why" hints and
-  glossary popovers (bower, order up, boom euchre, jeujeu), scoreboard themed after the
-  original whiteboard.
-- Reference material for engine/bot design: UMich EECS 280 euchre spec; open-source euchre
-  sims (pgwhalen/euchre_sim's pluggable-Player pattern; matgrioni's MCTS bot). boardgame.io is
-  dead (last release 2022) — its `playerView`/phases concepts are borrowed, not its code.
-
-### Phase 3+ — Someday list (recorded, deliberately unsequenced)
-- **Realtime multiplayer:** Cloudflare Durable Objects (+ PartyServer, the maintained
-  post-acquisition PartyKit successor) — server-authoritative rooms running `engine`,
-  WebSocket hibernation keeps idle rooms ~free; bot seat-filling from `bots`. Fits the $0 tier
-  at hobby scale.
-- **Newsletter:** email capture + occasional sends; provider evaluated when picked up
-  (e.g. Buttondown free tier); D1/KV can hold signups if self-managed.
-- **Community:** linked Discord first; later accounts, leaderboards, the Supreme Hall of Shame.
-- **French localization:** Astro i18n routing when warranted.
-- Old-repo TODO items intentionally retired: poll widget, next.jeuchre.org password gate,
-  Storybook, lerna/yarn tooling.
+- **V1 — site relaunch** (in progress; issues #2–#10): design system + DTCG manifest/specimens
+  (done), single-sourced rules pages, home/origin story, Foundation & governance page, blog,
+  printable rules, Cloudflare deploy + preview wiring, SEO/redirect preservation, then DNS
+  cutover and AWS decommission as the exit. Deliberately not in V1: newsletter, poll, GA.
+- **V2 — the game**: `engine` (immutable cloneable state, phase machine, full rule set with
+  countdown scoring and Jeujeu Supreme auto-loss, `playerView(state, seat)` secret filtering,
+  seedable RNG), `bots` (heuristic tiers returning `{ move, because }` — the coach reuses the
+  reasoning), `ui-game` (DOM/CSS card table, legal-move highlighting, coach overlay, glossary).
+  References: UMich EECS 280 euchre spec; pgwhalen/euchre_sim's pluggable-Player pattern.
+  boardgame.io is dead — concepts borrowed, not code.
+- **Someday (recorded, unsequenced):** realtime multiplayer via Durable Objects + PartyServer
+  (server-authoritative rooms running `engine`, hibernation keeps idle rooms ~free); newsletter
+  (e.g. Buttondown free tier; D1/KV if self-managed); community (Discord link first; later
+  accounts, leaderboards, the Supreme Hall of Shame); French i18n via Astro routing; possible
+  Foundation formalization. Old-repo TODOs deliberately retired: poll widget, password-gated
+  staging, Storybook, lerna/yarn.
 
 ## Risks and mitigations
 
@@ -221,14 +160,3 @@ Cloudflare project wired to GitHub deploys with per-PR previews.
   the test suite becomes the canonical rules spec.
 - **Astro 7 recency:** major-version churn risk is low for this shape (static content + one
   island uses only stable core APIs).
-
-## Open items (small, non-blocking)
-
-- Whether to also move domain registration (not just DNS) to Cloudflare Registrar.
-- Card artwork: Unicode/SVG standard deck vs. commissioned/custom art (V2 design task).
-- PDF generation approach for printable rules (print-CSS-to-PDF at build vs. hand-made asset).
-- GitHub org: stays under `osaaru` for now; with Foundation branding adopted (#24), creating a
-  `jeuchre` GitHub org and transferring the repo is a likely near-term step (transfers preserve
-  redirects) — decide before publicizing the repo widely.
-- Whether the Foundation page eventually grows into real structure (contact address,
-  named stewards, formal variant registry) — revisit when community activity warrants.
