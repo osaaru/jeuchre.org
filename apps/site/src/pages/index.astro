@@ -1,18 +1,36 @@
 ---
-const title = "Jeuchre — the anti-Euchre";
+import { Image } from "astro:assets";
+import scoreboard from "../assets/original-scoreboard.jpg";
+import Base from "../layouts/Base.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content="Jeuchre is a card game that you can think of as the anti-Euchre." />
-  </head>
-  <body>
-    <h1>{title}</h1>
-    <p>The goal is to lose tricks. A new jeuchre.org is being built in the open.</p>
-    <p><a href="https://github.com/osaaru/jeuchre.org">Follow along on GitHub</a></p>
-  </body>
-</html>
+<Base title="Jeuchre — the anti-Euchre">
+  <h1>Jeuchre <span class="pip" aria-hidden="true">♥</span></h1>
+  <p class="lede">
+    A card game that you can think of as the anti-Euchre: the goal is to <em>lose</em> tricks.
+  </p>
+  <p>
+    A new jeuchre.org is being built in the open — rules, story, and a game you can play in the
+    browser are on the way. <a href="https://github.com/osaaru/jeuchre.org">Follow along on GitHub</a>.
+  </p>
+  <figure>
+    <Image
+      src={scoreboard}
+      alt="The original jeuchre scoring system, on a whiteboard"
+      widths={[480, 800, 1200]}
+      sizes="(max-width: 42rem) 100vw, 42rem"
+    />
+    <figcaption>The original jeuchre scoring system</figcaption>
+  </figure>
+</Base>
+
+<style>
+  .lede {
+    font-size: var(--text-lg);
+    font-family: var(--font-display);
+  }
+
+  .pip {
+    color: var(--color-red);
+  }
+</style>
