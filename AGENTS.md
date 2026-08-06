@@ -28,6 +28,7 @@ mechanism, and it only works if it never drifts:
   Columns are execution state: Backlog (unscoped/proposals), Ready (accepted + groomed),
   In progress, Done. Labels: `proposal` = awaiting owner decision;
   `owner-task` = only Julian can do it. Start sessions by checking In progress/Ready.
+  The board holds ISSUES only — never add PRs (auto-add filter is `is:issue is:open`).
 - Every PR is titled `Closes #N - <issue title>` and the FIRST line of its body is
   `Closes #N` (NOT "Implements" — titles aren't parsed for links and squash commits reuse
   the body, so the link must live in the body; the title makes it visible at a glance). Branch names carry the issue
