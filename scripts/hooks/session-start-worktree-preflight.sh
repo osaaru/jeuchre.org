@@ -16,5 +16,10 @@ notes=()
 if [ ${#notes[@]} -gt 0 ]; then
   echo "Worktree preflight (${PWD##*/}):"
   printf ' - %s\n' "${notes[@]}"
-  echo "Operator's dev server owns port 4321 — agents use a free port >= 4400 (astro dev --port)."
+fi
+
+# Claim (or re-read) this worktree's port lane so parallel sessions never collide.
+if [ -f scripts/worktree-registry.mjs ] && command -v node > /dev/null; then
+  node scripts/worktree-registry.mjs claim --quiet 2>/dev/null || true
+  echo "Teardown after merge: run scripts/worktree-teardown.sh ${PWD##*/} from the MAIN checkout (see /end-session)."
 fi
