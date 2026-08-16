@@ -43,10 +43,17 @@ for the owner.
   (dev 4400 / preview 4401 / e2e 4402), driving Playwright with a throwaway config outside the
   repo. The launch config has no way to pick up a worktree's lane — worth fixing when someone
   touches the harness wiring.
-- **A new specimen means two baselines, not one.** Adding the playing-card specimen to
-  `/design/components` changes the VRT target: the darwin baseline regenerates locally
-  (`DESIGN=1 pnpm exec playwright test design.spec.ts --update-snapshots`), the linux one only
-  via Actions → "Update VRT baselines" on the PR branch.
+- **A new specimen means two baselines, not one — and the second one costs an extra CI round.**
+  Adding the playing-card specimen to `/design/components` changes the VRT target: the darwin
+  baseline regenerates locally (`DESIGN=1 pnpm exec playwright test design.spec.ts
+  --update-snapshots`), the linux one only via Actions → "Update VRT baselines" on the PR
+  branch. So the first CI run after such a change is *expected* to fail on
+  `design-components-linux.png` and nothing else — that is the workflow's whole purpose, not a
+  regression. Two things follow. Run the baseline workflow **before** or alongside the first
+  push, not after reading a red CI. And the workflow commits as `github-actions[bot]`, whose
+  push does not trigger workflows — the runs at that commit sit at `action_required` until
+  someone re-runs them (`gh run rerun <id>`), so a PR can look stalled when it is only waiting
+  to be poked.
 - Card glyphs sit at `--text-2xl` (the largest type token). The 2020 site used 80pt; matching
   that would mean inventing a token, which the design system routes through `tokens.json` plus
   a specimen in its own PR.
