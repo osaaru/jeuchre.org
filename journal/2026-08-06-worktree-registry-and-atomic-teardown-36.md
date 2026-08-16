@@ -8,7 +8,7 @@
 - `scripts/worktree-teardown.sh <name>` (+ `end-session` project skill): atomic cleanup —
   kill lane processes, release registry, remove worktree, delete local branch — gated on
   clean tree + MERGED PR (`--force` for abandoned work), run from the MAIN checkout only
-  (karma lesson: removing the worktree you occupy kills your own shell). Prints observed
+  (removing the worktree you occupy kills your own shell). Prints observed
   end state.
 - Board-flow automation fully verified this session: In progress (draft) → Needs review
   (ready) → Done (merge) with zero manual card moves on #27.

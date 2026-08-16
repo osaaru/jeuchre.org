@@ -1,4 +1,4 @@
-# 2026-08-05 — Work tracking moves to GitHub issues; karma-development adoption analysis
+# 2026-08-05 — Work tracking moves to GitHub issues; workflow adoption analysis
 
 - PR↔issue lore hardened (owner): PR titles are `Closes #N - <issue title>` (display-only —
   GitHub does not parse titles for links; the gate cross-checks title against body);
@@ -19,7 +19,7 @@
   checklist line is stale on this point). Rule:
   anything that exists only in conversation doesn't exist — file an issue at the moment it
   arises. New labels `proposal` and `owner-task`. STATE.md no longer enumerates next actions.
-- Analyzed ~/Documents/karma/karma-development (27 skills + guidance corpus + hooks) and
+- Analyzed a mature multi-agent workflow (27 skills + guidance corpus + hooks) and
   ranked adoptions. Filed: #15 (drift gate — ACCEPTED, Ready), #16–#19 (proposals: git guard,
   AGENTS hardening, guidance docs, distillation loop), #20 (Tier-2 triggers + Tier-3 skip
   record), #21–#22 (owner tasks: social preview upload, Renovate install).
