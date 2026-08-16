@@ -1,0 +1,32 @@
+---
+import { RANKING_HEADINGS, RANKING_ROWS } from "../data/rules";
+import PlayingCards from "./PlayingCards.astro";
+
+// Every example card is derived from the deck and the example trump suit, so
+// the suit that loses its jack to the left bower cannot be got wrong by hand.
+---
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">{RANKING_HEADINGS.rank}</th>
+      <th scope="col">{RANKING_HEADINGS.rule}</th>
+      <th scope="col">{RANKING_HEADINGS.example}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      RANKING_ROWS.map((row, index) => (
+        <tr>
+          <td>{index + 1}</td>
+          <td>{row.rule}</td>
+          <td>
+            {row.examples.map((cards) => (
+              <PlayingCards cards={cards} />
+            ))}
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>

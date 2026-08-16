@@ -1,0 +1,18 @@
+---
+import type { Phrase } from "../data/rules";
+
+interface Props {
+  phrase: Phrase;
+}
+
+// A phrase is plain text, or segments when part of it links out. Normalizing
+// here keeps the link out of the rules data's prose as markup.
+const { phrase } = Astro.props;
+const segments = typeof phrase === "string" ? [phrase] : phrase;
+---
+
+{
+  segments.map((segment) =>
+    typeof segment === "string" ? segment : <a href={segment.href}>{segment.text}</a>,
+  )
+}

@@ -4,6 +4,7 @@
   "type": "module",
   "dependencies": {
     "@astrojs/react": "^6.0.1",
+    "@jeuchre/engine": "workspace:*",
     "astro": "^7.1.1",
     "react": "catalog:",
     "react-dom": "catalog:",

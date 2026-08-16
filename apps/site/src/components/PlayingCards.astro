@@ -1,0 +1,38 @@
+---
+import type { Card } from "@jeuchre/engine";
+import { cardGlyph, cardName, isRedSuit } from "../lib/cards";
+
+interface Props {
+  cards: readonly Card[];
+}
+
+const { cards } = Astro.props;
+---
+
+<p class="cards">
+  {
+    cards.map((card) => (
+      <span class:list={["card", { red: isRedSuit(card.suit) }]} role="img" aria-label={cardName(card)}>
+        {cardGlyph(card)}
+      </span>
+    ))
+  }
+</p>
+
+<style>
+  .cards {
+    margin: 0;
+    /* The glyphs carry a lot of leading of their own. */
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .card {
+    font-size: var(--text-2xl);
+    color: var(--color-ink);
+  }
+
+  .card.red {
+    color: var(--color-red);
+  }
+</style>

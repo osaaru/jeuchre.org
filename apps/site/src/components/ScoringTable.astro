@@ -1,0 +1,29 @@
+---
+import { formatPoints, SCORING_HEADINGS, SCORING_OUTCOMES } from "../data/rules";
+
+// Rendered by both /rules and /full_rules — the table is the same table by
+// construction, which is the point of the shared data (#3).
+---
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">{SCORING_HEADINGS.outcome}</th>
+      <th scope="col">{SCORING_HEADINGS.maker}</th>
+      <th scope="col">{SCORING_HEADINGS.nonMaker}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      SCORING_OUTCOMES.map((outcome) => (
+        <tr>
+          <td>
+            <strong>{outcome.name}.</strong> {outcome.condition}
+          </td>
+          <td>{formatPoints(outcome.maker)}</td>
+          <td>{formatPoints(outcome.nonMaker)}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
