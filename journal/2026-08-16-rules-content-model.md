@@ -29,6 +29,29 @@ is the one statement. Row 4's wording now names the exception explicitly ("excep
 lost its jack to the left bower"), which is what the 2020 glyphs already showed. Filed as #42
 for the owner.
 
+## The lesson from review: assert the content, not the structure
+
+The first version of `tests/rules.spec.ts` pinned **structure** — row counts, cell counts, "this
+row contains that phrase", and that the two scoring tables match. Review showed three of the four
+claims these pages make about the game could be inverted with the whole suite green: swap the
+Euchre and Jeuchre columns, swap the maker and non-maker point columns, or swap two rank offsets
+in the glyph map. Seven rows teaching the opposite of the game, and CI stays green.
+
+The sharpest case is worth carrying to every future page here. `the scoring table is identical on
+both pages` **passes under an inverted points table, and passes _because_ the table is shared** —
+one component over one dataset, so the inversion appears identically on both pages and the
+identity assertion faithfully confirms it. *Identity and correctness are orthogonal claims.*
+Single-sourcing guarantees the two pages cannot drift; it guarantees nothing about the shared
+value being right, and it is easy to write the first test and believe you have the second. They
+are two tests now, deliberately.
+
+So: a rules page's tests assert what the page *says*, by column and by value. Where a value is
+produced by code the test could import, state it independently instead — the 24 expected card
+glyphs are written into the spec from the Unicode chart rather than imported from `cards.ts`,
+because a test that imports the thing under test agrees with it by construction. And when a test
+loops over rendered elements, assert the count too: a locator that matches nothing loops over
+nothing and passes.
+
 ## Gotchas
 
 - **`biome check` warnings on `.astro` are noise, and deleting the "unused" imports would break
@@ -37,12 +60,17 @@ for the owner.
   and passes — warnings do not fail the task. Only errors do; here they were three
   `assist/source/organizeImports` (import ordering), fixed with `biome check --write`. Read the
   `Found N errors` line, not the diagnostic count.
-- **`.claude/launch.json` hardcodes port 4321, which `AGENTS.md` reserves for the operator.**
-  Starting the preview from that config inside a bench worktree would collide with the
-  operator's own dev server. Verification here ran on the worktree's registered lane instead
-  (dev 4400 / preview 4401 / e2e 4402), driving Playwright with a throwaway config outside the
-  repo. The launch config has no way to pick up a worktree's lane — worth fixing when someone
-  touches the harness wiring.
+- **Two committed files default to port 4321, which `AGENTS.md` reserves for the operator — and
+  one of them fails silently.** Tracked as #44; here is what the next agent needs before that
+  lands. `.claude/launch.json` pins 4321, so the preview flow started from it inside a worktree
+  collides with the operator's own dev server; it has no way to pick up the worktree's lane.
+  Worse, `apps/site/playwright.config.ts` *defaults* to 4321 with `reuseExistingServer` outside
+  CI — so `moon check --all`, which passes no `E2E_PORT`, goes there, and if anything is already
+  serving 4321 Playwright reuses it and **reports a pass measured against someone else's build**.
+  A green suite that never tested your code is the failure this repo's verification story depends
+  on not having. Both of us hit it in one afternoon on this PR — the reviewer on his first run,
+  then me, *after* reading his finding. Knowing about it is not protection; pass `E2E_PORT=<lane
+  + 2>` explicitly on every run until the default changes.
 - **A new specimen means two baselines, not one — and the second one costs an extra CI round.**
   Adding the playing-card specimen to `/design/components` changes the VRT target: the darwin
   baseline regenerates locally (`DESIGN=1 pnpm exec playwright test design.spec.ts
