@@ -161,6 +161,11 @@ function plainCardsOf(suit: Suit): readonly Card[] {
   return HIGH_TO_LOW.filter((rank) => rank !== "J" || keepsItsJack).map((rank) => ({ suit, rank }));
 }
 
+/** The ranks a row names, spelled from the row's own cards rather than beside them. */
+function rankRun(cards: readonly Card[]): string {
+  return cards.map((card) => card.rank).join(", ");
+}
+
 export const RANKING_ROWS: readonly RankingRow[] = [
   {
     rule: 'Jack of the trump suit (the "right bower")',
@@ -171,11 +176,11 @@ export const RANKING_ROWS: readonly RankingRow[] = [
     examples: [[{ suit: leftBowerSuit, rank: "J" }]],
   },
   {
-    rule: "The remaining trump cards — A, K, Q, 10, 9",
+    rule: `The remaining trump cards — ${rankRun(plainCardsOf(EXAMPLE_TRUMP))}`,
     examples: [plainCardsOf(EXAMPLE_TRUMP)],
   },
   {
-    rule: "The cards of the other suits, ranked A, K, Q, J, 10, 9 — except the suit that lost its jack to the left bower",
+    rule: `The cards of the other suits, ranked ${HIGH_TO_LOW.join(", ")} — except the suit that lost its jack to the left bower`,
     examples: SUITS.filter((suit) => suit !== EXAMPLE_TRUMP).map(plainCardsOf),
   },
 ];
