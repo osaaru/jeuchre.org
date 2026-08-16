@@ -1,6 +1,6 @@
 ---
 import ScoringTable from "../components/ScoringTable.astro";
-import { DIFF_HEADLINE, DIFF_ROWS } from "../data/rules";
+import { DIFF_HEADINGS, DIFF_HEADLINE, DIFF_ROWS, SCORING_HEADING } from "../data/rules";
 import Base from "../layouts/Base.astro";
 ---
 
@@ -17,8 +17,8 @@ import Base from "../layouts/Base.astro";
   <table>
     <thead>
       <tr>
-        <th scope="col">Euchre</th>
-        <th scope="col">Jeuchre</th>
+        <th scope="col">{DIFF_HEADINGS.euchre}</th>
+        <th scope="col">{DIFF_HEADINGS.jeuchre}</th>
       </tr>
     </thead>
     <tbody>
@@ -33,7 +33,7 @@ import Base from "../layouts/Base.astro";
     </tbody>
   </table>
 
-  <h2 id="scoring">Scoring Hands</h2>
+  <h2 id="scoring">{SCORING_HEADING}</h2>
   <ScoringTable />
 </Base>
 

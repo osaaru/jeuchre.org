@@ -1,4 +1,4 @@
-import { type Card, isRedSuit, type Rank, type Suit } from "@jeuchre/engine";
+import type { Card, Rank, Suit } from "@jeuchre/engine";
 
 /**
  * Presentation for engine cards. The engine says what a card *is*; how it is
@@ -40,5 +40,3 @@ export function cardGlyph(card: Card): string {
 export function cardName(card: Card): string {
   return `${RANK_NAME[card.rank]} of ${card.suit}`;
 }
-
-export { isRedSuit };

@@ -40,6 +40,8 @@ export interface DiffRow {
 
 export const DIFF_HEADLINE = "The goal is to lose tricks, not win them like in Euchre.";
 
+export const DIFF_HEADINGS = { euchre: "Euchre", jeuchre: "Jeuchre" } as const;
+
 export const DIFF_ROWS: readonly DiffRow[] = [
   {
     euchre: "First black jack deals",
@@ -89,6 +91,9 @@ export interface ScoringOutcome {
   readonly maker: Points;
   readonly nonMaker: Points;
 }
+
+/** Both pages title the scoring table; the words are one string, like the table. */
+export const SCORING_HEADING = "Scoring Hands";
 
 export const SCORING_HEADINGS = {
   outcome: "Result of hand",
@@ -226,7 +231,7 @@ export const FULL_RULES_SECTIONS: readonly Section[] = [
   },
   {
     id: "scoring",
-    heading: "Scoring Hands",
+    heading: SCORING_HEADING,
     blocks: [],
     table: "scoring",
   },
