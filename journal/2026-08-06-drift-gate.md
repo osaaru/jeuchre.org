@@ -11,6 +11,5 @@
   narrow inputs, in `moon ci` via affected detection.
 - All checks negative-tested (dead path, budget overflow, bad filename, hook exit 2).
   Index-coverage check deliberately deferred until a routed docs/ corpus exists.
-- Origin: adapted from karma-development's lint-docs (analysis 2026-08-05); adoption
-  accepted after the owner's challenge — deterministic invariants vs probabilistic agent
+- Origin: prior-art review (2026-08-05); adoption accepted after the owner's challenge — deterministic invariants vs probabilistic agent
   stewardship (AGENTS.md had already shipped a wrong moon command as live proof).
