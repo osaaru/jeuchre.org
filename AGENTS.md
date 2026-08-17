@@ -61,9 +61,12 @@ handoff mechanism, and it only works if it never drifts:
   SessionStart hook (`scripts/hooks/session-start-worktree-preflight.sh`) surfaces this
   automatically when a session opens inside a worktree, and claims the worktree's port lane.
 - **Registry:** every worktree registers in `.claude/worktrees/.registry.json` (via
-  `scripts/worktree-registry.mjs claim`) — location, branch, issue, and a port lane
-  (4400, 4410, …; dev = lane, preview = lane+1, e2e = lane+2; operator owns 4321). Dev
-  servers: `moon run site:dev -- --port <lane>`; e2e: `E2E_PORT=<lane+2> moon run site:e2e`.
+  `scripts/lane-registry.py claim`, run by the hook), keyed by canonical worktree path.
+  Lane N = block `4390 + 10N`: lane 1 is 4400-4409, dev/preview/e2e = 4400/4401/4402;
+  shape in `lane-schema.json`, operator owns 4321. Dev servers: `moon run site:dev --
+  --port <dev>`; e2e: `E2E_PORT=<e2e> moon run site:e2e`. **Ask `scripts/lane-registry.py
+  claimed <path>` before deleting a worktree** — the registry is the one source of truth
+  for what is in use. Contract verified by `scripts/lane-registry-conformance.py`.
 - **Teardown (end of session):** after the PR merges, run
   `scripts/worktree-teardown.sh <name>` from the MAIN checkout (or invoke the
   `end-session` skill) — kills the lane's processes, releases the registry entry, removes

@@ -17,17 +17,25 @@ case "$PWD" in
   */.claude/worktrees/*) echo "ERROR: run from the MAIN checkout, not a worktree." >&2; exit 1 ;;
 esac
 
-entry=$(node scripts/worktree-registry.mjs entry "$name" 2>/dev/null) || {
+# The registry is keyed by canonical worktree path, so resolve the name first.
+wt_path=".claude/worktrees/$name"
+[ -d "$wt_path" ] && wt_path=$(cd "$wt_path" && pwd -P)
+entry=$(python3 scripts/lane-registry.py entry "$wt_path" 2>/dev/null) || {
   echo "No registry entry for '$name' — continuing with worktree/branch cleanup only."
   entry=""
 }
-wt_path=".claude/worktrees/$name"
 branch=""
 lane=""
+block_lo=""
+block_hi=""
 if [ -n "$entry" ]; then
-  wt_path=$(node -e "console.log(JSON.parse(process.argv[1]).path)" "$entry")
-  branch=$(node -e "console.log(JSON.parse(process.argv[1]).branch)" "$entry")
-  lane=$(node -e "console.log(JSON.parse(process.argv[1]).lane)" "$entry")
+  # Read the block from the registry rather than deriving it. The lane is an
+  # ordinal (1, 2, ...), NOT a port number — treating it as one silently looks
+  # for processes on ports 1..10 and reports success.
+  branch=$(printf '%s' "$entry" | python3 -c "import json,sys; print(json.load(sys.stdin).get('branch',''))")
+  lane=$(printf '%s' "$entry" | python3 -c "import json,sys; print(json.load(sys.stdin).get('lane',''))")
+  block_lo=$(printf '%s' "$entry" | python3 -c "import json,sys; print(json.load(sys.stdin)['block'][0])")
+  block_hi=$(printf '%s' "$entry" | python3 -c "import json,sys; print(json.load(sys.stdin)['block'][1])")
 fi
 [ -z "$branch" ] && [ -d "$wt_path" ] && branch=$(git -C "$wt_path" branch --show-current)
 
@@ -48,10 +56,9 @@ if [ -n "$branch" ] && [ "$force" != "--force" ]; then
   fi
 fi
 
-# Kill processes on the lane's ports
-if [ -n "$lane" ]; then
-  for offset in 0 1 2 3 4 5 6 7 8 9; do
-    port=$((lane + offset))
+# Kill processes across the lane's whole port block
+if [ -n "$block_lo" ]; then
+  for port in $(seq "$block_lo" "$block_hi"); do
     pids=$(lsof -ti tcp:"$port" 2>/dev/null || true)
     [ -n "$pids" ] && { echo "$pids" | xargs kill 2>/dev/null || true; echo "killed pid(s) on :$port"; }
   done
@@ -61,7 +68,15 @@ fi
 if [ -d "$wt_path" ]; then
   if [ "$force" = "--force" ]; then git worktree remove --force "$wt_path"; else git worktree remove "$wt_path"; fi
 fi
-[ -n "$entry" ] && node scripts/worktree-registry.mjs release "$name" > /dev/null
+if [ -n "$entry" ]; then
+  if [ "$force" = "--force" ]; then
+    python3 scripts/lane-registry.py release "$wt_path" --force > /dev/null
+  else
+    # No --force: if listeners survived the kill above, the registry refuses and
+    # says so. Releasing anyway would hand an occupied lane to the next claimer.
+    python3 scripts/lane-registry.py release "$wt_path" > /dev/null
+  fi
+fi
 [ -n "$branch" ] && git branch -D "$branch" 2>/dev/null || true
 git worktree prune
 
@@ -69,11 +84,11 @@ git worktree prune
 echo "--- teardown of '$name': observed end state ---"
 [ -d "$wt_path" ] && echo "worktree dir: STILL PRESENT" || echo "worktree dir: gone"
 git show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null && echo "local branch: STILL PRESENT" || echo "local branch: gone"
-node scripts/worktree-registry.mjs entry "$name" > /dev/null 2>&1 && echo "registry entry: STILL PRESENT" || echo "registry entry: gone"
-if [ -n "$lane" ]; then
+python3 scripts/lane-registry.py claimed "$wt_path" > /dev/null 2>&1 && echo "registry entry: STILL PRESENT" || echo "registry entry: gone"
+if [ -n "$block_lo" ]; then
   busy=""
-  for offset in 0 1 2; do
-    lsof -ti tcp:$((lane + offset)) > /dev/null 2>&1 && busy="$busy $((lane + offset))"
+  for port in $(seq "$block_lo" "$block_hi"); do
+    lsof -ti tcp:"$port" > /dev/null 2>&1 && busy="$busy $port"
   done
-  [ -n "$busy" ] && echo "ports still busy:$busy" || echo "ports: free"
+  [ -n "$busy" ] && echo "ports still busy:$busy" || echo "ports: free (block $block_lo-$block_hi)"
 fi
