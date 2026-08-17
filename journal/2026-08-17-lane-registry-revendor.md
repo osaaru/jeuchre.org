@@ -22,8 +22,16 @@
 - Root `moon.yml`: new `lane-registry-conformance` task; CI reaches it via `moon ci`.
   The CI container needs `lsof` (conformance's fixtures allocate with the occupancy check
   at its default), added to the existing apt-get line in `ci.yml`.
-- `scripts/worktree-teardown.sh`: re-checked against the new `entry` JSON — it reads
-  `branch`, `lane`, `block`, all still present in the new output shape. No change needed.
+- `scripts/worktree-teardown.sh`: the `entry` JSON parse (`branch`, `lane`, `block`) is
+  compatible unchanged — but the re-check found a real delta in the **exit contract**:
+  `claimed` became three-state, and the end-state line folded exit 2 (unknown) into
+  "gone". Edited: a three-way report, `set -e`-safe (`rc=0; cmd || rc=$?`).
+- Root moon task `lane-schema-check` (review round one's consider, taken): parses the
+  repo's actual `lane-schema.json` through the implementation's own loading path
+  (`list --json` with the real schema), so a malformed edit fails in CI instead of
+  surfacing as a dead claim at the next session open. Honest limit: it catches broken
+  JSON and missing required keys; a misspelled *optional* key is silently defaulted by
+  design and no check here sees it.
 
 ## Honest limits
 

@@ -2,6 +2,21 @@ language: "bash"
 layer: "tool"
 
 tasks:
+  lane-schema-check:
+    # Conformance runs against throwaway fixture schemas, so the repo's actual
+    # lane-schema.json is otherwise exercised only at live claim time. `list` parses
+    # it through the implementation's own loading path; a malformed edit fails here
+    # instead of surfacing as a dead claim at the next session open. Misspelled
+    # optional keys are silently defaulted by design — this catches broken JSON and
+    # missing required keys only.
+    command: "python3"
+    args:
+      - "scripts/lane-registry.py"
+      - "list"
+      - "--json"
+    inputs:
+      - "scripts/lane-registry.py"
+      - "lane-schema.json"
   lane-registry-conformance:
     command: "python3"
     # The harness runs the implementation from throwaway fixture repos, so the
