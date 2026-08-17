@@ -19,7 +19,10 @@ if [ ${#notes[@]} -gt 0 ]; then
 fi
 
 # Claim (or re-read) this worktree's resource lane so parallel sessions never collide.
+# `claim` puts export lines on stdout (for `eval`) and the human summary on stderr; this
+# hook is human-facing session context and cannot export into the session, so surface the
+# summary and drop the machine half.
 if [ -f scripts/lane-registry.py ] && command -v python3 > /dev/null; then
-  python3 scripts/lane-registry.py claim 2>/dev/null || true
+  python3 scripts/lane-registry.py claim 2>&1 > /dev/null || true
   echo "Teardown after merge: run scripts/worktree-teardown.sh ${PWD##*/} from the MAIN checkout (see /end-session)."
 fi

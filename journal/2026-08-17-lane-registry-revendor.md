@@ -1,6 +1,6 @@
 # 2026-08-17 — Re-vendor the lane registry, wire conformance into CI (#47)
 
-**PR:** #TBD · **Issue:** #47 · **Branch:** `chore/47-lane-registry-revendor`
+**PR:** #48 · **Issue:** #47 · **Branch:** `chore/47-lane-registry-revendor`
 
 ## What changed
 
@@ -38,4 +38,12 @@
 - The live store `.claude/worktrees/.registry.json` still carried a stale name-keyed
   entry from the retired `worktree-registry.mjs` alongside the path-keyed lease. The new
   implementation's prune-on-claim drops it (keys are treated as paths; a non-existent
-  path is a dead lease). Verified against a copy of the store, not assumed.
+  path is a dead lease). Verified against a copy of the store first, then observed live.
+- The conformance harness runs the implementation from throwaway fixture repos, so a
+  relative `--cmd` path (the README's own example shape) resolves inside the fixture and
+  every clause goes UNVERIFIED — which the harness rightly counts as not-a-pass. The moon
+  task passes `$workspaceRoot` so the path is absolute.
+- Schema loading is primary-wins: until this PR's `lane-schema.json` lands on trunk,
+  worktrees keep allocating against the primary's marker-less copy, so `.lane.local`
+  markers only start being written after merge (claim self-heals them at each session
+  open). Not a defect — the documented adoption gap.

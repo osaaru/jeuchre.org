@@ -2,6 +2,18 @@ language: "bash"
 layer: "tool"
 
 tasks:
+  lane-registry-conformance:
+    command: "python3"
+    # The harness runs the implementation from throwaway fixture repos, so the
+    # --cmd path must be absolute — a relative one resolves inside the fixture
+    # and every clause goes UNVERIFIED (which the harness counts as not-a-pass).
+    args:
+      - "scripts/lane-registry-conformance.py"
+      - "--cmd"
+      - "python3 $workspaceRoot/scripts/lane-registry.py"
+    inputs:
+      - "scripts/lane-registry.py"
+      - "scripts/lane-registry-conformance.py"
   lint-docs:
     command: "scripts/lint-docs.sh"
     inputs:

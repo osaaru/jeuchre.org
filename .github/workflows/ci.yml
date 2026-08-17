@@ -17,7 +17,9 @@ jobs:
         with:
           fetch-depth: 0
           filter: "blob:none"
-      - run: apt-get update -q && apt-get install -yq xz-utils
+      # lsof: lane-registry conformance allocates with the occupancy check on (its default),
+      # and the implementation refuses to allocate blind — no lsof means unverified clauses.
+      - run: apt-get update -q && apt-get install -yq xz-utils lsof
       - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: moonrepo/setup-toolchain@v0
         with:
