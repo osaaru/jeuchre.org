@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """conformance — does this lane registry meet the contract?
 
-The contract (`protocol/fleet.md` → "Registry and state"): *claim, release,
-prune — keyed by worktree path — authoritative over its resources.* Pinned since
-2026-08-15 and never verified against an implementation until this existed.
+The contract, in full: *claim (idempotent, skipping occupied lanes), release
+(refusing while listeners remain), prune (stale leases only), and `claimed
+<path>` — keyed by the canonical worktree path, authoritative over its
+resources.* It was written down long before anything verified it; this is that
+verification.
 
 Usage:
     conformance.py [--cmd "python3 /path/to/lane-registry.py"]
+                   [--store <relative/path.sqlite|.json>]
+
+`--store` picks the backend under test — the suffix decides SQLite or JSON.
+Pass the one the floor runs in production, or the properties that differ
+between backends (transactional allocation is a SQLite property) go untested
+in exactly the setup that relies on them.
 
 Builds a throwaway git repository with three worktrees in a temp directory and
 drives the implementation through the contract there. It never touches a real
@@ -47,8 +55,8 @@ SCHEMA = {
 
 # Three states, not two. A check that could not measure anything must never
 # report PASS — that is how a non-conforming implementation looks partly fine.
-# Same rule the fleet's comms diagnostic carries: unanswered is UNVERIFIED,
-# never a pass and never a failure.
+# Unanswered is UNVERIFIED: never a pass and never a failure. A check that
+# reports success when it measured nothing hides exactly what it was built to find.
 results: list[tuple[str, str, str]] = []
 
 
@@ -63,17 +71,28 @@ def unverified(name: str, detail: str = ""):
     print(f"  UNVERIFIED  {name}" + (f"  — {detail}" if detail else ""))
 
 
-def read_store(primary: Path) -> dict:
-    """The implementation's store, or {} if it is absent or unreadable.
+def leases(cmd_prefix: list[str], cwd: Path) -> dict | None:
+    """Every lease, asked of the implementation — never read from its store file.
 
-    Never raises: an implementation that writes its store somewhere else, or not
-    at all, is a finding to report — not a crash in the harness measuring it.
+    **The contract says nothing about storage format.** An earlier version of
+    this check read the store as JSON, which passed against the reference
+    implementation and then crashed against a SQLite one. A conformance check
+    that inspects internals is testing a clone, not a contract.
+
+    Returns None when the implementation cannot be asked (no `list`, or output
+    this harness cannot parse) — which is UNVERIFIED, never FAIL.
     """
-    rel = STORE_OVERRIDE or SCHEMA["store"]
+    p = subprocess.run([*cmd_prefix, "list", "--json"], cwd=cwd,
+                       capture_output=True, text=True)
+    if p.returncode != 0:
+        return None
     try:
-        return json.loads((primary / rel).read_text())
-    except (FileNotFoundError, json.JSONDecodeError, NotADirectoryError):
-        return {}
+        rows = json.loads(p.stdout)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(rows, list):
+        return None
+    return {r["worktree"]: r for r in rows if "worktree" in r and "lane" in r}
 
 
 def supports(cmd_prefix: list[str], cwd: Path, verb: str) -> bool:
@@ -105,7 +124,13 @@ def build_sandbox(root: Path) -> tuple[Path, list[Path]]:
     sh(["git", "config", "user.email", "conformance@example.invalid"], primary)
     sh(["git", "config", "user.name", "conformance"], primary)
     (primary / "README").write_text("sandbox\n")
-    (primary / "lane-schema.json").write_text(json.dumps(SCHEMA, indent=2))
+    # --store picks the backend under test: the suffix decides SQLite vs JSON, and a floor
+    # should be able to run conformance against the backend it actually runs in production.
+    # Without this the flag parsed and did nothing, so every run drove the JSON store —
+    # meaning the transactional-allocation property of the SQLite backend, the one most worth
+    # verifying, was the one property never exercised (found in review of the first adopting project, 2026-08-17).
+    schema = dict(SCHEMA, store=STORE_OVERRIDE) if STORE_OVERRIDE else SCHEMA
+    (primary / "lane-schema.json").write_text(json.dumps(schema, indent=2))
     sh(["git", "add", "-A"], primary)
     sh(["git", "commit", "-qm", "init"], primary)
 
@@ -149,30 +174,49 @@ def run(cmd_prefix: list[str], root: Path):
               f"still {lane_of(wt1)}")
 
     print("\ncontract: keyed by canonical worktree path")
-    store = read_store(primary)
-    if not store:
-        check(False, "store is readable at the declared location",
-              f"nothing at {STORE_OVERRIDE or SCHEMA['store']} — pass --store <relpath> "
-              "if this implementation keeps its registry elsewhere")
-    check(all(Path(k).is_absolute() for k in store),
-          "leases are keyed by absolute worktree path",
-          f"keys={[Path(k).name for k in store]}")
-    check(str(wt1.resolve()) in store, "this worktree's own path is the key")
+    store = leases(cmd_prefix, wt1)
+    if store is None:
+        for clause in ("leases are keyed by absolute worktree path",
+                       "this worktree's own path is the key",
+                       "stored keys are canonical (symlinks resolved)"):
+            unverified(clause, "implementation has no machine-readable `list` — the harness "
+                               "cannot enumerate leases without inspecting internals")
+        store = {}
+    else:
+        check(all(Path(k).is_absolute() for k in store),
+              "leases are keyed by absolute worktree path",
+              f"keys={[Path(k).name for k in store]}")
+        check(str(wt1.resolve()) in store, "this worktree's own path is the key")
     # Callers hand the registry whatever path they hold. On macOS /var is a
     # symlink to /private/var, so an uncanonicalised path is the normal case,
-    # not an edge one — and answering "not claimed" about a live bench is
-    # exactly how prune tooling deletes something in use.
-    check(all(k == str(Path(k).resolve()) for k in store),
-          "stored keys are canonical (symlinks resolved)")
+    # not an edge one — and answering "not claimed" about a worktree that is in
+    # use is exactly how prune tooling deletes something someone is working in.
+        check(all(k == str(Path(k).resolve()) for k in store),
+              "stored keys are canonical (symlinks resolved)")
+    # This clause needs a non-canonical spelling of a claimed worktree. macOS hands the
+    # sandbox one for free (/var -> /private/var); Linux does not, and `main` counts an
+    # unverified clause as not-a-pass — so on every Linux runner the suite failed on this
+    # one line, whatever the implementation did. Build the symlink instead of hoping the
+    # platform supplied one: an unmeasurable clause is a harness defect, not a property.
     if not supports(cmd_prefix, wt1, "claimed"):
         unverified("claimed accepts a non-canonical path", "no claimed verb")
-    elif str(wt1) != str(wt1.resolve()):
-        p = reg(wt1, "claimed", str(wt1), expect_ok=False)
-        check(p.returncode == 0,
-              "claimed accepts a non-canonical path for a claimed worktree",
-              f"{wt1} -> {wt1.resolve()}")
     else:
-        unverified("claimed non-canonical path", "no symlink in the sandbox path")
+        spelling = wt1
+        if str(spelling) == str(spelling.resolve()):
+            alias = root / "alias"
+            try:
+                alias.symlink_to(root, target_is_directory=True)
+                spelling = alias / wt1.name
+            except OSError:
+                pass
+        if str(spelling) == str(spelling.resolve()):
+            unverified("claimed accepts a non-canonical path",
+                       "no symlink in the sandbox path and none could be created")
+        else:
+            p = reg(wt1, "claimed", str(spelling), expect_ok=False)
+            check(p.returncode == 0,
+                  "claimed accepts a non-canonical path for a claimed worktree",
+                  f"{spelling} -> {spelling.resolve()}")
 
     print("\ncontract: derived values are reported, not re-derived by callers")
     if readable:
@@ -189,10 +233,16 @@ def run(cmd_prefix: list[str], root: Path):
         unverified("named ports fall inside the block", "lanes unreadable")
 
     print("\ncontract: release")
-    before = set(read_store(primary))
+    listable = leases(cmd_prefix, wt1) is not None
+    before = set(leases(cmd_prefix, wt1) or {})
     p_rel = reg(wt2, "release", expect_ok=False)
-    after = set(read_store(primary))
-    if p_rel.returncode != 0 and before == after:
+    after = set(leases(cmd_prefix, wt1) or {})
+    if not listable:
+        # Nothing to compare. A FAIL here would be an artifact of the harness.
+        unverified("release drops the lease", "leases not enumerable")
+        unverified("a released lane is reusable", "leases not enumerable")
+        unverified("release removes the worktree's marker", "leases not enumerable")
+    elif p_rel.returncode != 0 and before == after:
         unverified("release drops the lease",
                    f"release refused/errored and the store is unchanged: {p_rel.stderr.strip()[:70]}")
         unverified("a released lane is reusable", "nothing was released")
@@ -217,9 +267,12 @@ def run(cmd_prefix: list[str], root: Path):
               "verb absent — stale leases accumulate and their lanes are never reclaimed")
         unverified("prune drops leases whose worktree is gone", "no prune verb")
         unverified("prune leaves live leases alone", "no prune verb")
+    elif not listable:
+        unverified("prune drops leases whose worktree is gone", "leases not enumerable")
+        unverified("prune leaves live leases alone", "leases not enumerable")
     else:
         reg(wt1, "prune", expect_ok=False)
-        store = read_store(primary)
+        store = leases(cmd_prefix, wt1) or {}
         check(str(wt3.resolve()) not in store, "prune drops leases whose worktree is gone")
         check(str(wt1.resolve()) in store, "prune leaves live leases alone")
 
@@ -235,6 +288,40 @@ def run(cmd_prefix: list[str], root: Path):
         p = reg(wt1, "claimed", str(wt3), expect_ok=False)
         check(p.returncode != 0, "claimed exits non-zero for an unclaimed path")
 
+        # A moved worktree must never read as unclaimed. `git worktree move` re-homes a
+        # directory without telling a path-keyed registry, so the lease stays under the old
+        # path: the vanished path answers claimed and the live one answers not-claimed. That
+        # inversion fails *open* — deletion tooling reads "no lease" as nothing to protect.
+        # Claimed-or-unknown both pass; only a confident "not claimed" fails, because that is
+        # the answer that gets a live worktree deleted (bought 2026-08-17 in the first adopting project's review).
+        moved = wt2.parent / "wt2-moved"
+        reg(wt2, "claim", expect_ok=False)
+        mv = sh(["git", "worktree", "move", str(wt2), str(moved)], primary,
+                expect_ok=False).returncode == 0
+        if not mv:
+            unverified("a moved worktree never reads as unclaimed", "git worktree move failed")
+        else:
+            p = reg(primary, "claimed", str(moved), expect_ok=False)
+            check(p.returncode != 1,
+                  "a moved worktree never reads as unclaimed",
+                  f"exit {p.returncode}: {(p.stdout or p.stderr).strip().splitlines()[0][:80]}"
+                  if (p.stdout or p.stderr).strip() else f"exit {p.returncode}")
+
+            # ...and it must still hold once the orphan lease is gone. An implementation that
+            # reconciles from the surviving orphan rather than from the moved directory's own
+            # evidence passes the clause above and fails this one: `claim` prunes store-wide
+            # before allocating, so any unrelated claim — any E2E run, any dev server, or the
+            # prune tooling's own final `prune` — erases what the guard was reading. The
+            # worktree then reads deletable again, which is the original incident one step
+            # removed (bought in review round three of the first adopting project, 2026-08-17).
+            reg(wt1, "claim", expect_ok=False)
+            p = reg(primary, "claimed", str(moved), expect_ok=False)
+            check(p.returncode != 1,
+                  "a moved worktree still reads as in-use after its orphan lease is pruned",
+                  f"exit {p.returncode}: {(p.stdout or p.stderr).strip().splitlines()[0][:80]}"
+                  if (p.stdout or p.stderr).strip() else f"exit {p.returncode}")
+            sh(["git", "worktree", "move", str(moved), str(wt2)], primary, expect_ok=False)
+
     print("\nexhaustion")
     for wt in (wt2,):
         reg(wt, "claim")
@@ -245,12 +332,17 @@ def run(cmd_prefix: list[str], root: Path):
         sh(["git", "worktree", "add", "-q", "-b", f"wt{i}", str(wt)], primary)
         extra.append(wt)
         reg(wt, "claim", expect_ok=False)
-    store = read_store(primary)
-    check(len(store) <= SCHEMA["max_lanes"],
-          "never allocates beyond max_lanes",
-          f"{len(store)} leases, max {SCHEMA['max_lanes']}")
-    lanes = [e["lane"] for e in store.values()]
-    check(len(lanes) == len(set(lanes)), "no duplicate lanes under pressure", f"{sorted(lanes)}")
+    store = leases(cmd_prefix, wt1)
+    if store is None:
+        unverified("never allocates beyond max_lanes", "leases not enumerable")
+        unverified("no duplicate lanes under pressure", "leases not enumerable")
+    else:
+        check(len(store) <= SCHEMA["max_lanes"],
+              "never allocates beyond max_lanes",
+              f"{len(store)} leases, max {SCHEMA['max_lanes']}")
+        lanes = [e["lane"] for e in store.values()]
+        check(len(lanes) == len(set(lanes)), "no duplicate lanes under pressure",
+              f"{sorted(lanes)}")
 
 
 def main():
