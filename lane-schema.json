@@ -1,0 +1,8 @@
+{
+  "_comment": "Resource-lane shape for this repo. Vendored implementation: scripts/lane-registry.py; contract verified by scripts/lane-registry-conformance.py. Lane N occupies base+span*N .. +span-1, so lane 1 is 4400-4409. The operator owns 4321 and it is below the range by construction.",
+  "base": 4390,
+  "span": 10,
+  "max_lanes": 20,
+  "store": ".claude/worktrees/.registry.json",
+  "ports": { "dev": 0, "preview": 1, "e2e": 2 }
+}
