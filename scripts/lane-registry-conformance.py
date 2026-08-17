@@ -174,6 +174,20 @@ def run(cmd_prefix: list[str], root: Path):
     else:
         unverified("claimed non-canonical path", "no symlink in the sandbox path")
 
+    print("\ncontract: derived values are reported, not re-derived by callers")
+    if readable:
+        e = json.loads(reg(wt1, "entry").stdout)
+        blk = e.get("block")
+        ok = (isinstance(blk, list) and len(blk) == 2
+              and blk[0] == SCHEMA["base"] + SCHEMA["span"] * e["lane"]
+              and blk[1] == blk[0] + SCHEMA["span"] - 1)
+        check(ok, "entry reports the lane's port block", f"block={blk} lane={e['lane']}")
+        check(all(p_ in range(blk[0], blk[1] + 1) for p_ in e.get("ports", {}).values()),
+              "named ports fall inside the block", f"ports={e.get('ports')}")
+    else:
+        unverified("entry reports the lane's port block", "lanes unreadable")
+        unverified("named ports fall inside the block", "lanes unreadable")
+
     print("\ncontract: release")
     before = set(read_store(primary))
     p_rel = reg(wt2, "release", expect_ok=False)

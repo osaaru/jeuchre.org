@@ -63,8 +63,23 @@ def roots() -> tuple[Path, Path]:
     return worktree, common.parent
 
 
-def load_schema(primary: Path) -> dict:
+def load_schema(primary: Path, worktree: Path | None = None) -> dict:
+    """Schema from the primary checkout, falling back to the invoking worktree.
+
+    The primary wins so every worktree allocates against the same shape — a
+    per-worktree schema would hand out overlapping blocks. The fallback exists
+    for one real case: the branch that *introduces* the schema cannot see it in
+    the primary until it merges, which would otherwise make the tooling
+    unusable exactly while it is being adopted.
+    """
     path = primary / SCHEMA_NAME
+    if not path.exists() and worktree is not None and (worktree / SCHEMA_NAME).exists():
+        path = worktree / SCHEMA_NAME
+        print(
+            f"lane-registry: no {SCHEMA_NAME} in the primary checkout; using this "
+            f"worktree's copy. Allocation is only consistent once it lands on the trunk.",
+            file=sys.stderr,
+        )
     if not path.exists():
         die(f"no {SCHEMA_NAME} at {primary} — the project must declare its lane schema")
     schema = json.loads(path.read_text())
@@ -84,6 +99,17 @@ def lane_base(schema: dict, lane: int) -> int:
 def derived_ports(schema: dict, lane: int) -> dict[str, int]:
     base = lane_base(schema, lane)
     return {name: base + off for name, off in schema["ports"].items()}
+
+
+def lane_block(schema: dict, lane: int) -> list[int]:
+    """[first, last] port of the lane's block.
+
+    Reported so callers never re-derive it. A caller that assumes the lane
+    *number* is a port number is a silent failure: teardown tooling looked for
+    processes on ports 1..10 instead of 4400..4409 and reported success.
+    """
+    base = lane_base(schema, lane)
+    return [base, base + schema["span"] - 1]
 
 
 # ---------------------------------------------------------------- store + lock
@@ -206,7 +232,8 @@ def cmd_claim(args, worktree: Path, primary: Path, schema: dict):
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.write_text(f"{entry['lane']}\n")
 
-    emit(args, {"worktree": key, **entry, "ports": derived_ports(schema, entry["lane"])})
+    emit(args, {"worktree": key, **entry, "block": lane_block(schema, entry["lane"]),
+                "ports": derived_ports(schema, entry["lane"])})
 
 
 def cmd_release(args, worktree: Path, primary: Path, schema: dict):
@@ -260,8 +287,8 @@ def cmd_list(args, worktree: Path, primary: Path, schema: dict):
     store = Store(primary, schema)
     data = store.read()
     rows = [
-        {"worktree": p, **e, "ports": derived_ports(schema, e["lane"]),
-         "present": Path(p).is_dir()}
+        {"worktree": p, **e, "block": lane_block(schema, e["lane"]),
+         "ports": derived_ports(schema, e["lane"]), "present": Path(p).is_dir()}
         for p, e in sorted(data.items(), key=lambda kv: kv[1]["lane"])
     ]
     if "--json" in args:
@@ -280,6 +307,7 @@ def cmd_entry(args, worktree: Path, primary: Path, schema: dict):
     if not entry:
         die(f"no lease for {target}")
     print(json.dumps({"worktree": target, **entry,
+                      "block": lane_block(schema, entry["lane"]),
                       "ports": derived_ports(schema, entry["lane"])}, indent=2))
 
 
@@ -344,7 +372,7 @@ def main(argv: list[str]):
     if cmd not in COMMANDS:
         die(f"unknown command '{cmd}' — one of {', '.join(COMMANDS)}")
     worktree, primary = roots()
-    COMMANDS[cmd](args, worktree, primary, load_schema(primary))
+    COMMANDS[cmd](args, worktree, primary, load_schema(primary, worktree))
 
 
 if __name__ == "__main__":

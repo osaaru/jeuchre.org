@@ -14,6 +14,13 @@ while IFS= read -r f; do GUIDANCE_DOCS+=("$f"); done < <(ls journal/*.md 2>/dev/
 # Paths that are legitimately absent from a fresh checkout (generated/runtime).
 RUNTIME_ALLOW='^(apps/site/src/styles/tokens(-dark)?\.css|apps/site/dist|dist-design|\.claude/worktrees|\.moon/cache|node_modules|cache)'
 
+# Paths that once existed and are now referenced only by append-only history.
+# Journal entries are never edited (AGENTS.md), so deleting a file the journal
+# mentions would fail Check 1 forever — the first deletion in this repo's life
+# (#45, worktree-registry.mjs) proved that. Add a path here ONLY when it is
+# genuinely retired; a typo or a wrong path belongs in the failure list.
+RETIRED_ALLOW='^(scripts/worktree-registry\.mjs)$'
+
 FAILURES=0
 fail() { echo "FAIL: $1" >&2; FAILURES=$((FAILURES + 1)); }
 
@@ -30,6 +37,7 @@ for doc in "${GUIDANCE_DOCS[@]}"; do
       *'<'*|*'*'*|*'$'*|*'{'*|*YYYY*|*'#'*) continue ;;
     esac
     echo "$path" | grep -qE "$RUNTIME_ALLOW" && continue
+    echo "$path" | grep -qE "$RETIRED_ALLOW" && continue
     echo "apps/site/$path" | grep -qE "$RUNTIME_ALLOW" && continue
     # tokens/ and src/ prefixes are meaningful only inside apps/packages context; try both
     if [ ! -e "$path" ] && [ ! -e "apps/site/$path" ]; then
