@@ -84,7 +84,15 @@ git worktree prune
 echo "--- teardown of '$name': observed end state ---"
 [ -d "$wt_path" ] && echo "worktree dir: STILL PRESENT" || echo "worktree dir: gone"
 git show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null && echo "local branch: STILL PRESENT" || echo "local branch: gone"
-python3 scripts/lane-registry.py claimed "$wt_path" > /dev/null 2>&1 && echo "registry entry: STILL PRESENT" || echo "registry entry: gone"
+# `claimed` answers in three states: 0 claimed · 1 not claimed · 2 unknown. Unknown must
+# not be reported as "gone" — that is the answer that makes a live lease look deletable.
+claimed_rc=0
+python3 scripts/lane-registry.py claimed "$wt_path" > /dev/null 2>&1 || claimed_rc=$?
+case $claimed_rc in
+  0) echo "registry entry: STILL PRESENT" ;;
+  1) echo "registry entry: gone" ;;
+  *) echo "registry entry: unknown (run scripts/lane-registry.py claimed \"$wt_path\" to see why)" ;;
+esac
 if [ -n "$block_lo" ]; then
   busy=""
   for port in $(seq "$block_lo" "$block_hi"); do
