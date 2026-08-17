@@ -1,0 +1,44 @@
+---
+import ScoringTable from "../components/ScoringTable.astro";
+import { DIFF_HEADINGS, DIFF_HEADLINE, DIFF_ROWS, SCORING_HEADING } from "../data/rules";
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Rules — Jeuchre"
+  description="Jeuchre for people who already know Euchre: every rule that differs, side by side."
+>
+  <h1>For people who know the rules of Euchre&hellip;</h1>
+  <p class="toggle">
+    <a href="/full_rules">I don't know how to play Euchre. Show me the full rules.</a>
+  </p>
+
+  <h2>{DIFF_HEADLINE}</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">{DIFF_HEADINGS.euchre}</th>
+        <th scope="col">{DIFF_HEADINGS.jeuchre}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        DIFF_ROWS.map((row) => (
+          <tr>
+            <td>{row.euchre}</td>
+            <td>{row.jeuchre}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <h2 id="scoring">{SCORING_HEADING}</h2>
+  <ScoringTable />
+</Base>
+
+<style>
+  .toggle {
+    font-size: var(--text-sm);
+  }
+</style>

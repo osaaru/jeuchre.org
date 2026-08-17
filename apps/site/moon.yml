@@ -4,6 +4,11 @@ toolchains:
 layer: "application"
 stack: "frontend"
 
+# The rules pages derive their card examples from the engine's deck, so the site
+# builds against it (source exports — nothing to compile first).
+dependsOn:
+  - "engine"
+
 tasks:
   tokens:
     command: "pnpm exec node tokens/build-tokens.mjs"

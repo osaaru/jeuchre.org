@@ -1,0 +1,51 @@
+---
+import CardRankingTable from "../components/CardRankingTable.astro";
+import Phrase from "../components/Phrase.astro";
+import ScoringTable from "../components/ScoringTable.astro";
+import { FULL_RULES_PREAMBLE, FULL_RULES_SECTIONS } from "../data/rules";
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Full rules — Jeuchre"
+  description="The complete rules of Jeuchre, from the deck and the deal to scoring — no Euchre required."
+>
+  <h1>For people who don't know how to play Euchre, here are the full rules&hellip;</h1>
+  <p class="toggle">
+    <a href="/rules">I know how to play Euchre. Just show me the differences.</a>
+  </p>
+  <p>{FULL_RULES_PREAMBLE}</p>
+
+  {
+    FULL_RULES_SECTIONS.map((section) => (
+      <section>
+        <h2 id={section.id}>{section.heading}</h2>
+        {section.blocks.map((block) =>
+          block.kind === "paragraph" ? (
+            block.items.map((item) => (
+              <p>
+                <Phrase phrase={item} />
+              </p>
+            ))
+          ) : (
+            <ul>
+              {block.items.map((item) => (
+                <li>
+                  <Phrase phrase={item} />
+                </li>
+              ))}
+            </ul>
+          ),
+        )}
+        {section.table === "card-ranking" && <CardRankingTable />}
+        {section.table === "scoring" && <ScoringTable />}
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .toggle {
+    font-size: var(--text-sm);
+  }
+</style>

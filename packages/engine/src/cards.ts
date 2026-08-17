@@ -20,3 +20,20 @@ export function isRedSuit(suit: Suit): boolean {
 export function isRedNine(card: Card): boolean {
   return card.rank === "9" && isRedSuit(card.suit);
 }
+
+/**
+ * The other suit of the same color. This is what makes the left bower: the jack
+ * of `sameColorSuit(trump)` counts as a trump card, and leaves its own suit.
+ */
+export function sameColorSuit(suit: Suit): Suit {
+  switch (suit) {
+    case "clubs":
+      return "spades";
+    case "spades":
+      return "clubs";
+    case "diamonds":
+      return "hearts";
+    case "hearts":
+      return "diamonds";
+  }
+}

@@ -1,4 +1,7 @@
 ---
+import { sameColorSuit } from "@jeuchre/engine";
+import PlayingCards from "../components/PlayingCards.astro";
+import { EXAMPLE_TRUMP } from "../data/rules";
 import Base from "../layouts/Base.astro";
 ---
 
@@ -25,6 +28,20 @@ import Base from "../layouts/Base.astro";
     <div class="placeholder" aria-hidden="true">16 × 9 placeholder</div>
     <figcaption>A figcaption in the deep card-red</figcaption>
   </figure>
+
+  <h2>Playing cards</h2>
+  <p>
+    Card glyphs carry the suit color from the tokens, and each one is labelled for screen
+    readers. Used by the card-ranking table in the full rules.
+  </p>
+  <PlayingCards
+    cards={[
+      { suit: EXAMPLE_TRUMP, rank: "J" },
+      { suit: sameColorSuit(EXAMPLE_TRUMP), rank: "J" },
+      { suit: "hearts", rank: "A" },
+      { suit: "diamonds", rank: "10" },
+    ]}
+  />
 
   <h2>Lists</h2>
   <ul>
