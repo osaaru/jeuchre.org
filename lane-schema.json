@@ -1,8 +1,10 @@
 {
-  "_comment": "Resource-lane shape for this repo. Vendored implementation: scripts/lane-registry.py; contract verified by scripts/lane-registry-conformance.py. Lane N occupies base+span*N .. +span-1, so lane 1 is 4400-4409. The operator owns 4321 and it is below the range by construction.",
+  "_comment": "Resource-lane shape for this repo. Vendored implementation: scripts/lane-registry.py; contract verified by scripts/lane-registry-conformance.py (moon task lane-registry-conformance). Lane N occupies base+span*N .. +span-1, so lane 1 is 4400-4409. The operator owns 4321 and it is below the range by construction. The marker file is gitignored via the existing *.local pattern; it lets `claimed` recognize a moved worktree instead of answering 'not claimed' about a live one. Store stays JSON — readable by eye, and this repo's claim concurrency is low.",
   "base": 4390,
   "span": 10,
   "max_lanes": 20,
   "store": ".claude/worktrees/.registry.json",
+  "marker": ".lane.local",
+  "require_occupancy_check": true,
   "ports": { "dev": 0, "preview": 1, "e2e": 2 }
 }
